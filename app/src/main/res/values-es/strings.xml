@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Battleship</string>
+    <string name="about">Acerca de</string>
+    <string name="allow_adjacent_ships">Permitir barcos adyacentes</string>
+    <string name="difficulty">Dificultad</string>
+    <string name="language">Idioma</string>
+    <string name="new_game">Nuevo juego</string>
+    <string name="ok">Guardar</string>
+    <string name="options">Opciones</string>
+    <string name="rules">Reglas</string>
+    <string name="settings">Ajustes</string>
+</resources>
