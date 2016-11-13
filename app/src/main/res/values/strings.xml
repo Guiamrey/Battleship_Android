@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Battleship</string>
+    <string name="new_game">New Game</string>
+    <string name="options">Options</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="back">Back</string>
 </resources>

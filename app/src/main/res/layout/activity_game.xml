@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentStart="true"
+    tools:context="com.teleco.psi.battleship.MainActivity">
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row1"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <TextView
+            android:id="@+id/tile0"
+            style="@style/GameTile"
+            android:text="\"/>
+        <TextView
+            android:id="@+id/tile1"
+            style="@style/GameTile"
+            android:text="1"/>
+        <TextView
+            android:id="@+id/tile2"
+            style="@style/GameTile"
+            android:text="2"/>
+        <TextView
+            android:id="@+id/tile3"
+            style="@style/GameTile"
+            android:text="3"/>
+        <TextView
+            android:id="@+id/tile4"
+            style="@style/GameTile"
+            android:text="4"/>
+        <TextView
+            android:id="@+id/tile5"
+            style="@style/GameTile"
+            android:text="5"/>
+        <TextView
+            android:id="@+id/tile6"
+            style="@style/GameTile"
+            android:text="6"/>
+        <TextView
+            android:id="@+id/tile7"
+            style="@style/GameTile"
+            android:text="7"/>
+        <TextView
+            android:id="@+id/tile8"
+            style="@style/GameTile"
+            android:text="8"/>
+        <TextView
+            android:id="@+id/tile9"
+            style="@style/GameTile"
+            android:text="9"/>
+        <TextView
+            android:id="@+id/tile10"
+            style="@style/GameTile"
+            android:text="10"/>
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row2">
+        <TextView
+            android:id="@+id/tileA"
+            style="@style/GameTile"
+            android:text="A"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row3">
+        <TextView
+            android:id="@+id/tileA"
+            style="@style/GameTile"
+            android:text="B"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row4">
+        <TextView
+            android:id="@+id/tileC"
+            style="@style/GameTile"
+            android:text="C"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row5">
+        <TextView
+            android:id="@+id/tileD"
+            style="@style/GameTile"
+            android:text="D"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row6">
+        <TextView
+            android:id="@+id/tileE"
+            style="@style/GameTile"
+            android:text="E"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row7">
+        <TextView
+            android:id="@+id/tileF"
+            style="@style/GameTile"
+            android:text="F"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row8">
+        <TextView
+            android:id="@+id/tileG"
+            style="@style/GameTile"
+            android:text="G"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row9">
+        <TextView
+            android:id="@+id/tileH"
+            style="@style/GameTile"
+            android:text="H"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row10">
+        <TextView
+            android:id="@+id/tileI"
+            style="@style/GameTile"
+            android:text="I"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/row11">
+        <TextView
+            android:id="@+id/tileJ"
+            style="@style/GameTile"
+            android:text="J"/>
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+        <TextView
+            android:id="@+id/tile11"
+            style="@style/GameTile" />
+    </TableRow>
+</TableLayout>
+
