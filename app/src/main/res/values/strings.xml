@@ -9,6 +9,27 @@
     <string name="difficulty">Difficulty</string>
     <string name="rules">Rules</string>
     <string name="allow_adjacent_ships">Allow adjacent ships</string>
+    <string name="j">J</string>
+    <string name="i">I</string>
+    <string name="h">H</string>
+    <string name="g">G</string>
+    <string name="f">F</string>
+    <string name="e">E</string>
+    <string name="d">D</string>
+    <string name="c">C</string>
+    <string name="b">B</string>
+    <string name="a">A</string>
+    <string name="_10">10</string>
+    <string name="_9">9</string>
+    <string name="_8">8</string>
+    <string name="_7">7</string>
+    <string name="_6">6</string>
+    <string name="_5">5</string>
+    <string name="_4">4</string>
+    <string name="_3">3</string>
+    <string name="_2">2</string>
+    <string name="_1">1</string>
+    <string name="barra">\\</string>
     <string-array name="language_options">
         <item>English</item>
         <item>Español</item>

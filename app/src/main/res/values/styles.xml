@@ -9,7 +9,7 @@
     </style>
 
     <style name="GameTile">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:layout_gravity">fill</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">Roboto-Thin</item>
