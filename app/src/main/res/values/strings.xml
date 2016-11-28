@@ -30,6 +30,7 @@
     <string name="_2">2</string>
     <string name="_1">1</string>
     <string name="barra">\\</string>
+    <string name="carrier5">Carrier (5 squares)</string>
     <string-array name="language_options">
         <item>English</item>
         <item>Español</item>
@@ -44,4 +45,14 @@
         <item>Modern</item>
         <item>Custom</item>
     </string-array>
+    <string-array name="ship_types">
+        <item>Carrier (5 squares)</item>
+        <item>Battleship (4 squares)</item>
+        <item>Cruiser (3 squares)</item>
+        <item>Submarine (3 squares)</item>
+        <item>Destroyer (2 squares)</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
