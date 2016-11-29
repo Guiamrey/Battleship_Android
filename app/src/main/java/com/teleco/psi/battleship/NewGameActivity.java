@@ -1,5 +1,6 @@
 package com.teleco.psi.battleship;
 
+import android.content.Intent;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -29,7 +31,19 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
         spinner.setAdapter(adapter);
 
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
-        frameLayout.addView(createBoard());
+        final TableLayout table = createBoard();
+        frameLayout.addView(table);
+
+        Button startGameButton = (Button) findViewById(R.id.start_game);
+        startGameButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent start_game = new Intent(getApplicationContext(), GameActivity.class);
+                startActivity(start_game);
+            }
+        });
+
+
 
     }
 
@@ -69,7 +83,7 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
 
         TableLayout tableLayout = new TableLayout(this);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
-        layoutParams.height = 260;
+     //   layoutParams.height = 260;
         layoutParams.setMargins(50,0,50,0);
         for (int i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
@@ -82,7 +96,7 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
                     field.setText(num[j]);
                 } else if (j == 0) field.setText(AJ[i - 1]);
                 field.setTextSize(15);
-                field.setPadding(5,10,0,0);
+                field.setPadding(10,15,0,0);
                 field.setGravity(Gravity.CENTER);
                 row.addView(field, rowparams);
             }

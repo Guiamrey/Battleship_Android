@@ -2,12 +2,14 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -20,10 +22,25 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.game_activity);
 
+        Intent intent = getIntent();
 
+        Button startGameButton = (Button) findViewById(R.id.button3);
+        startGameButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
+                startActivity(start_game);
+                finish();
+            }
+        });
 
-       // setContentView(tableLayout);
+        FrameLayout frameLayout2 = (FrameLayout) findViewById(R.id.board2);
+        FrameLayout frameLayout1 = (FrameLayout) findViewById(R.id.board1);
+        frameLayout1.addView(createBoard());
+        frameLayout2.addView(createBoard());
+
     }
 
 
@@ -32,13 +49,13 @@ public class GameActivity extends Activity {
         String[] num = {"\\","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
         TableLayout tableLayout = new TableLayout(this);
+        tableLayout.setPadding(0,15,0,0);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
         layoutParams.setMargins(100,0,100,0);
         layoutParams.height = 260;
         for (int i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams rowparams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
-            //rowparams.setMargins(15,0,0,0);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < 11; j++) {
                 TextView field = new TextView(this);
@@ -47,6 +64,7 @@ public class GameActivity extends Activity {
                     field.setText(num[j]);
                 } else if (j == 0) field.setText(AJ[i - 1]);
                 field.setTextSize(15);
+                field.setPadding(8,6,0,0);
                 field.setGravity(Gravity.CENTER);
                 row.addView(field, rowparams);
             }
