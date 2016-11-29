@@ -1,6 +1,10 @@
 package com.teleco.psi.battleship;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PaintDrawable;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +21,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 public class NewGameActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+    int length, selected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,6 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = ((String) parent.getItemAtPosition(position)).split(" ")[0];
-        int length;
         switch (item) {
             case "Carrier":
                 length = 5;
@@ -69,7 +73,8 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
                 length = 0;
                 break;
         }
-
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
+        TableLayout tableLayout = (TableLayout) frameLayout.getChildAt(0);
     }
 
     @Override
@@ -83,22 +88,43 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
 
         TableLayout tableLayout = new TableLayout(this);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
-     //   layoutParams.height = 260;
         layoutParams.setMargins(50,0,50,0);
         for (int i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
-            TableRow.LayoutParams rowparams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
+            TableRow.LayoutParams rowParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
             for (int j = 0; j < 11; j++) {
                 TextView field = new TextView(this);
                 field.setBackgroundResource(R.drawable.cell_shape);
+                field.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (selected < length) {
+                            int color = Color.TRANSPARENT;
+                            Drawable background = v.getBackground();
+                            if (background instanceof ColorDrawable) {
+                                color = ((ColorDrawable) background).getColor();
+                            }
+                            if (color == Color.TRANSPARENT) {
+                                v.setBackgroundColor(Color.BLACK);
+                                selected++;
+                            } else {
+                                v.setBackgroundResource(R.drawable.cell_shape);
+                                selected--;
+                            }
+                            System.out.println("> You pressed: " + Integer.toString(v.getId()));
+                        }
+                    }
+                });
+                String id = String.valueOf(i) + String.valueOf(j);
+                field.setId(Integer.parseInt(id));
                 if (i == 0) {
                     field.setText(num[j]);
                 } else if (j == 0) field.setText(AJ[i - 1]);
                 field.setTextSize(15);
                 field.setPadding(10,15,0,0);
                 field.setGravity(Gravity.CENTER);
-                row.addView(field, rowparams);
+                row.addView(field, rowParams);
             }
             tableLayout.addView(row, layoutParams);
         }
