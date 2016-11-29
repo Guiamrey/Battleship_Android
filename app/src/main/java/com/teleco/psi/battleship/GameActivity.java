@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -18,29 +19,29 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_game);
-        FrameLayout v = (FrameLayout) findViewById(R.id.vieew);
-        setContentView(v);
-        //LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        //View v = vi.inflate(R.layout.activity_game, null);
-        TableLayout board = (TableLayout) findViewById(R.id.board);
-        TableLayout.LayoutParams params = new TableLayout.LayoutParams();
-        params.width = 260;
-        board.setBackgroundColor(Color.BLACK);
-        for (int i = 0; i < 10; i++) {
+        String[] AJ = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+        String[] num = {"\\","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+
+        TableLayout tableLayout = new TableLayout(this);
+        TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
+        layoutParams.setMargins(30,15,30,0);
+        layoutParams.height = 260;
+        for (int i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams rowparams = new TableRow.LayoutParams();
             rowparams.width = TableRow.LayoutParams.MATCH_PARENT;
-           // row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-            for (int j = 0; j < 10; j++) {
+            row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
+            for (int j = 0; j < 11; j++) {
                 TextView field = new TextView(this);
+                if (i == 0) {
+                    field.setText(num[j]);
+                } else if (j == 0) field.setText(AJ[i - 1]);
+                field.setTextSize(15);
                 field.setBackgroundColor(Color.GRAY);
-                row.addView(field,rowparams);
+                row.addView(field, rowparams);
             }
-            board.addView(row, params);
+            tableLayout.addView(row, layoutParams);
         }
-        v.addView(board);
-       // ViewGroup insertPoint = (ViewGroup) findViewById(R.id.board);
-       // insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+        setContentView(tableLayout);
     }
 }
