@@ -10,32 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.teleco.psi.battleship.NewGameActivity">
 
-    <TextView
-        android:text="Select ship to place"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:id="@+id/textView245"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/textView245"
-        android:layout_alignParentStart="true"/>
-
-    <Button
-        android:text="Place"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="22dp"
-        android:id="@+id/button"
-        android:layout_below="@+id/spinner"
-        android:layout_alignParentEnd="true" />
-
     <FrameLayout
         android:layout_marginTop="200dp"
         android:id="@+id/frame"
@@ -55,26 +29,34 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/start_game" />
 
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/anchor"
-        android:id="@+id/imageView"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/button"
-        android:layout_alignEnd="@+id/button" />
-
     <TextView
         android:text="@string/place_your_ships"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_toStartOf="@+id/imageView"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="8dp"
         android:textStyle="normal|bold"
-        android:textSize="23sp" />
+        android:textSize="23sp"
+        android:layout_marginEnd="11dp"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_toStartOf="@+id/imageView" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/anchor"
+        android:id="@+id/imageView"
+        android:layout_marginTop="80dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/start_game"
+        android:layout_marginStart="25dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:id="@+id/info"
+        android:text="Info" />
 
 </RelativeLayout>

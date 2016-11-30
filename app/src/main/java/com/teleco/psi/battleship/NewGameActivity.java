@@ -1,6 +1,11 @@
 package com.teleco.psi.battleship;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,20 +25,23 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-public class NewGameActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    int length, selected;
+import com.google.gson.Gson;
+
+import java.util.Arrays;
+
+public class NewGameActivity extends AppCompatActivity {
+    private static int [][][] matrix = new int[10][10][3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        for (int[][] row : matrix) {
+            for (int[] column : row) {
+                column[0] = 0;
+            }
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_game);
-
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.ship_types, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
         final TableLayout table = createBoard();
@@ -43,43 +51,25 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
         startGameButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                SharedPreferences settings = getSharedPreferences("Matrix", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(matrix);
+                editor.putString("Matrix", json);
+                editor.commit();
                 Intent start_game = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(start_game);
             }
         });
 
-
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = ((String) parent.getItemAtPosition(position)).split(" ")[0];
-        switch (item) {
-            case "Carrier":
-                length = 5;
-                break;
-            case "Battleship":
-                length = 4;
-                break;
-            case "Cruiser":
-            case "Submarine":
-                length = 3;
-                break;
-            case "Destroyer":
-                length = 2;
-                break;
-            default:
-                length = 0;
-                break;
-        }
-        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
-        TableLayout tableLayout = (TableLayout) frameLayout.getChildAt(0);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
+        Button infoButton = (Button) findViewById(R.id.info);
+        infoButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                DialogFragment aboutDialog = new NewGameActivity.AlertDialogInfo().newInstance();
+                aboutDialog.show(getFragmentManager(), "Alert");
+            }
+        });
     }
 
     protected TableLayout createBoard(){
@@ -96,23 +86,23 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
             for (int j = 0; j < 11; j++) {
                 TextView field = new TextView(this);
                 field.setBackgroundResource(R.drawable.cell_shape);
+                field.setTag(i + "," + j);
                 field.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (selected < length) {
-                            int color = Color.TRANSPARENT;
-                            Drawable background = v.getBackground();
-                            if (background instanceof ColorDrawable) {
-                                color = ((ColorDrawable) background).getColor();
-                            }
-                            if (color == Color.TRANSPARENT) {
-                                v.setBackgroundColor(Color.BLACK);
-                                selected++;
-                            } else {
-                                v.setBackgroundResource(R.drawable.cell_shape);
-                                selected--;
-                            }
-                            System.out.println("> You pressed: " + Integer.toString(v.getId()));
+                        int row = Integer.parseInt(v.getTag().toString().split(",")[0]);
+                        int column = Integer.parseInt(v.getTag().toString().split(",")[1]);
+                        int color = Color.TRANSPARENT;
+                        Drawable background = v.getBackground();
+                        if (background instanceof ColorDrawable) {
+                            color = ((ColorDrawable) background).getColor();
+                        }
+                        if (color == Color.TRANSPARENT) {
+                            matrix[row-1][column-1][0] = 1;
+                            v.setBackgroundColor(Color.BLACK);
+                        } else {
+                            matrix[row-1][column-1][0] = 0;
+                            v.setBackgroundResource(R.drawable.cell_shape);
                         }
                     }
                 });
@@ -129,6 +119,29 @@ public class NewGameActivity extends AppCompatActivity implements AdapterView.On
             tableLayout.addView(row, layoutParams);
         }
         return tableLayout;
+    }
 
+    public static class AlertDialogInfo extends DialogFragment {
+        public static NewGameActivity.AlertDialogInfo newInstance() {
+            return new AlertDialogInfo();
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("INFO");
+            builder.setMessage("Place your ships on the board as you like. You can place:"
+                + "\n1 carrier (5 squares)"
+                + "\n1 battleship (4 squares)"
+                + "\n2 cruisers (3 squares)"
+                + "\n1 destroyer (2 squares)");
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+            return builder.create();
+        }
     }
 }

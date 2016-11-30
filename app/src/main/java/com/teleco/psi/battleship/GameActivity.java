@@ -2,6 +2,8 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -11,7 +13,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
 public class GameActivity extends Activity {
+    private static int [][][] matrix = new int[10][10][3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,20 @@ public class GameActivity extends Activity {
         frameLayout1.addView(createBoard());
         frameLayout2.addView(createBoard());
 
+        SharedPreferences settings = getSharedPreferences("Matrix", 0);
+        Gson gson = new Gson();
+        String json = settings.getString("Matrix", "");
+        matrix = gson.fromJson(json, int[][][].class);
+        TableLayout board = (TableLayout) frameLayout1.getChildAt(0);
+        for (int i = 1; i <= 10; i++) {
+            TableRow row = (TableRow) board.getChildAt(i);
+            for (int j = 1; j <= 10; j++) {
+                TextView field = (TextView) row.getChildAt(j);
+                if (matrix[i-1][j-1][0] == 1 ) {
+                    field.setBackgroundColor(Color.BLACK);
+                }
+            }
+        }
     }
 
 
