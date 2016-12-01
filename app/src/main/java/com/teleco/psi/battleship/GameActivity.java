@@ -100,6 +100,9 @@ public class GameActivity extends Activity {
                 if(column==7){
                     v.setBackgroundResource(R.drawable.fuego);
                 }
+                if(column==9){
+                    v.setBackgroundResource(R.drawable.cross);
+                }
                 System.out.println(row + " " + column + "  " + h + " " + w);
             }
         });
