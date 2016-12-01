@@ -11,52 +11,99 @@
     tools:context="com.teleco.psi.battleship.NewGameActivity">
 
     <FrameLayout
-        android:layout_marginTop="200dp"
         android:id="@+id/frame"
-        android:layout_marginBottom="70dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-    </FrameLayout>
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="70dp"
+        android:layout_marginTop="200dp" />
 
     <Button
-        android:text="Start Game"
-        android:padding="15dp"
+        android:id="@+id/start_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/start_game" />
+        android:padding="15dp"
+        android:text="@string/start_game" />
 
     <TextView
-        android:text="@string/place_your_ships"
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textStyle="normal|bold"
-        android:textSize="23sp"
-        android:layout_marginEnd="11dp"
         android:layout_alignBottom="@+id/imageView"
-        android:layout_toStartOf="@+id/imageView" />
+        android:layout_marginEnd="11dp"
+        android:layout_toStartOf="@+id/imageView"
+        android:text="@string/place_your_ships"
+        android:textColor="@color/colorBlack"
+        android:textSize="23sp"
+        android:textStyle="normal|bold" />
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/anchor"
-        android:id="@+id/imageView"
-        android:layout_marginTop="80dp"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="80dp"
         android:layout_toEndOf="@+id/start_game"
-        android:layout_marginStart="25dp" />
+        android:src="@drawable/anchor" />
 
     <Button
+        android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
-        android:id="@+id/info"
-        android:text="Info" />
+        android:text="@string/info" />
+
+    <ImageView
+        android:id="@+id/ship4_2"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/ship3" />
+
+    <ImageView
+        android:id="@+id/ship4_1"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="110dp"
+        android:src="@drawable/ship4" />
+
+    <ImageView
+        android:id="@+id/ship5"
+        android:layout_width="130dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ship5" />
+
+    <ImageView
+        android:id="@+id/ship2"
+        android:layout_width="50dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="220dp"
+        android:src="@drawable/ship2" />
+
+    <ImageView
+        android:id="@+id/ship3_1"
+        android:layout_width="80dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ship3_1" />
+
+    <ImageView
+        android:id="@+id/ship3_2"
+        android:layout_width="80dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="220dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/ship4_1" />
 
 </RelativeLayout>

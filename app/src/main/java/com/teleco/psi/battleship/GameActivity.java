@@ -4,19 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import com.teleco.psi.battleship.R;
 import com.google.gson.Gson;
 
 public class GameActivity extends Activity {
@@ -56,6 +52,7 @@ public class GameActivity extends Activity {
                 }
             }
         }
+
     }
 
 
@@ -90,17 +87,20 @@ public class GameActivity extends Activity {
 
     }
     protected void addClickListener(TextView view, int i, int j){
-        final int column = i;
-        final int row = j;
+        final int row = i;
+        final int column = j;
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int h = v.getHeight();
                 int w = v.getWidth();
-
-                //v.setBackgroundResource(R.drawable.cell_shoted);
-                v.setBackgroundColor(Color.RED);
-                System.out.println(row + " " + column);
+                if(column==5){
+                    v.setBackgroundResource(R.drawable.agua);
+                }
+                if(column==7){
+                    v.setBackgroundResource(R.drawable.fuego);
+                }
+                System.out.println(row + " " + column + "  " + h + " " + w);
             }
         });
     }

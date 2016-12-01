@@ -9,28 +9,27 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Spinner;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import java.util.Arrays;
 
 public class NewGameActivity extends AppCompatActivity {
     private static int [][][] matrix = new int[10][10][3];
+    private int _xDelta;
+    private int _yDelta;
+    private android.widget.RelativeLayout.LayoutParams layoutParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class NewGameActivity extends AppCompatActivity {
                 startActivity(start_game);
             }
         });
-
         Button infoButton = (Button) findViewById(R.id.info);
         infoButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -70,6 +68,20 @@ public class NewGameActivity extends AppCompatActivity {
                 aboutDialog.show(getFragmentManager(), "Alert");
             }
         });
+
+        ImageView ship5 = (ImageView) findViewById(R.id.ship5);
+        onTouchListener(ship5);
+        ImageView ship4_2 = (ImageView) findViewById(R.id.ship4_2);
+        onTouchListener(ship4_2);
+        ImageView ship4_1 = (ImageView) findViewById(R.id.ship4_1);
+        onTouchListener(ship4_1);
+        ImageView ship3_1 = (ImageView) findViewById(R.id.ship3_1);
+        onTouchListener(ship3_1);
+        ImageView ship3_2 = (ImageView) findViewById(R.id.ship3_2);
+        onTouchListener(ship3_2);
+        ImageView ship2 = (ImageView) findViewById(R.id.ship2);
+        onTouchListener(ship2);
+
     }
 
     protected TableLayout createBoard(){
@@ -119,6 +131,50 @@ public class NewGameActivity extends AppCompatActivity {
             tableLayout.addView(row, layoutParams);
         }
         return tableLayout;
+    }
+
+    private void onTouchListener(ImageView v){
+        v.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //Recogemos las coordenadas del dedo
+                final int X = (int) event.getRawX();
+                final int Y = (int) event.getRawY();
+                //Dependiendo de la accion recogida..
+                switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                    //Al tocar la pantalla
+                    case MotionEvent.ACTION_DOWN:
+                        //Recogemos los parametros de la imagen que hemo tocado
+                        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) v.getLayoutParams();
+                        _xDelta = X - Params.leftMargin;
+                        _yDelta = Y - Params.topMargin;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        //Al levantar el dedo simplemento mostramos un mensaje
+                        System.out.println("Soltamos");
+                        break;
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        //No hace falta utilizarlo
+                        break;
+                    case MotionEvent.ACTION_POINTER_UP:
+                        //No hace falta utilizarlo
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        //Al mover el dedo vamos actualizando los margenes de la imagen para crear efecto de arrastrado
+                        RelativeLayout.LayoutParams layoutParams =
+                                (RelativeLayout.LayoutParams) v.getLayoutParams();
+                        layoutParams.leftMargin = X - _xDelta;
+                        layoutParams.topMargin = Y - _yDelta;
+
+                        v.setLayoutParams(layoutParams);
+
+                        break;
+                }
+                //Se podría decir que 'dibujamos' la posición de la imagen en el marco.
+                v.invalidate();
+                return true;
+            }
+        });
     }
 
     public static class AlertDialogInfo extends DialogFragment {
