@@ -15,11 +15,24 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class GameActivity extends Activity {
     private static int [][][] matrixHuman = new int[10][10][3];
     private static int [][][] matrixMachine = new int[10][10][3];
     private FrameLayout frameLayoutHuman;
     private FrameLayout frameLayoutMachine;
+
+    static int hundidos = 0;
+    private static int vertical = 0;
+    private static int horizontal = 0;
+    private static boolean lastHit = false;
+    private static int row, column;
+    private static int pos, sentido = 1;
+    private static int sentidos = 0;
+    private static int sentidosInvertidos =0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,14 +112,14 @@ public class GameActivity extends Activity {
                 } else {
                     view.setBackgroundColor(Color.BLUE);
                 }
-                //llamada al algoritmo
+                startAlgorithm();
                 TableLayout board = (TableLayout) frameLayoutMachine.getChildAt(0);
                 for (int i = 1; i <= 10; i++) {
                     TableRow row = (TableRow) board.getChildAt(i);
                     for (int j = 1; j <= 10; j++) {
                         TextView field = (TextView) row.getChildAt(j);
-                        if (matrixMachine[i-1][j-1][0] == 1 ) {
-                            field.setBackgroundColor(Color.BLACK);
+                        if (matrixMachine[i-1][j-1][1] == 1 ) {
+                            field.setBackgroundColor(Color.RED);
                         }
                     }
                 }
@@ -115,4 +128,319 @@ public class GameActivity extends Activity {
     }
 
 
+    public static void startAlgorithm(){
+        int[] action = new int[3];
+        printMatrix();
+
+        System.out.println("---------------- INITIAL MATRIX -----------------");
+
+        if(!lastHit){
+            action =  choosePlay();
+            lastHit = hitOrMiss(action[0], action[1]);
+        }else if(vertical != 0 || horizontal != 0){
+            shipFound(row, column);
+        }else{
+            bestAfterHit(action);
+        }
+        printMatrix();
+    }
+
+    /***
+     * This function print the matrix in console.
+     * It only prints the boats, and the state of the box.
+     */
+
+    private static void printMatrix(){
+        System.out.println("\\   A    B    C    D    E    F    G    H    I    J");
+        for (int i = 0; i < matrixHuman.length ; i++) {
+            System.out.print(i+1);
+            for (int j = 0; j < matrixHuman.length ; j++) {
+                if(i==9 && j==0) System.out.print(" "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+
+                else System.out.print("  "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+            }
+            System.out.print("\n");
+        }
+    }
+
+    /***
+     * This function choose the next shot when the only that we know is the matrix probability.
+     * The function choose the higher probability value and return it. If all the probabilities are equals,
+     * the function generates two randoms numbers to select the nest shot
+     *
+     * @return bestAction [3] bestAction[0]  row, bestAction[1]  column, bestAction[2]  probability of the shot.
+     */
+
+    private static int[] choosePlay(){
+        int[] bestAction = new int[3];
+        bestAction[0] = -1;
+        for (int i = 0; i < matrixHuman.length ; i++) {
+            for (int j = 0; j < matrixHuman.length ; j++) {
+                if (matrixHuman[i][j][1] == 0 && matrixHuman[i][j][2] > bestAction[2]){
+                    bestAction[0] = i;
+                    bestAction[1] = j;
+                    bestAction[2] = matrixHuman[i][j][2];
+                }
+            }
+        }
+
+        if(bestAction[0] == -1) {
+            Random rand = new Random();
+
+            while(true) {
+                int x = rand.nextInt(9);
+                int y = rand.nextInt(9);
+
+                if(matrixHuman[x][y][1] == 0) {
+                    bestAction[0] = x;
+                    bestAction[1] = y;
+                    bestAction[2] =  matrixHuman[x][y][2];
+                    break;
+                }
+            }
+        }
+        return bestAction;
+    }
+
+    /**
+     * This function check if the shot is success or not
+     *
+     * @param x row of the shot
+     * @param y column of the shot
+     * @return boolean which indicates hit or not.
+     */
+    private static boolean hitOrMiss(int x, int y){
+        if(matrixHuman[x][y][0]==1) {
+            matrixHuman[x][y][1] = 2; //tocado
+            System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " TOCADO");
+            hundidos++;
+            return true;
+        }
+        matrixHuman[x][y][1] = 1;    //agua
+        System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
+        return false;
+    }
+
+    /**
+     * This function put the boats in the matrix
+     * @param from where the boat starts
+     * @param to where the boat finish
+     * @param line the line where the boat is
+     * @param direction the horientation of the boat, vertical (1) or horizontal (0)
+     * @param matrixHuman the board game
+     */
+
+    public static void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                matrixHuman[line][i][0] = 1;
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                matrixHuman[i][line][0] = 1;
+            }
+        }
+    }
+
+    /**
+     * Function that finds the possible plays around your last hit, it calls after you hit for
+     * first time a boat, the function keep in mind if you are in the corners of the board or in the middle.. etc
+     *
+     * @param lastAction array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
+     * @return A list with the possible plays.
+     */
+
+    public static List<String> findArround(int[] lastAction){
+        List<String> possiblePlays = new ArrayList<>();
+
+        if(lastAction[0] == 9){  // buscar hacia arriba o lados
+            if(lastAction[1] == 0) { //hacia arriba o derecha
+                possiblePlays.add("9-1");
+                possiblePlays.add("8-0");
+            } else if(lastAction[1] == 9){ //hacia arriba o izquierda
+                possiblePlays.add("8-9");
+                possiblePlays.add("9-8");
+            } else { // buscar mejor jugada proxima a ese barco
+                possiblePlays.add("9-" + (lastAction[1] - 1));
+                possiblePlays.add("9-" + (lastAction[1] + 1));
+                possiblePlays.add("8-" + (lastAction[1]));
+            }
+        }else if(lastAction[0]==0) { // hacia abajo o los lados
+            if(lastAction[1] == 0) { // hacia abajo o derecha
+                possiblePlays.add("0-1");
+                possiblePlays.add("1-0");
+            } else if(lastAction[1] == 9){ //hacia abajo o izquierda
+                possiblePlays.add("0-8");
+                possiblePlays.add("1-9");
+            } else { // buscar mejor jugada proxima a ese barco
+                possiblePlays.add("0-"+ (lastAction[1] - 1));
+                possiblePlays.add("0-"+ (lastAction[1] + 1));
+                possiblePlays.add("1-"+ lastAction[1]);
+            }
+        } else{
+            if(lastAction[1]==0){
+                possiblePlays.add(lastAction[0] + "-" + (lastAction[1] + 1));
+            }else{
+                possiblePlays.add(lastAction[0] + "-" + (lastAction[1] - 1));
+            }
+            possiblePlays.add((lastAction[0]+1) + "-" + lastAction[1]);
+            possiblePlays.add((lastAction[0]-1) + "-" + lastAction[1]);
+        }
+        return possiblePlays;
+    }
+
+    /**
+     * Function that calls when the IA hits a boat two times and try to found
+     * the rest of the ship.
+     * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
+     */
+    public static void bestAfterHit(int[] lastAction){
+        List<String> possiblePlays = findArround(lastAction);
+        checkProbablyPos(possiblePlays, lastAction);
+    }
+
+    /**
+     * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
+     * int the board the ship and call @function shipFound()
+     * @param possiblePlays List with the possible plays where the boat can be
+     * @param lastAction array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
+     */
+
+    public static void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
+        int[] bestAction =  new int[3];
+        int nPosiblePlays = possiblePlays.size();
+        int nPlaysTested = 0;
+        while(true){
+            for (int i = 0; i < possiblePlays.size(); i++) {
+                String[] playsStr = possiblePlays.get(i).split("-");
+                int row = Integer.parseInt(playsStr[0]);
+                int column = Integer.parseInt(playsStr[1]);
+
+                if (matrixHuman[row][column][1] == 0 && matrixHuman[row][column][2] >= bestAction[2]){
+                    bestAction[0] = row;
+                    bestAction[1] = column;
+                    bestAction[2] = matrixHuman[row][column][2];
+                }
+            }
+            nPlaysTested++;
+            lastHit = hitOrMiss(bestAction[0], bestAction[1]);
+
+            if(lastHit){
+                int row = bestAction[0];
+                int column = bestAction[1];
+
+                if(bestAction[0] == lastAction [0]) { //si la fila donde hemos tocado, es la misma que la de la anterior jugada => horizontal
+                    horizontal = 1; //horizontal
+                }else{
+                    vertical = 1; //vertical
+                }
+            }else if(nPlaysTested == nPosiblePlays) {
+                vertical = 0;
+                horizontal = 0;
+                lastHit = false;
+                return;
+            }
+        }
+    }
+
+
+    /**
+     * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
+     * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
+     * @param row row where the IA knows that there is a boat there
+     * @param column column where the IA knows that there is a boat there
+     */
+    public static void shipFound(int row, int column){
+        boolean hit = false;
+
+        if(horizontal ==  1) {
+            while (true) {
+                if (sentidosInvertidos == 2) {
+                    changeOrientation();
+                    break;
+                }
+
+                int upDown = checkLimits(row - pos * sentido);
+                if (upDown == sentido) {
+                    changeDirection();
+                }
+
+                if (matrixHuman[row - pos * sentido][column][1] == 0) {
+                    hit = hitOrMiss(row - pos * sentido, column);
+                } else {
+                    continue;
+                }
+
+                if (hit) {
+                    lastHit = hit;
+                    pos++;
+                } else {
+                    pos = 0;
+                    sentido = sentido * (-1);
+                    sentidosInvertidos++;
+                }
+                break;
+            }
+        }
+        if(vertical == 1) {
+            while (true) {
+                if (sentidosInvertidos == 2) {
+                    changeOrientation();
+                    break;
+                }
+
+                int upDown = checkLimits(column - pos * sentido);
+                if (upDown == sentido) {
+                    changeDirection();
+                }
+
+                if (matrixHuman[row][column - pos * sentido][1] == 0) {
+                    hit = hitOrMiss(row, column - pos * sentido);
+                } else {
+                    continue;
+                }
+
+                if (hit) {
+                    continueDirection(hit);
+                } else {
+                    changeDirection();
+                }
+                break;
+            }
+        } if(vertical == 2  && horizontal == 2){
+            lastHit = false;
+        }
+    }
+
+    private static void changeOrientation() {
+        pos = 1;
+        vertical++;
+        horizontal++;
+        sentidosInvertidos = 0;
+    }
+
+    private static void changeDirection(){
+        pos = 1;
+        sentido = sentido * (-1);
+        sentidosInvertidos++;
+    }
+
+    private static void continueDirection(boolean hit){
+        lastHit = hit;
+        pos++;
+    }
+    /**
+     * This function check the limits of the board.
+     * @param position index of the board
+     * @return 0 for the position is good, 1, if your position is under the minimum index, and -1 if your position is over the maximun index
+     */
+    public static int checkLimits(int position){
+        if(position < 0){
+            return 1;
+        }else if(position > 9){
+            return -1;
+        }else{
+            return 0;
+        }
+    }
 }
