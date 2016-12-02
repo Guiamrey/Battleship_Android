@@ -16,16 +16,17 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 public class GameActivity extends Activity {
-    private static int [][][] matrix1 = new int[10][10][3];
-    private static int [][][] matrix2 = new int[10][10][3];
-    private static FrameLayout frameLayout2;
+    private static int [][][] matrixHuman = new int[10][10][3];
+    private static int [][][] matrixMachine = new int[10][10][3];
+    private FrameLayout frameLayoutHuman;
+    private FrameLayout frameLayoutMachine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
 
-        Button startGameButton = (Button) findViewById(R.id.button3);
+        Button startGameButton = (Button) findViewById(R.id.newGameButton);
         startGameButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -34,22 +35,21 @@ public class GameActivity extends Activity {
                 finish();
             }
         });
-
-        frameLayout2 = (FrameLayout) findViewById(R.id.board2);
-        FrameLayout frameLayout1 = (FrameLayout) findViewById(R.id.board1);
-        frameLayout1.addView(createBoard());
-        frameLayout2.addView(createBoard());
+        frameLayoutHuman = (FrameLayout) findViewById(R.id.boardHuman);
+        frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
+        frameLayoutHuman.addView(createBoard(false));
+        frameLayoutMachine.addView(createBoard(true));
 
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
-        matrix1 = gson.fromJson(json, int[][][].class);
-        TableLayout board = (TableLayout) frameLayout1.getChildAt(0);
+        matrixHuman = gson.fromJson(json, int[][][].class);
+        TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
         for (int i = 1; i <= 10; i++) {
             TableRow row = (TableRow) board.getChildAt(i);
             for (int j = 1; j <= 10; j++) {
                 TextView field = (TextView) row.getChildAt(j);
-                if (matrix1[i-1][j-1][0] == 1 ) {
+                if (matrixHuman[i-1][j-1][0] == 1 ) {
                     field.setBackgroundColor(Color.BLACK);
                 }
             }
@@ -57,7 +57,7 @@ public class GameActivity extends Activity {
     }
 
 
-    protected TableLayout createBoard(){
+    protected TableLayout createBoard(boolean clickable){
         String[] AJ = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
         String[] num = {"\\","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
@@ -79,7 +79,9 @@ public class GameActivity extends Activity {
                 field.setTextSize(15);
                 field.setPadding(8,6,0,0);
                 field.setGravity(Gravity.CENTER);
-                addClickListener(field, i, j);
+                if (clickable) {
+                    addClickListener(field, i, j);
+                }
                 row.addView(field, rowparams);
             }
             tableLayout.addView(row, layoutParams);
@@ -87,31 +89,23 @@ public class GameActivity extends Activity {
         return tableLayout;
 
     }
-    protected void addClickListener(TextView view, int i, int j){
-        final int row = i;
-        final int column = j;
+    protected void addClickListener(final TextView view, final int i, final int j){
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int h = v.getHeight();
-                int w = v.getWidth();
-                if(column==5){
-                    v.setBackgroundResource(R.drawable.agua);
+                if (matrixMachine[i][j][0] == 1) {
+                    view.setBackgroundColor(Color.RED);
+                    return;
+                } else {
+                    view.setBackgroundColor(Color.BLUE);
                 }
-                if(column==7){
-                    v.setBackgroundResource(R.drawable.fuego);
-                }
-                if(column==9){
-                    v.setBackgroundResource(R.drawable.cross);
-                }
-                System.out.println(row + " " + column + "  " + h + " " + w);
                 //llamada al algoritmo
-                TableLayout board = (TableLayout) frameLayout2.getChildAt(0);
+                TableLayout board = (TableLayout) frameLayoutMachine.getChildAt(0);
                 for (int i = 1; i <= 10; i++) {
                     TableRow row = (TableRow) board.getChildAt(i);
                     for (int j = 1; j <= 10; j++) {
                         TextView field = (TextView) row.getChildAt(j);
-                        if (matrix1[i-1][j-1][0] == 1 ) {
+                        if (matrixMachine[i-1][j-1][0] == 1 ) {
                             field.setBackgroundColor(Color.BLACK);
                         }
                     }

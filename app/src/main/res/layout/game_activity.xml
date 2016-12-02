@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/board2"
+        android:id="@+id/boardMachine"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
@@ -33,10 +33,10 @@
         android:src="@android:drawable/ic_menu_help" />
 
     <FrameLayout
-        android:id="@+id/board1"
+        android:id="@+id/boardHuman"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/board2"
+        android:layout_above="@+id/boardMachine"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="330dp"
         android:layout_toEndOf="@+id/pause">
@@ -44,7 +44,7 @@
     </FrameLayout>
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/newGameButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
