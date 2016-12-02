@@ -19,4 +19,39 @@
     <string name="_2">2</string>
     <string name="_1">1</string>
     <string name="barra">\\</string>
+    <string name="_10">10</string>
+    <string name="_6">6</string>
+    <string name="a">a</string>
+    <string name="b">B</string>
+    <string name="c">C</string>
+    <string name="d">D</string>
+    <string name="e">E</string>
+    <string name="f">F</string>
+    <string name="g">G</string>
+    <string name="h">H</string>
+    <string name="i">I</string>
+    <string name="info">Info</string>
+    <string name="j">J</string>
+    <string name="place_your_ships">Coloca tus barcos!</string>
+    <string name="start_game">Empezar juego</string>
+    <string name="carrier5">Portaviones (5 casillas)</string>
+    <string-array name="difficulty_options">
+        <item>Difícil</item>
+        <item>Medio</item>
+        <item>Fácil</item>
+    </string-array>
+    <string-array name="rules_options">
+        <item>Clásico</item>
+        <item>Superdisparos</item>
+    </string-array>
+    <string-array name="ship_types">
+        <item>Portaaviones (5 casillas)</item>
+        <item>Buque (4 casillas)</item>
+        <item>Barco de guerra (3 casillas)</item>
+        <item>Submarino (3 casillas)</item>
+        <item>Destructor (2 casillas)</item>
+    </string-array>
+    <string name="information_rules">Modos de juego: \n1. Clásico. Cada jugador solo puede disparar a una casilla de cada vez.
+        El turno de juego se cambia a menos que un jugador acierte en un barco. Gana el jugador con más barcos a flote.
+    \n2. Superdisparo. Mismo modo de juego que el modo clásico, con la diferencia de que los barcos se hunden con un sólo disparo. </string>
 </resources>

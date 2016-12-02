@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -70,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/back_settings"
-        android:layout_alignStart="@+id/language_options"
+        android:layout_marginStart="200dp"
         android:layout_alignTop="@+id/rules_text"
         android:layout_marginBottom="36dp"
         android:textSize="17sp" />
@@ -90,7 +91,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/ships_text"
-        android:layout_alignStart="@+id/difficulty_options"
+        android:layout_marginStart="200dp"
         android:layout_alignTop="@+id/language_text"
         android:textSize="17sp" />
 
@@ -100,8 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/language_text"
         android:layout_alignTop="@+id/difficulty_text"
-        android:layout_marginStart="12dp"
-        android:layout_toEndOf="@+id/ships_text"
+        android:layout_marginStart="200dp"
         android:padding="16dp"
         android:textSize="17sp" />
 
@@ -113,6 +113,16 @@
         android:layout_alignBottom="@+id/ships_text"
         android:layout_toEndOf="@+id/back_settings"
         android:padding="16dp" />
+
+    <ImageButton
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:src="@android:drawable/ic_dialog_info"
+        android:layout_marginBottom="17dp"
+        android:id="@+id/info"
+        android:background="@color/ColorWater"
+        android:layout_alignBottom="@+id/rules_text"
+        android:layout_toEndOf="@+id/rules_text" />
 
 
 </RelativeLayout>
