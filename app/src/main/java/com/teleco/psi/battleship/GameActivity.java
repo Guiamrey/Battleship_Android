@@ -16,7 +16,9 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 public class GameActivity extends Activity {
-    private static int [][][] matrix = new int[10][10][3];
+    private static int [][][] matrix1 = new int[10][10][3];
+    private static int [][][] matrix2 = new int[10][10][3];
+    private static FrameLayout frameLayout2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class GameActivity extends Activity {
             }
         });
 
-        FrameLayout frameLayout2 = (FrameLayout) findViewById(R.id.board2);
+        frameLayout2 = (FrameLayout) findViewById(R.id.board2);
         FrameLayout frameLayout1 = (FrameLayout) findViewById(R.id.board1);
         frameLayout1.addView(createBoard());
         frameLayout2.addView(createBoard());
@@ -41,18 +43,17 @@ public class GameActivity extends Activity {
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
-        matrix = gson.fromJson(json, int[][][].class);
+        matrix1 = gson.fromJson(json, int[][][].class);
         TableLayout board = (TableLayout) frameLayout1.getChildAt(0);
         for (int i = 1; i <= 10; i++) {
             TableRow row = (TableRow) board.getChildAt(i);
             for (int j = 1; j <= 10; j++) {
                 TextView field = (TextView) row.getChildAt(j);
-                if (matrix[i-1][j-1][0] == 1 ) {
+                if (matrix1[i-1][j-1][0] == 1 ) {
                     field.setBackgroundColor(Color.BLACK);
                 }
             }
         }
-
     }
 
 
@@ -104,6 +105,17 @@ public class GameActivity extends Activity {
                     v.setBackgroundResource(R.drawable.cross);
                 }
                 System.out.println(row + " " + column + "  " + h + " " + w);
+                //llamada al algoritmo
+                TableLayout board = (TableLayout) frameLayout2.getChildAt(0);
+                for (int i = 1; i <= 10; i++) {
+                    TableRow row = (TableRow) board.getChildAt(i);
+                    for (int j = 1; j <= 10; j++) {
+                        TextView field = (TextView) row.getChildAt(j);
+                        if (matrix1[i-1][j-1][0] == 1 ) {
+                            field.setBackgroundColor(Color.BLACK);
+                        }
+                    }
+                }
             }
         });
     }
