@@ -1,12 +1,18 @@
 package com.teleco.psi.battleship;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -21,21 +27,24 @@ import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends Activity {
-    private static int [][][] matrixHuman = new int[10][10][3];
-    private static int [][][] matrixMachine = new int[10][10][3];
-    private static FrameLayout frameLayoutHuman;
+    private int [][][] matrixHuman = new int[10][10][3];
+    private int [][][] matrixMachine = new int[10][10][3];
+    private FrameLayout frameLayoutHuman;
     private FrameLayout frameLayoutMachine;
+    private boolean stopUserInteractions = false;
 
-    static int hundidos = 0;
-    private static int vertical = 0;
-    private static int horizontal = 0;
-    private static boolean lastHit = false;
-    private static int row, column;
-    private static int pos = 1, sentido = 1;
-    private static int sentidosInvertidos =0 ;
-    private static int[] lastAction = new int[3];
-    private static boolean IATurn = false;
-    private static boolean humanTurn = false;
+    private Handler wait = new Handler();
+    int hundidos = 0;
+    private int vertical = 0;
+    private int horizontal = 0;
+    private boolean lastHit = false;
+    private int row, column;
+    private int pos = 1, sentido = 1;
+    private int sentidosInvertidos =0 ;
+    private int[] lastAction = new int[3];
+    private boolean IATurn = false;
+    private boolean humanTurn = false;
+    private static int winner = 0;
 
 
     @Override
@@ -120,24 +129,13 @@ public class GameActivity extends Activity {
                 IATurn = true;
                 humanTurn = false;
                 startAlgorithm();
-                /*TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
-                for (int i = 1; i <= 10; i++) {
-                    TableRow row = (TableRow) board.getChildAt(i);
-                    for (int j = 1; j <= 10; j++) {
-                        TextView field = (TextView) row.getChildAt(j);
-                        if (matrixHuman[i-1][j-1][1] == 1 ) {
-                            field.setBackgroundColor(Color.BLUE);
-                        }else if(matrixHuman[i-1][j-1][1] == 2 ) {
-                            field.setBackgroundColor(Color.RED);
-                        }
-                    }
-                }*/
             }
         });
     }
 
 
-    public static void startAlgorithm(){
+    public void startAlgorithm(){
+        stopUserInteractions = true;
         while (IATurn){
             if(!lastHit){
                 lastAction =  choosePlay();
@@ -157,7 +155,7 @@ public class GameActivity extends Activity {
      * It only prints the boats, and the state of the box.
      */
 
-    private static void printMatrix(){
+    private void printMatrix(){
         System.out.println("\\   A    B    C    D    E    F    G    H    I    J");
         for (int i = 0; i < matrixHuman.length ; i++) {
             System.out.print(i+1);
@@ -178,7 +176,7 @@ public class GameActivity extends Activity {
      * @return bestAction [3] bestAction[0]  row, bestAction[1]  column, bestAction[2]  probability of the shot.
      */
 
-    private static int[] choosePlay(){
+    private int[] choosePlay(){
         int[] bestAction = new int[3];
         bestAction[0] = -1;
         for (int i = 0; i < matrixHuman.length ; i++) {
@@ -216,23 +214,38 @@ public class GameActivity extends Activity {
      * @param y column of the shot
      * @return boolean which indicates hit or not.
      */
-    private static boolean hitOrMiss(int x, int y){
+    private boolean hitOrMiss(int x, int y){
+        final int X = x;
+        final int Y = y;
         if(matrixHuman[x][y][0]==1) {
             matrixHuman[x][y][1] = 2; //tocado
             System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " TOCADO");
             hundidos++;
-            drawHitOrMiss(x,y,true);
+            wait.postDelayed(new Runnable() {
+                public void run() {
+                    drawHitOrMiss(X,Y, true);
+                }
+            }, 2000);
             return true;
         }
         matrixHuman[x][y][1] = 1;    //agua
         System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
-        drawHitOrMiss(x,y, false);
+        wait.postDelayed(new Runnable() {
+            public void run() {
+                drawHitOrMiss(X,Y, false);
+                stopUserInteractions = false;
+            }
+        }, 2000);
         IATurn = !IATurn;
         humanTurn = !humanTurn;
+
+        /*DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
+        endGameDialog.show(getFragmentManager(), "Alert");*/
+
         return false;
     }
 
-    private static void drawHitOrMiss(int x, int y, boolean hit) {
+    private void drawHitOrMiss(int x, int y, boolean hit) {
         TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
         TableRow row = (TableRow) board.getChildAt(x+1);
         TextView field = (TextView) row.getChildAt(y+1);
@@ -251,7 +264,7 @@ public class GameActivity extends Activity {
      * @param matrixHuman the board game
      */
 
-    public static void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
+    public void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
         if (direction==0){ //Horizontal
             for (int i=from; i<=to; i++){
                 matrixHuman[line][i][0] = 1;
@@ -271,7 +284,7 @@ public class GameActivity extends Activity {
      * @return A list with the possible plays.
      */
 
-    public static List<String> findArround(int[] lastAction){
+    public List<String> findArround(int[] lastAction){
         List<String> possiblePlays = new ArrayList<>();
 
         if(lastAction[0] == 9){  // buscar hacia arriba o lados
@@ -322,7 +335,7 @@ public class GameActivity extends Activity {
      * the rest of the ship.
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
-    public static void bestAfterHit(int[] lastAction){
+    public void bestAfterHit(int[] lastAction){
         List<String> possiblePlays = findArround(lastAction);
         checkProbablyPos(possiblePlays, lastAction);
     }
@@ -334,7 +347,7 @@ public class GameActivity extends Activity {
      * @param lastAction array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
 
-    public static void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
+    public void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
         boolean hit;
         int[] bestAction =  new int[3];
         int nPosiblePlays = possiblePlays.size();
@@ -378,7 +391,7 @@ public class GameActivity extends Activity {
      * @param row row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
-    public static void shipFound(int row, int column){
+    public void shipFound(int row, int column){
         boolean hit;
 
         if(horizontal ==  1) {
@@ -436,7 +449,7 @@ public class GameActivity extends Activity {
     }
 
 
-    private static void shipDown() {
+    private void shipDown() {
         pos = 1;
         vertical=0;
         horizontal=0;
@@ -444,13 +457,13 @@ public class GameActivity extends Activity {
         lastHit = false;
     }
 
-    private static void changeDirection(){
+    private void changeDirection(){
         pos = 1;
         sentido = sentido * (-1);
         sentidosInvertidos++;
     }
 
-    private static void continueDirection(boolean hit){
+    private void continueDirection(boolean hit){
         lastHit = hit;
         pos++;
     }
@@ -459,13 +472,25 @@ public class GameActivity extends Activity {
      * @param position index of the board
      * @return 0 for the position is good, 1, if your position is under the minimum index, and -1 if your position is over the maximun index
      */
-    public static int checkLimits(int position){
+    public int checkLimits(int position){
         if(position < 0){
             return 1;
         }else if(position > 9){
             return -1;
         }else{
             return 0;
+        }
+    }
+
+    public static int getWinner(){
+        return winner;
+    }
+
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (stopUserInteractions) {
+            return true;
+        } else {
+            return super.dispatchTouchEvent(ev);
         }
     }
 }
