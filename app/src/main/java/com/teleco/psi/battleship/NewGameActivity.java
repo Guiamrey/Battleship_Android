@@ -1,5 +1,6 @@
 package com.teleco.psi.battleship;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -9,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 
-public class NewGameActivity extends AppCompatActivity {
+public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
     private int _xDelta;
     private int _yDelta;
@@ -57,6 +57,7 @@ public class NewGameActivity extends AppCompatActivity {
                 editor.commit();
                 Intent start_game = new Intent(getApplicationContext(), GameActivity.class);
                 startActivity(start_game);
+                finish();
             }
         });
         Button infoButton = (Button) findViewById(R.id.info);
