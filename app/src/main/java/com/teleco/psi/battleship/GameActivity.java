@@ -31,8 +31,9 @@ public class GameActivity extends Activity {
     private static boolean lastHit = false;
     private static int row, column;
     private static int pos, sentido = 1;
-    private static int sentidos = 0;
     private static int sentidosInvertidos =0 ;
+    private static int[] lastAction = new int[3];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,18 +130,13 @@ public class GameActivity extends Activity {
 
 
     public static void startAlgorithm(){
-        int[] action = new int[3];
-        printMatrix();
-
-        System.out.println("---------------- INITIAL MATRIX -----------------");
-
         if(!lastHit){
-            action =  choosePlay();
-            lastHit = hitOrMiss(action[0], action[1]);
+            lastAction =  choosePlay();
+            lastHit = hitOrMiss(lastAction[0], lastAction[1]);
         }else if(vertical != 0 || horizontal != 0){
-            shipFound(row, column);
+            shipFound(lastAction[0], lastAction[1]);
         }else{
-            bestAfterHit(action);
+            bestAfterHit(lastAction);
         }
         printMatrix();
     }
@@ -307,40 +303,41 @@ public class GameActivity extends Activity {
      */
 
     public static void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
+        boolean hit;
         int[] bestAction =  new int[3];
         int nPosiblePlays = possiblePlays.size();
         int nPlaysTested = 0;
-        while(true){
-            for (int i = 0; i < possiblePlays.size(); i++) {
-                String[] playsStr = possiblePlays.get(i).split("-");
-                int row = Integer.parseInt(playsStr[0]);
-                int column = Integer.parseInt(playsStr[1]);
 
-                if (matrixHuman[row][column][1] == 0 && matrixHuman[row][column][2] >= bestAction[2]){
-                    bestAction[0] = row;
-                    bestAction[1] = column;
-                    bestAction[2] = matrixHuman[row][column][2];
-                }
-            }
-            nPlaysTested++;
-            lastHit = hitOrMiss(bestAction[0], bestAction[1]);
+        for (int i = 0; i < possiblePlays.size(); i++) {
+            String[] playsStr = possiblePlays.get(i).split("-");
+            int row = Integer.parseInt(playsStr[0]);
+            int column = Integer.parseInt(playsStr[1]);
 
-            if(lastHit){
-                int row = bestAction[0];
-                int column = bestAction[1];
-
-                if(bestAction[0] == lastAction [0]) { //si la fila donde hemos tocado, es la misma que la de la anterior jugada => horizontal
-                    horizontal = 1; //horizontal
-                }else{
-                    vertical = 1; //vertical
-                }
-            }else if(nPlaysTested == nPosiblePlays) {
-                vertical = 0;
-                horizontal = 0;
-                lastHit = false;
-                return;
+            if (matrixHuman[row][column][1] == 0 && matrixHuman[row][column][2] >= bestAction[2]){
+                bestAction[0] = row;
+                bestAction[1] = column;
+                bestAction[2] = matrixHuman[row][column][2];
             }
         }
+        nPlaysTested++;
+        hit = hitOrMiss(bestAction[0], bestAction[1]);
+
+        if(hit){
+            row = bestAction[0];
+            column = bestAction[1];
+
+            if(bestAction[0] == lastAction [0]) { //si la fila donde hemos tocado, es la misma que la de la anterior jugada => horizontal
+                horizontal = 1; //horizontal
+            }else{
+                vertical = 1; //vertical
+            }
+        }else if(nPlaysTested == nPosiblePlays) {
+            vertical = 0;
+            horizontal = 0;
+            lastHit = false;
+            return;
+        }
+
     }
 
 
@@ -351,7 +348,7 @@ public class GameActivity extends Activity {
      * @param column column where the IA knows that there is a boat there
      */
     public static void shipFound(int row, int column){
-        boolean hit = false;
+        boolean hit;
 
         if(horizontal ==  1) {
             while (true) {
