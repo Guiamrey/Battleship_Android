@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends Activity {
-    private static double [][] matrixBaseAttack = new double[10][10];
-    private static double [][] matrixBaseDefense = new double[10][10];
     private static double alpha = 0.2;
     private static int totalGames;
 
@@ -103,6 +101,8 @@ public class GameActivity extends Activity {
                 }
             }
         }
+
+        //inicializeBase();
     }
 
 
@@ -600,7 +600,7 @@ public class GameActivity extends Activity {
         totalGames++;
     }
 
-
+/*
     public static void learningAttack(){
         for (int row = 0; row < 10; row++) {
             for (int column  = 0; column < 10; column++) {
@@ -616,121 +616,121 @@ public class GameActivity extends Activity {
             }
         }
     }
-
+*/
     public static void inicializeBase (){
         //centrales
-        matrixBaseDefense[4][4] = 1;
-        matrixBaseDefense[4][5] = 1;
-        matrixBaseDefense[5][4] = 1;
-        matrixBaseDefense[4][5] = 1;
+        matrixHuman[4][4][2] = 10;
+        matrixHuman[4][5][2] = 10;
+        matrixHuman[5][4][2] = 10;
+        matrixHuman[4][5][2] = 10;
         //rodeando las centrales
-        matrixBaseDefense[4][3] = 0.9;
-        matrixBaseDefense[4][6] = 0.9;
-        matrixBaseDefense[5][3] = 0.9;
-        matrixBaseDefense[5][6] = 0.9;
-        matrixBaseDefense[3][4] = 0.9;
-        matrixBaseDefense[3][5] = 0.9;
-        matrixBaseDefense[6][4] = 0.9;
-        matrixBaseDefense[6][5] = 0.9;
+        matrixHuman[4][3][2] = 9;
+        matrixHuman[4][6][2] = 9;
+        matrixHuman[5][3][2] = 9;
+        matrixHuman[5][6][2] = 9;
+        matrixHuman[3][4][2] = 9;
+        matrixHuman[3][5][2] = 9;
+        matrixHuman[6][4][2] = 9;
+        matrixHuman[6][5][2] = 9;
         //un nivel mas hacia afuera
-        matrixBaseDefense[3][3] = 0.82;
-        matrixBaseDefense[3][6] = 0.82;
-        matrixBaseDefense[6][3] = 0.82;
-        matrixBaseDefense[6][6] = 0.82;
-        matrixBaseDefense[4][2] = 0.82;
-        matrixBaseDefense[5][2] = 0.82;
-        matrixBaseDefense[4][7] = 0.82;
-        matrixBaseDefense[5][7] = 0.82;
-        matrixBaseDefense[2][4] = 0.82;
-        matrixBaseDefense[2][5] = 0.82;
-        matrixBaseDefense[7][4] = 0.82;
-        matrixBaseDefense[7][5] = 0.82;
+        matrixHuman[3][3][2] = 82;
+        matrixHuman[3][6][2] = 82;
+        matrixHuman[6][3][2] = 82;
+        matrixHuman[6][6][2] = 82;
+        matrixHuman[4][2][2] = 82;
+        matrixHuman[5][2][2] = 82;
+        matrixHuman[4][7][2] = 82;
+        matrixHuman[5][7][2] = 82;
+        matrixHuman[2][4][2] = 82;
+        matrixHuman[2][5][2] = 82;
+        matrixHuman[7][4][2] = 82;
+        matrixHuman[7][5][2] = 82;
         ///
-        matrixBaseDefense[3][2] = 0.73;
-        matrixBaseDefense[2][3] = 0.73;
-        matrixBaseDefense[2][6] = 0.73;
-        matrixBaseDefense[3][7] = 0.73;
-        matrixBaseDefense[6][2] = 0.73;
-        matrixBaseDefense[7][3] = 0.73;
-        matrixBaseDefense[6][7] = 0.73;
-        matrixBaseDefense[7][6] = 0.73;
+        matrixHuman[3][2][2] = 73;
+        matrixHuman[2][3][2] = 73;
+        matrixHuman[2][6][2] = 73;
+        matrixHuman[3][7][2] = 73;
+        matrixHuman[6][2][2] = 73;
+        matrixHuman[7][3][2] = 73;
+        matrixHuman[6][7][2] = 73;
+        matrixHuman[7][6][2] = 73;
         //
-        matrixBaseDefense[4][1] = 0.64;
-        matrixBaseDefense[5][1] = 0.64;
-        matrixBaseDefense[4][8] = 0.64;
-        matrixBaseDefense[5][8] = 0.64;
-        matrixBaseDefense[8][4] = 0.64;
-        matrixBaseDefense[8][5] = 0.64;
-        matrixBaseDefense[1][4] = 0.64;
-        matrixBaseDefense[1][5] = 0.64;
-        matrixBaseDefense[2][2] = 0.64;
-        matrixBaseDefense[2][7] = 0.64;
-        matrixBaseDefense[7][7] = 0.64;
-        matrixBaseDefense[7][2] = 0.64;
+        matrixHuman[4][1][2] = 64;
+        matrixHuman[5][1][2] = 64;
+        matrixHuman[4][8][2] = 64;
+        matrixHuman[5][8][2] = 64;
+        matrixHuman[8][4][2] = 64;
+        matrixHuman[8][5][2] = 64;
+        matrixHuman[1][4][2] = 64;
+        matrixHuman[1][5][2] = 64;
+        matrixHuman[2][2][2] = 64;
+        matrixHuman[2][7][2] = 64;
+        matrixHuman[7][7][2] = 64;
+        matrixHuman[7][2][2] = 64;
         //
-        matrixBaseDefense[3][1] = 0.55;
-        matrixBaseDefense[1][3] = 0.55;
-        matrixBaseDefense[1][6] = 0.55;
-        matrixBaseDefense[3][8] = 0.55;
-        matrixBaseDefense[6][1] = 0.55;
-        matrixBaseDefense[8][3] = 0.55;
-        matrixBaseDefense[6][8] = 0.55;
-        matrixBaseDefense[8][6] = 0.55;
+        matrixHuman[3][1][2] = 55;
+        matrixHuman[1][3][2] = 55;
+        matrixHuman[1][6][2] = 55;
+        matrixHuman[3][8][2] = 55;
+        matrixHuman[6][1][2] = 55;
+        matrixHuman[8][3][2] = 55;
+        matrixHuman[6][8][2] = 55;
+        matrixHuman[8][6][2] = 55;
         //
-        matrixBaseDefense[0][4] = 0.46;
-        matrixBaseDefense[0][5] = 0.46;
-        matrixBaseDefense[9][4] = 0.46;
-        matrixBaseDefense[9][5] = 0.46;
-        matrixBaseDefense[4][0] = 0.46;
-        matrixBaseDefense[5][0] = 0.46;
-        matrixBaseDefense[4][9] = 0.46;
-        matrixBaseDefense[5][9] = 0.46;
-        matrixBaseDefense[1][2] = 0.46;
-        matrixBaseDefense[2][1] = 0.46;
-        matrixBaseDefense[1][7] = 0.46;
-        matrixBaseDefense[2][8] = 0.46;
-        matrixBaseDefense[7][1] = 0.46;
-        matrixBaseDefense[8][2] = 0.46;
-        matrixBaseDefense[8][7] = 0.46;
-        matrixBaseDefense[7][8] = 0.46;
+        matrixHuman[0][4][2] = 46;
+        matrixHuman[0][5][2] = 46;
+        matrixHuman[9][4][2] = 46;
+        matrixHuman[9][5][2] = 46;
+        matrixHuman[4][0][2] = 46;
+        matrixHuman[5][0][2] = 46;
+        matrixHuman[4][9][2] = 46;
+        matrixHuman[5][9][2] = 46;
+        matrixHuman[1][2][2] = 46;
+        matrixHuman[2][1][2] = 46;
+        matrixHuman[1][7][2] = 46;
+        matrixHuman[2][8][2] = 46;
+        matrixHuman[7][1][2] = 46;
+        matrixHuman[8][2][2] = 46;
+        matrixHuman[8][7][2] = 46;
+        matrixHuman[7][8][2] = 46;
         //
-        matrixBaseDefense[0][3] = 0.36;
-        matrixBaseDefense[3][0] = 0.36;
-        matrixBaseDefense[0][6] = 0.36;
-        matrixBaseDefense[3][9] = 0.36;
-        matrixBaseDefense[1][7] = 0.36;
-        matrixBaseDefense[2][8] = 0.36;
-        matrixBaseDefense[6][0] = 0.36;
-        matrixBaseDefense[9][3] = 0.36;
-        matrixBaseDefense[9][6] = 0.36;
-        matrixBaseDefense[6][9] = 0.36;
+        matrixHuman[0][3][2] = 36;
+        matrixHuman[3][0][2] = 36;
+        matrixHuman[0][6][2] = 36;
+        matrixHuman[3][9][2] = 36;
+        matrixHuman[1][7][2] = 36;
+        matrixHuman[2][8][2] = 36;
+        matrixHuman[6][0][2] = 36;
+        matrixHuman[9][3][2] = 36;
+        matrixHuman[9][6][2] = 36;
+        matrixHuman[6][9][2] = 36;
         //
-        matrixBaseDefense[2][0] = 0.27;
-        matrixBaseDefense[1][1] = 0.27;
-        matrixBaseDefense[0][2] = 0.27;
-        matrixBaseDefense[0][7] = 0.27;
-        matrixBaseDefense[1][8] = 0.27;
-        matrixBaseDefense[2][9] = 0.27;
-        matrixBaseDefense[7][0] = 0.27;
-        matrixBaseDefense[8][1] = 0.27;
-        matrixBaseDefense[9][2] = 0.27;
-        matrixBaseDefense[9][7] = 0.27;
-        matrixBaseDefense[8][8] = 0.27;
-        matrixBaseDefense[7][9] = 0.27;
+        matrixHuman[2][0][2] = 27;
+        matrixHuman[1][1][2] = 27;
+        matrixHuman[0][2][2] = 27;
+        matrixHuman[0][7][2] = 27;
+        matrixHuman[1][8][2] = 27;
+        matrixHuman[2][9][2] = 27;
+        matrixHuman[7][0][2] = 27;
+        matrixHuman[8][1][2] = 27;
+        matrixHuman[9][2][2] = 27;
+        matrixHuman[9][7][2] = 27;
+        matrixHuman[8][8][2] = 27;
+        matrixHuman[7][9][2] = 27;
         //
-        matrixBaseDefense[0][1] = 0.18;
-        matrixBaseDefense[1][0] = 0.18;
-        matrixBaseDefense[0][8] = 0.18;
-        matrixBaseDefense[1][9] = 0.18;
-        matrixBaseDefense[8][0] = 0.18;
-        matrixBaseDefense[9][1] = 0.18;
-        matrixBaseDefense[8][9] = 0.18;
-        matrixBaseDefense[9][8] = 0.18;
+        matrixHuman[0][1][2] = 18;
+        matrixHuman[1][0][2] = 18;
+        matrixHuman[0][8][2] = 18;
+        matrixHuman[1][9][2] = 18;
+        matrixHuman[8][0][2] = 18;
+        matrixHuman[9][1][2] = 18;
+        matrixHuman[8][9][2] = 18;
+        matrixHuman[9][8][2] = 18;
         //
-        matrixBaseDefense[0][0] = 0;
-        matrixBaseDefense[0][9] = 0.;
-        matrixBaseDefense[9][0] = 0.;
-        matrixBaseDefense[9][9] = 0.;
+        matrixHuman[0][0][2] = 0;
+        matrixHuman[0][9][2] = 0;
+        matrixHuman[9][0][2] = 0;
+        matrixHuman[9][9][2] = 0;
     }
 
     public void placeShipsIA(){
