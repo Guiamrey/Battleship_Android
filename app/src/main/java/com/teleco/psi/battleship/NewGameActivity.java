@@ -29,6 +29,7 @@ public class NewGameActivity extends AppCompatActivity {
     private static int [][][] matrix = new int[10][10][3];
     private int _xDelta;
     private int _yDelta;
+    private boolean move = false;
     private android.widget.RelativeLayout.LayoutParams layoutParams;
 
     @Override
@@ -79,9 +80,8 @@ public class NewGameActivity extends AppCompatActivity {
         onTouchListener(ship3_1);
         ImageView ship3_2 = (ImageView) findViewById(R.id.ship3_2);
         onTouchListener(ship3_2);
-        ImageView ship2 = (ImageView) findViewById(R.id.ship2);
+        final ImageView ship2 = (ImageView) findViewById(R.id.ship2);
         onTouchListener(ship2);
-
     }
 
     protected TableLayout createBoard(){
@@ -134,6 +134,7 @@ public class NewGameActivity extends AppCompatActivity {
     }
 
     private void onTouchListener(ImageView v){
+
         v.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -144,14 +145,21 @@ public class NewGameActivity extends AppCompatActivity {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                     //Al tocar la pantalla
                     case MotionEvent.ACTION_DOWN:
+                        move = false;
                         //Recogemos los parametros de la imagen que hemo tocado
                         RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) v.getLayoutParams();
                         _xDelta = X - Params.leftMargin;
                         _yDelta = Y - Params.topMargin;
                         break;
                     case MotionEvent.ACTION_UP:
+                        if(!move){
+                            if(Float.compare(v.getRotation(), (float) 0.0) < 0) {
+                                v.setRotation(v.getRotation() + 90);
+                            }else{
+                                v.setRotation(v.getRotation() - 90);
+                            }
+                        }
                         //Al levantar el dedo simplemento mostramos un mensaje
-                        System.out.println("Soltamos");
                         break;
                     case MotionEvent.ACTION_POINTER_DOWN:
                         //No hace falta utilizarlo
@@ -160,14 +168,13 @@ public class NewGameActivity extends AppCompatActivity {
                         //No hace falta utilizarlo
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        move = true;
                         //Al mover el dedo vamos actualizando los margenes de la imagen para crear efecto de arrastrado
                         RelativeLayout.LayoutParams layoutParams =
                                 (RelativeLayout.LayoutParams) v.getLayoutParams();
                         layoutParams.leftMargin = X - _xDelta;
                         layoutParams.topMargin = Y - _yDelta;
-
                         v.setLayoutParams(layoutParams);
-
                         break;
                 }
                 //Se podría decir que 'dibujamos' la posición de la imagen en el marco.
