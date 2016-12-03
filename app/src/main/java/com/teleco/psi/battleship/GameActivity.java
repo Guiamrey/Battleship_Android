@@ -29,7 +29,7 @@ import java.util.Random;
 public class GameActivity extends Activity {
     private static double alpha = 0.2;
     private static int totalGames;
-
+    private FrameLayout light;
     private int [][][] matrixHuman = new int[10][10][3];
     private static int [][][] matrixMachine = new int[10][10][3];
     private FrameLayout frameLayoutHuman;
@@ -59,6 +59,8 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
 
+        light = (FrameLayout) findViewById(R.id.semaforo);
+        light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -153,11 +155,13 @@ public class GameActivity extends Activity {
                     view.setBackgroundColor(Color.RED);
                     return;
                 } else {
+                    //light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
+                    //
                 }
-                checkFinalGame();
                 IATurn = true;
                 humanTurn = false;
+                checkFinalGame();
                 startAlgorithm();
             }
         });
@@ -365,10 +369,12 @@ public class GameActivity extends Activity {
             public void run() {
                 drawHitOrMiss(X,Y, false);
                 stopUserInteractions = false;
+                light.setBackgroundResource(R.drawable.verde);
             }
         }, 2000);
         IATurn = !IATurn;
         humanTurn = !humanTurn;
+
         checkFinalGame();
         return false;
     }
@@ -623,7 +629,7 @@ public class GameActivity extends Activity {
             winner = 1;
             DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
             endGameDialog.show(getFragmentManager(), "Alert");
-        } else if( shipsDownIA == NUMBER_SHIPS){
+        } else if(shipsDownIA == NUMBER_SHIPS){
             winner = 2;
             DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
             endGameDialog.show(getFragmentManager(), "Alert");
