@@ -27,12 +27,26 @@ import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends Activity {
+    private static double alpha = 0.2;
+    private static int totalGames;
+
     private int [][][] matrixHuman = new int[10][10][3];
     private int [][][] matrixMachine = new int[10][10][3];
     private FrameLayout frameLayoutHuman;
     private FrameLayout frameLayoutMachine;
     private boolean stopUserInteractions = false;
 
+    static int shipsDownIA = 0;
+    static int shipsDownHuman = 0;
+    private static int vertical = 0;
+    private static int horizontal = 0;
+    private static boolean lastHit = false;
+    private static int row, column;
+    private static int pos = 1, sentido = 1;
+    private static int sentidosInvertidos =0 ;
+    private static int[] lastAction = new int[3];
+    private static boolean IATurn = false;
+    private static boolean humanTurn = false;
     private Handler wait = new Handler();
     int hundidos = 0;
     private int vertical = 0;
@@ -44,21 +58,40 @@ public class GameActivity extends Activity {
     private int[] lastAction = new int[3];
     private boolean IATurn = false;
     private boolean humanTurn = false;
-    private static int winner = 0;
 
+
+    private static int winner;
+
+    private static final int NUMBER_SHIPS = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
 
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
+                        startActivity(start_game);
+                        finish();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener);
+
         Button startGameButton = (Button) findViewById(R.id.newGameButton);
         startGameButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
-                startActivity(start_game);
-                finish();
+                builder.show();
             }
         });
         frameLayoutHuman = (FrameLayout) findViewById(R.id.boardHuman);
@@ -66,6 +99,9 @@ public class GameActivity extends Activity {
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
 
+        setMatrixMachine();
+
+        //setMatrixHuman()
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
@@ -80,6 +116,8 @@ public class GameActivity extends Activity {
                 }
             }
         }
+
+        //inicializeBase();
     }
 
 
@@ -106,8 +144,9 @@ public class GameActivity extends Activity {
                 field.setPadding(8,6,0,0);
                 field.setGravity(Gravity.CENTER);
                 if (clickable) {
-                    if(i != 0 || j != 0)
+                    if (!(i == 0 || j == 0)) {
                         addClickListener(field, i, j);
+                    }
                 }
                 row.addView(field, rowparams);
             }
@@ -120,7 +159,7 @@ public class GameActivity extends Activity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (matrixMachine[i][j][0] == 1) {
+                if (matrixMachine[i - 1][j - 1][0] == 1) {
                     view.setBackgroundColor(Color.RED);
                     return;
                 } else {
@@ -133,6 +172,101 @@ public class GameActivity extends Activity {
         });
     }
 
+    public static void setMatrixMachine(){
+
+        Random rand = new Random();
+        boolean shipOK = false;
+
+        //Barco de 5
+        int line = rand.nextInt(9);
+        int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+        int from = rand.nextInt(5);
+        int to = from + 4;
+
+
+
+        System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        setShip(from, to, line, direction, matrixMachine);
+
+        //Barco de 4
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(4);
+            to = from + 3;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+
+        int shipThree = 0;
+
+        while (shipThree != 2){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(3);
+            to = from + 2;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+                shipThree++;
+            }
+
+        }
+
+        shipOK = false;
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(2);
+            to = from + 1;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+    }
+
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (matrixAux[line][i][0] == 1) return false;
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (matrixAux[i][line][0] == 1) return false;
+            }
+        }
+
+        return true;
+    }
 
     public void startAlgorithm(){
         stopUserInteractions = true;
@@ -226,6 +360,13 @@ public class GameActivity extends Activity {
                     drawHitOrMiss(X,Y, true);
                 }
             }, 2000);
+            if(IATurn){
+                shipsDownIA++;
+            }else{
+                shipsDownHuman++;
+            }
+            drawHitOrMiss(x,y,true);
+            checkFinalGame();
             return true;
         }
         matrixHuman[x][y][1] = 1;    //agua
@@ -242,6 +383,7 @@ public class GameActivity extends Activity {
         /*DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
         endGameDialog.show(getFragmentManager(), "Alert");*/
 
+        checkFinalGame();
         return false;
     }
 
@@ -492,5 +634,253 @@ public class GameActivity extends Activity {
         } else {
             return super.dispatchTouchEvent(ev);
         }
+    }
+
+    public static void checkFinalGame(){
+        if(shipsDownHuman == NUMBER_SHIPS){
+            winner = 1;
+        } else if( shipsDownIA == NUMBER_SHIPS){
+            winner = 2;
+        }
+        totalGames++;
+    }
+
+/*
+    public static void learningAttack(){
+        for (int row = 0; row < 10; row++) {
+            for (int column  = 0; column < 10; column++) {
+                matrixBaseAttack[row][column] = (totalGames * matrixBaseAttack[row][column] - (alpha * matrixHuman[row][column][2])) / (totalGames + 1);
+            }
+        }
+    }
+
+    public static void learningDefense(){
+        for (int row = 0; row < 10; row++) {
+            for (int column  = 0; column < 10; column++) {
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
+            }
+        }
+    }
+*/
+    public static void inicializeBase (){
+        //centrales
+        matrixHuman[4][4][2] = 10;
+        matrixHuman[4][5][2] = 10;
+        matrixHuman[5][4][2] = 10;
+        matrixHuman[4][5][2] = 10;
+        //rodeando las centrales
+        matrixHuman[4][3][2] = 9;
+        matrixHuman[4][6][2] = 9;
+        matrixHuman[5][3][2] = 9;
+        matrixHuman[5][6][2] = 9;
+        matrixHuman[3][4][2] = 9;
+        matrixHuman[3][5][2] = 9;
+        matrixHuman[6][4][2] = 9;
+        matrixHuman[6][5][2] = 9;
+        //un nivel mas hacia afuera
+        matrixHuman[3][3][2] = 82;
+        matrixHuman[3][6][2] = 82;
+        matrixHuman[6][3][2] = 82;
+        matrixHuman[6][6][2] = 82;
+        matrixHuman[4][2][2] = 82;
+        matrixHuman[5][2][2] = 82;
+        matrixHuman[4][7][2] = 82;
+        matrixHuman[5][7][2] = 82;
+        matrixHuman[2][4][2] = 82;
+        matrixHuman[2][5][2] = 82;
+        matrixHuman[7][4][2] = 82;
+        matrixHuman[7][5][2] = 82;
+        ///
+        matrixHuman[3][2][2] = 73;
+        matrixHuman[2][3][2] = 73;
+        matrixHuman[2][6][2] = 73;
+        matrixHuman[3][7][2] = 73;
+        matrixHuman[6][2][2] = 73;
+        matrixHuman[7][3][2] = 73;
+        matrixHuman[6][7][2] = 73;
+        matrixHuman[7][6][2] = 73;
+        //
+        matrixHuman[4][1][2] = 64;
+        matrixHuman[5][1][2] = 64;
+        matrixHuman[4][8][2] = 64;
+        matrixHuman[5][8][2] = 64;
+        matrixHuman[8][4][2] = 64;
+        matrixHuman[8][5][2] = 64;
+        matrixHuman[1][4][2] = 64;
+        matrixHuman[1][5][2] = 64;
+        matrixHuman[2][2][2] = 64;
+        matrixHuman[2][7][2] = 64;
+        matrixHuman[7][7][2] = 64;
+        matrixHuman[7][2][2] = 64;
+        //
+        matrixHuman[3][1][2] = 55;
+        matrixHuman[1][3][2] = 55;
+        matrixHuman[1][6][2] = 55;
+        matrixHuman[3][8][2] = 55;
+        matrixHuman[6][1][2] = 55;
+        matrixHuman[8][3][2] = 55;
+        matrixHuman[6][8][2] = 55;
+        matrixHuman[8][6][2] = 55;
+        //
+        matrixHuman[0][4][2] = 46;
+        matrixHuman[0][5][2] = 46;
+        matrixHuman[9][4][2] = 46;
+        matrixHuman[9][5][2] = 46;
+        matrixHuman[4][0][2] = 46;
+        matrixHuman[5][0][2] = 46;
+        matrixHuman[4][9][2] = 46;
+        matrixHuman[5][9][2] = 46;
+        matrixHuman[1][2][2] = 46;
+        matrixHuman[2][1][2] = 46;
+        matrixHuman[1][7][2] = 46;
+        matrixHuman[2][8][2] = 46;
+        matrixHuman[7][1][2] = 46;
+        matrixHuman[8][2][2] = 46;
+        matrixHuman[8][7][2] = 46;
+        matrixHuman[7][8][2] = 46;
+        //
+        matrixHuman[0][3][2] = 36;
+        matrixHuman[3][0][2] = 36;
+        matrixHuman[0][6][2] = 36;
+        matrixHuman[3][9][2] = 36;
+        matrixHuman[1][7][2] = 36;
+        matrixHuman[2][8][2] = 36;
+        matrixHuman[6][0][2] = 36;
+        matrixHuman[9][3][2] = 36;
+        matrixHuman[9][6][2] = 36;
+        matrixHuman[6][9][2] = 36;
+        //
+        matrixHuman[2][0][2] = 27;
+        matrixHuman[1][1][2] = 27;
+        matrixHuman[0][2][2] = 27;
+        matrixHuman[0][7][2] = 27;
+        matrixHuman[1][8][2] = 27;
+        matrixHuman[2][9][2] = 27;
+        matrixHuman[7][0][2] = 27;
+        matrixHuman[8][1][2] = 27;
+        matrixHuman[9][2][2] = 27;
+        matrixHuman[9][7][2] = 27;
+        matrixHuman[8][8][2] = 27;
+        matrixHuman[7][9][2] = 27;
+        //
+        matrixHuman[0][1][2] = 18;
+        matrixHuman[1][0][2] = 18;
+        matrixHuman[0][8][2] = 18;
+        matrixHuman[1][9][2] = 18;
+        matrixHuman[8][0][2] = 18;
+        matrixHuman[9][1][2] = 18;
+        matrixHuman[8][9][2] = 18;
+        matrixHuman[9][8][2] = 18;
+        //
+        matrixHuman[0][0][2] = 0;
+        matrixHuman[0][9][2] = 0;
+        matrixHuman[9][0][2] = 0;
+        matrixHuman[9][9][2] = 0;
+    }
+
+    public void placeShipsIA(){
+        int[] bestPlace = new int[3];
+        bestPlace[0] = -1;
+        for (int i = 0; i < matrixMachine.length ; i++) {
+            for (int j = 0; j < matrixMachine.length ; j++) {
+                if (matrixMachine[i][j][0] == 0 && matrixMachine[i][j][2] > bestPlace[2]){
+                    bestPlace[0] = i;
+                    bestPlace[1] = j;
+                    bestPlace[2] = matrixMachine[i][j][2];
+                }
+            }
+        }
+
+        if(bestPlace[0] == -1) {
+            Random rand = new Random();
+            while(true) {
+                int x = rand.nextInt(9);
+                int y = rand.nextInt(9);
+
+                if(matrixMachine[x][y][0] == 0) {
+                    bestPlace[0] = x;
+                    bestPlace[1] = y;
+                    bestPlace[2] =  matrixMachine[x][y][2];
+                    break;
+                }
+            }
+        }
+        placeCarrier(bestPlace);
+    }
+
+    public double probabilityPlace(int from, int to, int line, int direction){
+        double sum = 0;
+
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                sum += matrixHuman[line][i][2];
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                sum += matrixHuman[i][line][2];
+            }
+        }
+        return sum/(to-from);
+    }
+
+    public void placeCarrier(int[] bestPlace){
+        List<String> possiblePlace = placesWithCorrectSize(bestPlace, 5);
+        boolean shipFree;
+
+        for (int i = 0; i < possiblePlace.size(); i++) {
+            String[] placeStr = possiblePlace.get(i).split("-");
+            int row = Integer.parseInt(placeStr[0]);
+            int column = Integer.parseInt(placeStr[1]);
+
+            if(bestPlace[0] == row){
+                if (bestPlace[1] > column){
+                    shipFree = isAShip(bestPlace[1] - 5, bestPlace[1], row , 0);
+                }else{
+                    shipFree = isAShip(bestPlace[1], bestPlace[1] + 5, row , 0);
+                }
+            }else{
+                if(bestPlace[0] > column){
+                    shipFree = isAShip(bestPlace[0] + 5, bestPlace[0], row , 0);
+                }else{
+                    shipFree = isAShip(bestPlace[0], bestPlace[0] + 5, row , 0);
+                }
+            }
+
+            if(shipFree){
+                //probabilityPlace();
+            }
+        }
+    }
+
+    public List<String> placesWithCorrectSize(int[] bestPlace, int sizeBoat){ //el menos deberia quitarse si los barcos no pueden estar juntos
+        List<String> possiblePlays = new ArrayList<>();
+        if((bestPlace[0] + sizeBoat-1) < 10){
+            possiblePlays.add((bestPlace[0] + 1 ) + "-" + bestPlace[1]);
+        }
+        if((bestPlace[0] - sizeBoat-1) >= 0){
+            possiblePlays.add((bestPlace[0] - 1 ) + "-" + bestPlace[1]);
+        }
+        if((bestPlace[1] + sizeBoat-1) < 10){
+            possiblePlays.add(bestPlace[0] + "-" + (bestPlace[1] + 1));
+        }
+        if((bestPlace[1] - sizeBoat-1) >= 0){
+            possiblePlays.add(bestPlace[0] + "-" + (bestPlace[1] - 1));
+        }
+        return possiblePlays;
+    }
+
+    public static boolean isAShip(int from, int to, int line, int direction){
+
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (matrixMachine[line][i][0] == 1) return false;
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (matrixMachine[i][line][0] == 1) return false;
+            }
+        }
+
+        return true;
     }
 }
