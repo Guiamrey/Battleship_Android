@@ -31,22 +31,12 @@ public class GameActivity extends Activity {
     private static int totalGames;
 
     private int [][][] matrixHuman = new int[10][10][3];
-    private int [][][] matrixMachine = new int[10][10][3];
+    private static int [][][] matrixMachine = new int[10][10][3];
     private FrameLayout frameLayoutHuman;
-    private FrameLayout frameLayoutMachine;
     private boolean stopUserInteractions = false;
 
     static int shipsDownIA = 0;
     static int shipsDownHuman = 0;
-    private static int vertical = 0;
-    private static int horizontal = 0;
-    private static boolean lastHit = false;
-    private static int row, column;
-    private static int pos = 1, sentido = 1;
-    private static int sentidosInvertidos =0 ;
-    private static int[] lastAction = new int[3];
-    private static boolean IATurn = false;
-    private static boolean humanTurn = false;
     private Handler wait = new Handler();
     int hundidos = 0;
     private int vertical = 0;
@@ -62,7 +52,7 @@ public class GameActivity extends Activity {
 
     private static int winner;
 
-    private static final int NUMBER_SHIPS = 8;
+    private static final int NUMBER_SHIPS = 17;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +85,7 @@ public class GameActivity extends Activity {
             }
         });
         frameLayoutHuman = (FrameLayout) findViewById(R.id.boardHuman);
-        frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
+        FrameLayout frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
 
@@ -165,6 +155,7 @@ public class GameActivity extends Activity {
                 } else {
                     view.setBackgroundColor(Color.BLUE);
                 }
+                checkFinalGame();
                 IATurn = true;
                 humanTurn = false;
                 startAlgorithm();
@@ -365,7 +356,6 @@ public class GameActivity extends Activity {
             }else{
                 shipsDownHuman++;
             }
-            drawHitOrMiss(x,y,true);
             checkFinalGame();
             return true;
         }
@@ -379,10 +369,6 @@ public class GameActivity extends Activity {
         }, 2000);
         IATurn = !IATurn;
         humanTurn = !humanTurn;
-
-        /*DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
-        endGameDialog.show(getFragmentManager(), "Alert");*/
-
         checkFinalGame();
         return false;
     }
@@ -406,7 +392,7 @@ public class GameActivity extends Activity {
      * @param matrixHuman the board game
      */
 
-    public void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
+    public static void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
         if (direction==0){ //Horizontal
             for (int i=from; i<=to; i++){
                 matrixHuman[line][i][0] = 1;
@@ -629,18 +615,18 @@ public class GameActivity extends Activity {
     }
 
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (stopUserInteractions) {
-            return true;
-        } else {
-            return super.dispatchTouchEvent(ev);
-        }
+        return stopUserInteractions || super.dispatchTouchEvent(ev);
     }
 
-    public static void checkFinalGame(){
+    public void checkFinalGame(){
         if(shipsDownHuman == NUMBER_SHIPS){
             winner = 1;
+            DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
+            endGameDialog.show(getFragmentManager(), "Alert");
         } else if( shipsDownIA == NUMBER_SHIPS){
             winner = 2;
+            DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
+            endGameDialog.show(getFragmentManager(), "Alert");
         }
         totalGames++;
     }
@@ -662,7 +648,7 @@ public class GameActivity extends Activity {
         }
     }
 */
-    public static void inicializeBase (){
+    public void inicializeBase (){
         //centrales
         matrixHuman[4][4][2] = 10;
         matrixHuman[4][5][2] = 10;
