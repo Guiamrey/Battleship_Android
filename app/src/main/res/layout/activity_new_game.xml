@@ -61,26 +61,19 @@
 
     <ImageView
         android:id="@+id/ship4_2"
-        android:layout_width="100dp"
         android:layout_height="25dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/ship3" />
+        android:src="@drawable/ship3"
+        android:layout_width="95dp" />
 
     <ImageView
         android:id="@+id/ship4_1"
-        android:layout_width="100dp"
         android:layout_height="25dp"
         android:layout_alignParentTop="true"
         android:layout_marginStart="110dp"
-        android:src="@drawable/ship4" />
-
-    <ImageView
-        android:id="@+id/ship5"
-        android:layout_width="130dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ship5" />
+        android:src="@drawable/ship4"
+        android:layout_width="95dp" />
 
     <ImageView
         android:id="@+id/ship2"
@@ -92,11 +85,11 @@
 
     <ImageView
         android:id="@+id/ship3_1"
-        android:layout_width="80dp"
         android:layout_height="25dp"
         android:layout_marginStart="130dp"
         android:layout_marginTop="30dp"
-        android:src="@drawable/ship3_1" />
+        android:src="@drawable/ship3_1"
+        android:layout_width="80dp" />
 
     <ImageView
         android:id="@+id/ship3_2"
@@ -105,5 +98,13 @@
         android:layout_marginStart="220dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/ship4_1" />
+
+    <ImageView
+        android:id="@+id/ship5"
+        android:layout_height="25dp"
+        android:src="@drawable/ship5"
+        android:layout_width="105dp"
+        android:layout_alignTop="@+id/ship3_1"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

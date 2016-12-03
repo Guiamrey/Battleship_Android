@@ -1,10 +1,13 @@
 package com.teleco.psi.battleship;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -52,20 +55,40 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
 
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
+                        startActivity(start_game);
+                        finish();
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener);
+
         Button startGameButton = (Button) findViewById(R.id.newGameButton);
         startGameButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
-                startActivity(start_game);
-                finish();
+                builder.show();
             }
         });
+
         frameLayoutHuman = (FrameLayout) findViewById(R.id.boardHuman);
         frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
 
+        setMatrixMachine();
+
+        //setMatrixHuman()
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
@@ -106,8 +129,9 @@ public class GameActivity extends Activity {
                 field.setPadding(8,6,0,0);
                 field.setGravity(Gravity.CENTER);
                 if (clickable) {
-                    if(i != 0 || j != 0)
+                    if (!(i == 0 || j == 0)) {
                         addClickListener(field, i, j);
+                    }
                 }
                 row.addView(field, rowparams);
             }
@@ -120,7 +144,7 @@ public class GameActivity extends Activity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (matrixMachine[i][j][0] == 1) {
+                if (matrixMachine[i - 1][j - 1][0] == 1) {
                     view.setBackgroundColor(Color.RED);
                     return;
                 } else {
@@ -133,9 +157,104 @@ public class GameActivity extends Activity {
         });
     }
 
+    public static void setMatrixMachine(){
+
+        Random rand = new Random();
+        boolean shipOK = false;
+
+        //Barco de 5
+        int line = rand.nextInt(9);
+        int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+        int from = rand.nextInt(5);
+        int to = from + 4;
+
+
+
+        System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        setShip(from, to, line, direction, matrixMachine);
+
+        //Barco de 4
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(4);
+            to = from + 3;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+
+        int shipThree = 0;
+
+        while (shipThree != 2){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(3);
+            to = from + 2;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+                shipThree++;
+            }
+
+        }
+
+        shipOK = false;
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(2);
+            to = from + 1;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+    }
+
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (matrixAux[line][i][0] == 1) return false;
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (matrixAux[i][line][0] == 1) return false;
+            }
+        }
+
+        return true;
+    }
 
     public static void startAlgorithm(){
-        while (IATurn && winner == 0){
+        while (IATurn){
             if(!lastHit){
                 lastAction =  choosePlay();
                 lastHit = hitOrMiss(lastAction[0], lastAction[1]);
@@ -144,6 +263,26 @@ public class GameActivity extends Activity {
             }else{
                 bestAfterHit(lastAction);
             }
+        }
+
+        //printMatrix();
+    }
+
+    /***
+     * This function print the matrix in console.
+     * It only prints the boats, and the state of the box.
+     */
+
+    private static void printMatrix(){
+        System.out.println("\\   A    B    C    D    E    F    G    H    I    J");
+        for (int i = 0; i < matrixHuman.length ; i++) {
+            System.out.print(i+1);
+            for (int j = 0; j < matrixHuman.length ; j++) {
+                if(i==9 && j==0) System.out.print(" "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+
+                else System.out.print("  "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+            }
+            System.out.print("\n");
         }
     }
 
