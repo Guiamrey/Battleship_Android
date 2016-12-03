@@ -56,6 +56,9 @@ public class GameActivity extends Activity {
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
 
+        setMatrixMachine();
+
+        //setMatrixHuman()
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
@@ -124,6 +127,101 @@ public class GameActivity extends Activity {
         });
     }
 
+    public static void setMatrixMachine(){
+
+        Random rand = new Random();
+        boolean shipOK = false;
+
+        //Barco de 5
+        int line = rand.nextInt(9);
+        int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+        int from = rand.nextInt(5);
+        int to = from + 4;
+
+
+
+        System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        setShip(from, to, line, direction, matrixMachine);
+
+        //Barco de 4
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(4);
+            to = from + 3;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+
+        int shipThree = 0;
+
+        while (shipThree != 2){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(3);
+            to = from + 2;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+                shipThree++;
+            }
+
+        }
+
+        shipOK = false;
+
+        while (!shipOK){
+
+            line = rand.nextInt(9);
+            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+
+            from = rand.nextInt(2);
+            to = from + 1;
+
+            shipOK = true;
+            shipOK = isAShip(from, to, line, direction, matrixMachine);
+
+            System.out.println("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+
+            if (shipOK) {
+                setShip(from, to, line, direction, matrixMachine);
+            }
+
+        }
+    }
+
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (matrixAux[line][i][0] == 1) return false;
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (matrixAux[i][line][0] == 1) return false;
+            }
+        }
+
+        return true;
+    }
 
     public static void startAlgorithm(){
         while (IATurn){
@@ -136,8 +234,6 @@ public class GameActivity extends Activity {
                 bestAfterHit(lastAction);
             }
         }
-
-        //printMatrix();
     }
 
     /***
@@ -236,17 +332,17 @@ public class GameActivity extends Activity {
      * @param to where the boat finish
      * @param line the line where the boat is
      * @param direction the horientation of the boat, vertical (1) or horizontal (0)
-     * @param matrixHuman the board game
+     * @param matrixAux the board game
      */
 
-    public static void setShip(int from, int to, int line, int direction, int[][][] matrixHuman){
+    public static void setShip(int from, int to, int line, int direction, int[][][] matrixAux){
         if (direction==0){ //Horizontal
             for (int i=from; i<=to; i++){
-                matrixHuman[line][i][0] = 1;
+                matrixAux[line][i][0] = 1;
             }
         } else { //Vertical
             for (int i=from; i<=to; i++){
-                matrixHuman[i][line][0] = 1;
+                matrixAux[i][line][0] = 1;
             }
         }
     }
