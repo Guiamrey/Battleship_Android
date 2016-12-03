@@ -88,38 +88,22 @@ public class NewGameActivity extends AppCompatActivity {
         TableLayout tableLayout = new TableLayout(this);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
         layoutParams.setMargins(50, 0, 50, 0);
-        for (int i = 0; i < 11; i++) {
+        int i, j;
+        for (i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams rowParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-            for (int j = 0; j < 11; j++) {
+            for (j = 0; j < 11; j++) {
                 TextView field = new TextView(this);
                 field.setBackgroundResource(R.drawable.cell_shape);
-                field.setTag(i + "," + j);
-                field.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int row = Integer.parseInt(v.getTag().toString().split(",")[0]);
-                        int column = Integer.parseInt(v.getTag().toString().split(",")[1]);
-                        int color = Color.TRANSPARENT;
-                        Drawable background = v.getBackground();
-                        if (background instanceof ColorDrawable) {
-                            color = ((ColorDrawable) background).getColor();
-                        }
-                        if (color == Color.TRANSPARENT) {
-                            matrix[row - 1][column - 1][0] = 1;
-                            v.setBackgroundColor(Color.BLACK);
-                        } else {
-                            matrix[row - 1][column - 1][0] = 0;
-                            v.setBackgroundResource(R.drawable.cell_shape);
-                        }
-                    }
-                });
-                String id = String.valueOf(i) + String.valueOf(j);
-                field.setId(Integer.parseInt(id));
+                if (!(i == 0 || j == 0)) {
+                    addClickListener(field, i, j);
+                }
                 if (i == 0) {
                     field.setText(num[j]);
-                } else if (j == 0) field.setText(AJ[i - 1]);
+                } else if (j == 0) {
+                    field.setText(AJ[i - 1]);
+                }
                 field.setTextSize(15);
                 field.setPadding(10, 15, 0, 0);
                 field.setGravity(Gravity.CENTER);
@@ -128,6 +112,26 @@ public class NewGameActivity extends AppCompatActivity {
             tableLayout.addView(row, layoutParams);
         }
         return tableLayout;
+    }
+
+    private void addClickListener(final TextView view, final int i, final int j) {
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int color = Color.TRANSPARENT;
+                Drawable background = v.getBackground();
+                if (background instanceof ColorDrawable) {
+                    color = ((ColorDrawable) background).getColor();
+                }
+                if (color == Color.TRANSPARENT) {
+                    matrix[i - 1][j - 1][0] = 1;
+                    v.setBackgroundColor(Color.BLACK);
+                } else {
+                    matrix[i - 1][j - 1][0] = 0;
+                    v.setBackgroundResource(R.drawable.cell_shape);
+                }
+            }
+        });
     }
 
     private void onTouchListener(ImageView v) {
