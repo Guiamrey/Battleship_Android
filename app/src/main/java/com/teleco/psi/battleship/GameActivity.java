@@ -155,7 +155,7 @@ public class GameActivity extends Activity {
                     view.setBackgroundColor(Color.RED);
                     return;
                 } else {
-                    //light.setBackgroundResource(R.drawable.rojo);
+                    light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
                     //
                 }
