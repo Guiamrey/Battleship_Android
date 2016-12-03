@@ -22,7 +22,7 @@ import java.util.Random;
 public class GameActivity extends Activity {
     private static int [][][] matrixHuman = new int[10][10][3];
     private static int [][][] matrixMachine = new int[10][10][3];
-    private FrameLayout frameLayoutHuman;
+    private static FrameLayout frameLayoutHuman;
     private FrameLayout frameLayoutMachine;
 
     static int hundidos = 0;
@@ -83,7 +83,7 @@ public class GameActivity extends Activity {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams rowparams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
             row.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-            for (int j = 0; j < 11; j++) {
+            for (int j = 0; j < 11; j++) { //i
                 TextView field = new TextView(this);
                 field.setBackgroundResource(R.drawable.cell_shape);
                 if (i == 0) {
@@ -93,7 +93,8 @@ public class GameActivity extends Activity {
                 field.setPadding(8,6,0,0);
                 field.setGravity(Gravity.CENTER);
                 if (clickable) {
-                    addClickListener(field, i, j);
+                    if(i != 0 || j != 0)
+                        addClickListener(field, i, j);
                 }
                 row.addView(field, rowparams);
             }
@@ -113,16 +114,18 @@ public class GameActivity extends Activity {
                     view.setBackgroundColor(Color.BLUE);
                 }
                 startAlgorithm();
-                TableLayout board = (TableLayout) frameLayoutMachine.getChildAt(0);
+                /*TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
                 for (int i = 1; i <= 10; i++) {
                     TableRow row = (TableRow) board.getChildAt(i);
                     for (int j = 1; j <= 10; j++) {
                         TextView field = (TextView) row.getChildAt(j);
-                        if (matrixMachine[i-1][j-1][1] == 1 ) {
+                        if (matrixHuman[i-1][j-1][1] == 1 ) {
+                            field.setBackgroundColor(Color.BLUE);
+                        }else if(matrixHuman[i-1][j-1][1] == 2 ) {
                             field.setBackgroundColor(Color.RED);
                         }
                     }
-                }
+                }*/
             }
         });
     }
@@ -214,11 +217,23 @@ public class GameActivity extends Activity {
             matrixHuman[x][y][1] = 2; //tocado
             System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " TOCADO");
             hundidos++;
+            drawHitOrMiss(x,y,true);
             return true;
         }
         matrixHuman[x][y][1] = 1;    //agua
         System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
+        drawHitOrMiss(x,y, false);
         return false;
+    }
+
+    private static void drawHitOrMiss(int x, int y, boolean hit) {
+        TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
+        TableRow row = (TableRow) board.getChildAt(x);
+        TextView field = (TextView) row.getChildAt(y);
+        if (hit)
+            field.setBackgroundColor(Color.RED);
+        else
+            field.setBackgroundColor(Color.BLUE);
     }
 
     /**
