@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +31,11 @@ public class GameActivity extends Activity {
     private static int horizontal = 0;
     private static boolean lastHit = false;
     private static int row, column;
-    private static int pos, sentido = 1;
+    private static int pos = 1, sentido = 1;
     private static int sentidosInvertidos =0 ;
     private static int[] lastAction = new int[3];
+    private static boolean IATurn = false;
+    private static boolean humanTurn = false;
 
 
     @Override
@@ -114,6 +117,8 @@ public class GameActivity extends Activity {
                 } else {
                     view.setBackgroundColor(Color.BLUE);
                 }
+                IATurn = true;
+                humanTurn = false;
                 startAlgorithm();
                 /*TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
                 for (int i = 1; i <= 10; i++) {
@@ -133,15 +138,18 @@ public class GameActivity extends Activity {
 
 
     public static void startAlgorithm(){
-        if(!lastHit){
-            lastAction =  choosePlay();
-            lastHit = hitOrMiss(lastAction[0], lastAction[1]);
-        }else if(vertical != 0 || horizontal != 0){
-            shipFound(lastAction[0], lastAction[1]);
-        }else{
-            bestAfterHit(lastAction);
+        while (IATurn){
+            if(!lastHit){
+                lastAction =  choosePlay();
+                lastHit = hitOrMiss(lastAction[0], lastAction[1]);
+            }else if(vertical != 0 || horizontal != 0){
+                shipFound(lastAction[0], lastAction[1]);
+            }else{
+                bestAfterHit(lastAction);
+            }
         }
-        printMatrix();
+
+        //printMatrix();
     }
 
     /***
@@ -219,13 +227,15 @@ public class GameActivity extends Activity {
         matrixHuman[x][y][1] = 1;    //agua
         System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
         drawHitOrMiss(x,y, false);
+        IATurn = !IATurn;
+        humanTurn = !humanTurn;
         return false;
     }
 
     private static void drawHitOrMiss(int x, int y, boolean hit) {
         TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
-        TableRow row = (TableRow) board.getChildAt(x);
-        TextView field = (TextView) row.getChildAt(y);
+        TableRow row = (TableRow) board.getChildAt(x+1);
+        TextView field = (TextView) row.getChildAt(y+1);
         if (hit)
             field.setBackgroundColor(Color.RED);
         else
@@ -288,15 +298,22 @@ public class GameActivity extends Activity {
                 possiblePlays.add("0-"+ (lastAction[1] + 1));
                 possiblePlays.add("1-"+ lastAction[1]);
             }
-        } else{
-            if(lastAction[1]==0){
-                possiblePlays.add(lastAction[0] + "-" + (lastAction[1] + 1));
-            }else{
-                possiblePlays.add(lastAction[0] + "-" + (lastAction[1] - 1));
-            }
+        } else if(lastAction[1]==0){
+            possiblePlays.add(lastAction[0] + "-" + (lastAction[1] + 1));
             possiblePlays.add((lastAction[0]+1) + "-" + lastAction[1]);
             possiblePlays.add((lastAction[0]-1) + "-" + lastAction[1]);
+        }else if (lastAction[1] == 9){
+            possiblePlays.add(lastAction[0] + "-" + (lastAction[1] - 1));
+            possiblePlays.add((lastAction[0]+1) + "-" + lastAction[1]);
+            possiblePlays.add((lastAction[0]-1) + "-" + lastAction[1]);
+        }else{
+            possiblePlays.add((lastAction[0]) + "-" + (lastAction[1]+1));
+            possiblePlays.add((lastAction[0]) + "-" + (lastAction[1]-1));
+            possiblePlays.add((lastAction[0]+1) + "-" + lastAction[1]);
+            possiblePlays.add((lastAction[0]-1) + "-" + lastAction[1]);
+
         }
+
         return possiblePlays;
     }
 
@@ -350,7 +367,6 @@ public class GameActivity extends Activity {
             vertical = 0;
             horizontal = 0;
             lastHit = false;
-            return;
         }
 
     }
@@ -368,67 +384,64 @@ public class GameActivity extends Activity {
         if(horizontal ==  1) {
             while (true) {
                 if (sentidosInvertidos == 2) {
-                    changeOrientation();
-                    break;
-                }
-
-                int upDown = checkLimits(row - pos * sentido);
-                if (upDown == sentido) {
-                    changeDirection();
-                }
-
-                if (matrixHuman[row - pos * sentido][column][1] == 0) {
-                    hit = hitOrMiss(row - pos * sentido, column);
-                } else {
-                    continue;
-                }
-
-                if (hit) {
-                    lastHit = hit;
-                    pos++;
-                } else {
-                    pos = 0;
-                    sentido = sentido * (-1);
-                    sentidosInvertidos++;
-                }
-                break;
-            }
-        }
-        if(vertical == 1) {
-            while (true) {
-                if (sentidosInvertidos == 2) {
-                    changeOrientation();
+                    shipDown();
                     break;
                 }
 
                 int upDown = checkLimits(column - pos * sentido);
                 if (upDown == sentido) {
                     changeDirection();
+                    continue;
                 }
 
                 if (matrixHuman[row][column - pos * sentido][1] == 0) {
                     hit = hitOrMiss(row, column - pos * sentido);
                 } else {
+                    pos++;
                     continue;
                 }
 
-                if (hit) {
-                    continueDirection(hit);
-                } else {
-                    changeDirection();
-                }
+                if (hit) continueDirection(hit);
+                else changeDirection();
+
                 break;
             }
-        } if(vertical == 2  && horizontal == 2){
-            lastHit = false;
+        }
+        if(vertical == 1) {
+            while (true) {
+                if (sentidosInvertidos == 2) {
+                    shipDown();
+                    break;
+                }
+
+                int upDown = checkLimits(row - pos * sentido);
+                if (upDown == sentido) {
+                    changeDirection();
+                    continue;
+                }
+
+                if (matrixHuman[row - pos * sentido][column][1] == 0) {
+                    hit = hitOrMiss(row - pos * sentido, column);
+                } else {
+                    pos++;
+                    continue;
+                }
+
+                if (hit) continueDirection(hit);
+                else changeDirection();
+
+                break;
+            }
         }
     }
 
-    private static void changeOrientation() {
+
+    private static void shipDown() {
         pos = 1;
-        vertical++;
-        horizontal++;
+        vertical=0;
+        horizontal=0;
         sentidosInvertidos = 0;
+        lastHit = false;
     }
 
     private static void changeDirection(){
