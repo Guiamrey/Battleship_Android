@@ -153,6 +153,8 @@ public class GameActivity extends Activity {
             public void onClick(View v) {
                 if (matrixMachine[i - 1][j - 1][0] == 1) {
                     view.setBackgroundColor(Color.RED);
+                    shipsDownHuman++;
+                    checkFinalGame();
                     return;
                 } else {
                     light.setBackgroundResource(R.drawable.rojo);
