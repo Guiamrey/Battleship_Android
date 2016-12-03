@@ -26,11 +26,10 @@ import com.google.gson.Gson;
 
 
 public class NewGameActivity extends AppCompatActivity {
-    private static int [][][] matrix = new int[10][10][3];
+    private static int[][][] matrix = new int[10][10][3];
     private int _xDelta;
     private int _yDelta;
     private boolean move = false;
-    private android.widget.RelativeLayout.LayoutParams layoutParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,6 @@ public class NewGameActivity extends AppCompatActivity {
                 column[0] = 0;
             }
         }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_game);
 
@@ -48,7 +46,7 @@ public class NewGameActivity extends AppCompatActivity {
         frameLayout.addView(table);
 
         Button startGameButton = (Button) findViewById(R.id.start_game);
-        startGameButton.setOnClickListener(new View.OnClickListener(){
+        startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences settings = getSharedPreferences("Matrix", 0);
@@ -62,14 +60,13 @@ public class NewGameActivity extends AppCompatActivity {
             }
         });
         Button infoButton = (Button) findViewById(R.id.info);
-        infoButton.setOnClickListener(new View.OnClickListener(){
+        infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DialogFragment aboutDialog = new NewGameActivity.AlertDialogInfo().newInstance();
                 aboutDialog.show(getFragmentManager(), "Alert");
             }
         });
-
         ImageView ship5 = (ImageView) findViewById(R.id.ship5);
         onTouchListener(ship5);
         ImageView ship4_2 = (ImageView) findViewById(R.id.ship4_2);
@@ -80,17 +77,17 @@ public class NewGameActivity extends AppCompatActivity {
         onTouchListener(ship3_1);
         ImageView ship3_2 = (ImageView) findViewById(R.id.ship3_2);
         onTouchListener(ship3_2);
-        final ImageView ship2 = (ImageView) findViewById(R.id.ship2);
+        ImageView ship2 = (ImageView) findViewById(R.id.ship2);
         onTouchListener(ship2);
     }
 
-    protected TableLayout createBoard(){
+    protected TableLayout createBoard() {
         String[] AJ = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-        String[] num = {"\\","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] num = {"\\", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
         TableLayout tableLayout = new TableLayout(this);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
-        layoutParams.setMargins(50,0,50,0);
+        layoutParams.setMargins(50, 0, 50, 0);
         for (int i = 0; i < 11; i++) {
             TableRow row = new TableRow(this);
             TableRow.LayoutParams rowParams = new TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f);
@@ -110,10 +107,10 @@ public class NewGameActivity extends AppCompatActivity {
                             color = ((ColorDrawable) background).getColor();
                         }
                         if (color == Color.TRANSPARENT) {
-                            matrix[row-1][column-1][0] = 1;
+                            matrix[row - 1][column - 1][0] = 1;
                             v.setBackgroundColor(Color.BLACK);
                         } else {
-                            matrix[row-1][column-1][0] = 0;
+                            matrix[row - 1][column - 1][0] = 0;
                             v.setBackgroundResource(R.drawable.cell_shape);
                         }
                     }
@@ -124,7 +121,7 @@ public class NewGameActivity extends AppCompatActivity {
                     field.setText(num[j]);
                 } else if (j == 0) field.setText(AJ[i - 1]);
                 field.setTextSize(15);
-                field.setPadding(10,15,0,0);
+                field.setPadding(10, 15, 0, 0);
                 field.setGravity(Gravity.CENTER);
                 row.addView(field, rowParams);
             }
@@ -133,7 +130,7 @@ public class NewGameActivity extends AppCompatActivity {
         return tableLayout;
     }
 
-    private void onTouchListener(ImageView v){
+    private void onTouchListener(ImageView v) {
 
         v.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -150,6 +147,7 @@ public class NewGameActivity extends AppCompatActivity {
                         RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) v.getLayoutParams();
                         _xDelta = X - Params.leftMargin;
                         _yDelta = Y - Params.topMargin;
+                        System.out.println(X + " " + Y + " / " + _xDelta + " " + _yDelta + " / " + Params.leftMargin + " " + Params.topMargin);
                         break;
                     case MotionEvent.ACTION_UP:
                         if(!move){
@@ -170,10 +168,12 @@ public class NewGameActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_MOVE:
                         move = true;
                         //Al mover el dedo vamos actualizando los margenes de la imagen para crear efecto de arrastrado
-                        RelativeLayout.LayoutParams layoutParams =
-                                (RelativeLayout.LayoutParams) v.getLayoutParams();
+                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
                         layoutParams.leftMargin = X - _xDelta;
                         layoutParams.topMargin = Y - _yDelta;
+                        /*int top = layoutParams.topMargin;
+                        int left = layoutParams.leftMargin;
+                        if ((left < 140) || (top < 678) || (top > 1438))*/
                         v.setLayoutParams(layoutParams);
                         break;
                 }
@@ -194,10 +194,10 @@ public class NewGameActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("INFO");
             builder.setMessage("Place your ships on the board as you like. You can place:"
-                + "\n1 carrier (5 squares)"
-                + "\n1 battleship (4 squares)"
-                + "\n2 cruisers (3 squares)"
-                + "\n1 destroyer (2 squares)");
+                    + "\n1 carrier (5 squares)"
+                    + "\n1 battleship (4 squares)"
+                    + "\n2 cruisers (3 squares)"
+                    + "\n1 destroyer (2 squares)");
             builder.setCancelable(false);
             builder.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
