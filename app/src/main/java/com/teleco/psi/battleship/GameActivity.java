@@ -181,8 +181,6 @@ public class GameActivity extends Activity {
         int from = rand.nextInt(5);
         int to = from + 4;
 
-
-
         System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
         setShip(from, to, line, direction, matrixMachine);
 
@@ -193,7 +191,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(9);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(4);
+            from = rand.nextInt(6);
             to = from + 3;
 
             shipOK = true;
@@ -213,7 +211,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(9);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(3);
+            from = rand.nextInt(7);
             to = from + 2;
 
             shipOK = true;
@@ -235,7 +233,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(9);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(2);
+            from = rand.nextInt(8);
             to = from + 1;
 
             shipOK = true;
@@ -250,7 +248,7 @@ public class GameActivity extends Activity {
         }
     }
 
-    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+    public static boolean isAShipTogether(int from, int to, int line, int direction, int[][][] matrixAux){
 
         if (direction==0){ //Horizontal
             for (int i=from; i<=to; i++){
@@ -264,6 +262,71 @@ public class GameActivity extends Activity {
 
         return true;
     }
+
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (line > 0){
+                    if (matrixAux[line-1][i][0] == 1) return false;
+                }
+
+                if ((i != 0) && (i != 9)){
+
+                    if (line > 0){
+                        if (matrixAux[line-1][i-1][0] == 1) return false;
+                        if (matrixAux[line-1][i+1][0] == 1) return false;
+                    }
+
+                    if (matrixAux[line][i-1][0] == 1) return false;
+                    if (matrixAux[line][i+1][0] == 1) return false;
+
+                    if (line < 9){
+                        if (matrixAux[line+1][i-1][0] == 1) return false;
+                        if (matrixAux[line+1][i+1][0] == 1) return false;
+                    }
+
+                }
+
+                if (matrixAux[line][i][0] == 1) return false;
+
+                if (line < 9){
+                    if (matrixAux[line+1][i][0] == 1) return false;
+                }
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (line > 0) {
+                    if (matrixAux[i][line-1][0] == 1) return false;
+                }
+
+                if (i != 0){
+
+                    if (line > 0){
+                        if (matrixAux[i-1][line-1][0] == 1) return false;
+                        if (matrixAux[i+1][line-1][0] == 1) return false;
+                    }
+
+                    if (matrixAux[i-1][line][0] == 1) return false;
+                    if (matrixAux[i+1][line][0] == 1) return false;
+
+                    if (line < 9){
+                        if (matrixAux[i-1][line+1][0] == 1) return false;
+                        if (matrixAux[i+1][line+1][0] == 1) return false;
+                    }
+
+                }
+
+                if (matrixAux[i][line][0] == 1) return false;
+
+                if (line < 9){
+                    if (matrixAux[i][line+1][0] == 1) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 
     public void startAlgorithm(){
         stopUserInteractions = true;
