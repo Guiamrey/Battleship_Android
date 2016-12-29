@@ -658,19 +658,19 @@ public class GameActivity extends Activity {
 */
     public void inicializeBase (){
         //centrales
-        matrixHuman[4][4][2] = 10;
-        matrixHuman[4][5][2] = 10;
-        matrixHuman[5][4][2] = 10;
-        matrixHuman[4][5][2] = 10;
+        matrixHuman[4][4][2] = 100;
+        matrixHuman[4][5][2] = 100;
+        matrixHuman[5][4][2] = 100;
+        matrixHuman[4][5][2] = 100;
         //rodeando las centrales
-        matrixHuman[4][3][2] = 9;
-        matrixHuman[4][6][2] = 9;
-        matrixHuman[5][3][2] = 9;
-        matrixHuman[5][6][2] = 9;
-        matrixHuman[3][4][2] = 9;
-        matrixHuman[3][5][2] = 9;
-        matrixHuman[6][4][2] = 9;
-        matrixHuman[6][5][2] = 9;
+        matrixHuman[4][3][2] = 90;
+        matrixHuman[4][6][2] = 90;
+        matrixHuman[5][3][2] = 90;
+        matrixHuman[5][6][2] = 90;
+        matrixHuman[3][4][2] = 90;
+        matrixHuman[3][5][2] = 90;
+        matrixHuman[6][4][2] = 90;
+        matrixHuman[6][5][2] = 90;
         //un nivel mas hacia afuera
         matrixHuman[3][3][2] = 82;
         matrixHuman[3][6][2] = 82;
