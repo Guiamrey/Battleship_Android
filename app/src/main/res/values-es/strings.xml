@@ -6,7 +6,7 @@
     <string name="difficulty">Dificultad</string>
     <string name="language">Idioma</string>
     <string name="new_game">Nuevo juego</string>
-    <string name="ok">Guardar</string>
+    <string name="save">Guardar</string>
     <string name="options">Opciones</string>
     <string name="rules">Reglas</string>
     <string name="settings">Ajustes</string>
@@ -36,9 +36,9 @@
     <string name="start_game">Empezar juego</string>
     <string name="carrier5">Portaviones (5 casillas)</string>
     <string-array name="difficulty_options">
-        <item>Difícil</item>
-        <item>Medio</item>
         <item>Fácil</item>
+        <item>Medio</item>
+        <item>Difícil</item>
     </string-array>
     <string-array name="rules_options">
         <item>Clásico</item>
@@ -54,4 +54,6 @@
     <string name="information_rules">Modos de juego: \n1. Clásico. Cada jugador solo puede disparar a una casilla de cada vez.
         El turno de juego se cambia a menos que un jugador acierte en un barco. Gana el jugador con más barcos a flote.
     \n2. Superdisparo. Mismo modo de juego que el modo clásico, con la diferencia de que los barcos se hunden con un sólo disparo. </string>
+    <string name="back_pressed">Se ha pulsado el botón \"Atrás\". ¿Está seguro de que no quiere guardar los ajustes?</string>
+    <string name="no_save">No guardar</string>
 </resources>
