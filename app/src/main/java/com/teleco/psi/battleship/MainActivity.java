@@ -31,7 +31,6 @@ public class MainActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         String language = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
-        System.out.println(language+"-----");
         Locale locale = new Locale(language);
         Resources res = getResources();
         Configuration config = res.getConfiguration();

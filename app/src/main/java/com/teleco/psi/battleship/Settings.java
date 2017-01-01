@@ -39,10 +39,18 @@ public class Settings extends Activity {
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));
         }
-        SharedPreferences settings_ships = getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE);
-        settings_ships.getBoolean("checked",false);
-        ad_ships.setChecked(settings_ships.getBoolean("checked",false));
+
         super.onResume();
+    }
+
+    private void setPreferences(){
+        ArrayAdapter adap = (ArrayAdapter) spinner_level.getAdapter();
+        spinner_level.setSelection(adap.getPosition(getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "")), true);
+
+        adap = (ArrayAdapter) spinner_rules.getAdapter();
+        spinner_rules.setSelection(adap.getPosition(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "")));
+
+        ad_ships.setChecked(getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE).getBoolean("checked",false));
     }
 
     private void configLanguage(String language){
@@ -53,27 +61,18 @@ public class Settings extends Activity {
         res.updateConfiguration(config, res.getDisplayMetrics());
         onConfigurationChanged(config);
     }
+    private void savePreferences(String key, String name, String value_string){
+        SharedPreferences settings = getSharedPreferences(key , Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(name, value_string);
+        editor.commit();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-
-        spinner_level = (Spinner) findViewById(R.id.difficulty_options);
-        ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
-        adap_level.setDropDownViewResource(R.layout.downlevel);
-        spinner_level.setAdapter(adap_level);
-        spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
-                System.out.println("Level: " + spinner_level.getSelectedItem().toString());
-
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
 
         spinner_language = (Spinner) findViewById(R.id.language_options);
         ArrayAdapter<CharSequence> adap_language = ArrayAdapter.createFromResource(this, R.array.language_options, android.R.layout.simple_spinner_item);
@@ -87,50 +86,35 @@ public class Settings extends Activity {
                     language = "en";
                 } else language = "es";
                 configLanguage(language);
-                System.out.println("Language: " + spinner_language.getSelectedItem().toString());
-                SharedPreferences settings = getSharedPreferences("Language" , Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString("Language", language);
-                editor.commit();
             }
-
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+        spinner_level = (Spinner) findViewById(R.id.difficulty_options);
+        ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
+        adap_level.setDropDownViewResource(R.layout.downlevel);
+        spinner_level.setAdapter(adap_level);
+
         ad_ships = (Switch) findViewById(R.id.switch_ships);
-        ad_ships.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences settings = getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean("checked", isChecked);
-                editor.commit();
-            }
-        });
 
         spinner_rules = (Spinner) findViewById(R.id.rules_options);
         ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
         adap_rules.setDropDownViewResource(R.layout.downlevel);
         spinner_rules.setAdapter(adap_rules);
-        spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
-                System.out.println("Rules: " + spinner_rules.getSelectedItem().toString());
-            }
 
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        original[LANGUAGE] = spinner_language.getSelectedItem().toString();
-        original[RULES] = spinner_rules.getSelectedItem().toString();
-        original[LEVEL] = spinner_level.getSelectedItem().toString();
-        original[SHIPS] = "" + ad_ships.isChecked();
+
+        original[LANGUAGE] = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
+        original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");
+        original[LEVEL] = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "");
+        original[SHIPS] = "" + getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE).getBoolean("checked",false);
+
 
         backButton = (Button) findViewById(R.id.back_settings);
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //Closing SecondScreen Activity
+                saveAll();
+                //Closing Screen Activity
                 finish();
             }
         });
@@ -143,9 +127,32 @@ public class Settings extends Activity {
             }
         });
     }
+
+    private void saveAll(){
+        SharedPreferences settings = getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("checked", ad_ships.isChecked());
+        editor.commit();
+
+        System.out.println("Guardar-> "+spinner_level.getSelectedItem().toString());
+        System.out.println("Guardar-> "+spinner_rules.getSelectedItem().toString());
+        System.out.println("Guardar-> "+spinner_language.getSelectedItem().toString());
+        System.out.println("Guardar-> "+ad_ships.isChecked());
+
+        savePreferences("Level", "Level", spinner_level.getSelectedItem().toString());
+
+        String language;
+        if (spinner_language.getSelectedItem().toString().equalsIgnoreCase("English")) {
+            language = "en";
+        } else language = "es";
+        savePreferences("Language", "Language", language);
+
+        savePreferences("Rules", "Rules", spinner_rules.getSelectedItem().toString());
+    }
+
     private void showInfoDialog() {
 
-        AlertDialog alertbox = new AlertDialog.Builder(this)
+        AlertDialog infodialog = new AlertDialog.Builder(this)
                 .setTitle("Games modes")
                 .setMessage(getResources().getString(R.string.information_rules))
                 .setCancelable(false)
@@ -180,6 +187,7 @@ public class Settings extends Activity {
         adap_level.setDropDownViewResource(R.layout.downlevel);
         spinner_level.setAdapter(adap_level);
         backButton.setText(R.string.save);
+        setPreferences();
         super.onConfigurationChanged(newConfig);
     }
 
@@ -197,6 +205,10 @@ public class Settings extends Activity {
         }
         return true;
     }
+
+    /**
+     * Se llama cuando se pulsa el botón de atrás del dispositivo, se comprueba si ha cambiado algún parametro de los ajustes para guardar o no los cambios.
+     */
     @Override
     public void onBackPressed() {
         if(check_changed()) {
@@ -222,5 +234,4 @@ public class Settings extends Activity {
                     .show();
         }else finish();
     }
-
 }
