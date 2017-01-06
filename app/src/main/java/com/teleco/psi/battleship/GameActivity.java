@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends Activity {
+    private boolean supershots;
     private static double alpha = 0.2;
     private static int totalGames;
     private FrameLayout light;
@@ -57,6 +59,12 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* Comprobar el modo de juego: Clásico o superdisparos
+        * Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
+        */
+        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
+
         setContentView(R.layout.game_activity);
         shipsDownIA = 0;
         shipsDownHuman = 0;
