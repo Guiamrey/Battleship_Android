@@ -58,7 +58,8 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
-
+        shipsDownIA = 0;
+        shipsDownHuman = 0;
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
