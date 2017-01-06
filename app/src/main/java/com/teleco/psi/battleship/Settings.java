@@ -103,12 +103,10 @@ public class Settings extends Activity {
         adap_rules.setDropDownViewResource(R.layout.downlevel);
         spinner_rules.setAdapter(adap_rules);
 
-
         original[LANGUAGE] = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");
         original[LEVEL] = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "");
         original[SHIPS] = "" + getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE).getBoolean("checked",false);
-
 
         backButton = (Button) findViewById(R.id.back_settings);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -133,12 +131,6 @@ public class Settings extends Activity {
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("checked", ad_ships.isChecked());
         editor.commit();
-
-        System.out.println("Guardar-> "+spinner_level.getSelectedItem().toString());
-        System.out.println("Guardar-> "+spinner_rules.getSelectedItem().toString());
-        System.out.println("Guardar-> "+spinner_language.getSelectedItem().toString());
-        System.out.println("Guardar-> "+ad_ships.isChecked());
-
         savePreferences("Level", "Level", spinner_level.getSelectedItem().toString());
 
         String language;
@@ -197,13 +189,17 @@ public class Settings extends Activity {
      */
 
     private boolean check_changed(){
-        if (!(original[LANGUAGE].equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
+        String lan;
+        if(original[LANGUAGE].equalsIgnoreCase("es"))
+            lan = "Español";
+        else lan = "English";
+        if (!(lan.equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
                 !(original[LEVEL].equalsIgnoreCase(spinner_level.getSelectedItem().toString())) ||
                 !(original[RULES].equalsIgnoreCase(spinner_rules.getSelectedItem().toString())) ||
                 !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()))){
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
