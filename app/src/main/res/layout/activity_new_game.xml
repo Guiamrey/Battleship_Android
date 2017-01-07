@@ -19,28 +19,6 @@
         android:layout_marginBottom="70dp"
         android:layout_marginTop="200dp" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ancla"
-        android:layout_marginEnd="11dp"
-        android:layout_toStartOf="@+id/ancla"
-        android:text="@string/place_your_ships"
-        android:textColor="@color/colorBlack"
-        android:textSize="23sp"
-        android:textStyle="normal|bold" />
-
-    <ImageView
-        android:id="@+id/ancla"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="80dp"
-        android:layout_toEndOf="@+id/start_game"
-        android:src="@drawable/anchor" />
-
     <Button
         android:id="@+id/info"
         android:layout_width="wrap_content"
@@ -50,30 +28,6 @@
         android:layout_marginTop="14dp"
         android:text="@string/info" />
 
-    <ImageView
-        android:id="@+id/ship4_2"
-        android:layout_height="25dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ship3"
-        android:layout_width="95dp" />
-
-    <ImageView
-        android:id="@+id/ship4_1"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="110dp"
-        android:src="@drawable/ship4"
-        android:layout_width="95dp" />
-
-    <ImageView
-        android:id="@+id/ship2"
-        android:layout_width="50dp"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="220dp"
-        android:src="@drawable/ship2" />
-
     <Button
         android:id="@+id/start_game"
         android:layout_width="wrap_content"
@@ -82,14 +36,6 @@
         android:layout_centerHorizontal="true"
         android:padding="15dp"
         android:text="@string/start_game" />
-
-    <ImageView
-        android:id="@+id/ship3_2"
-        android:layout_width="80dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="220dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ship4_1" />
 
     <ImageView
         android:id="@+id/ship5"
@@ -106,5 +52,70 @@
         android:layout_width="80dp"
         android:layout_marginTop="30dp"
         android:layout_marginStart="130dp" />
+
+    <ImageView
+        android:id="@+id/ship3_2"
+        android:layout_width="80dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ship4_1"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/ship3_1" />
+
+    <TextView
+        android:text="hla holahoalahoas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorBlack"
+        android:textSize="15sp"
+        android:id="@+id/num_fields"
+        android:layout_marginBottom="13dp"
+        android:layout_above="@+id/textView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp" />
+
+    <ImageView
+        android:id="@+id/ancla"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="43dp"
+        android:src="@drawable/anchor"
+        android:layout_below="@+id/ship3_1"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/place_your_ships"
+        android:textColor="@color/colorBlack"
+        android:textSize="23sp"
+        android:textStyle="normal|bold"
+        android:layout_marginTop="11dp"
+        android:layout_alignTop="@+id/ancla"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/ship2"
+        android:layout_width="50dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ship2"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/start_game" />
+
+    <ImageView
+        android:id="@+id/ship4"
+        android:layout_height="25dp"
+        android:src="@drawable/ship3"
+        android:layout_width="95dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:src="@android:drawable/ic_menu_delete"
+        android:id="@+id/trashicon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_height="48dp"
+        android:layout_width="44dp" />
 
 </RelativeLayout>
