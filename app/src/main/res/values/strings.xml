@@ -64,4 +64,19 @@
     \n\n2. Supershots\nSame game mode as Classic, with the difference that ships sink with a single shot.
     </string>
     <string name="back_pressed">Back key pressed. Are you sure you don´t want to save the settings?</string>
+    <string name="noship">The ship is not correctly placed. The squares must be consecutive and oriented in only one direction.</string>
+    <string name="reset">Reset</string>
+    <string name="deleteconf">Delete board\'s configuration?</string>
+    <string name="placeshipfirst">Place the ship before continue with another one.</string>
+    <string name="placeallships">You didn\'t place all the ships on the board.</string>
+    <string name="doit">Do it.</string>
+    <string name="shipof">"Ship of "</string>
+    <string name="squares">" squares"</string>
+    <string name="gamesmodes">Games modes</string>
+    <string name="shipinfo">To place your ships touch the images and then select the squares where you want to place the ship.        Select as many squares as indicated when touching the ship.</string>
+    <string name="ok">Ok</string>
+    <string name="yes">Yes</string>
+    <string name="resetgamesure">Are you sure?</string>
+    <string name="resetinggame">You are trying to reset the game.</string>
+
 </resources>

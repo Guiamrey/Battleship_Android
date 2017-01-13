@@ -145,10 +145,10 @@ public class Settings extends Activity {
     private void showInfoDialog() {
 
         AlertDialog infodialog = new AlertDialog.Builder(this)
-                .setTitle("Games modes")
+                .setTitle(R.string.gamesmodes)
                 .setMessage(getResources().getString(R.string.information_rules))
                 .setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                     }
                 })
@@ -193,13 +193,10 @@ public class Settings extends Activity {
         if(original[LANGUAGE].equalsIgnoreCase("es"))
             lan = "Español";
         else lan = "English";
-        if (!(lan.equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
+        return !(lan.equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
                 !(original[LEVEL].equalsIgnoreCase(spinner_level.getSelectedItem().toString())) ||
                 !(original[RULES].equalsIgnoreCase(spinner_rules.getSelectedItem().toString())) ||
-                !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()))){
-            return true;
-        }
-        return false;
+                !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()));
     }
 
     /**

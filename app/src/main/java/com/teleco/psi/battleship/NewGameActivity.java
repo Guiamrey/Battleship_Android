@@ -30,13 +30,10 @@ import com.google.gson.Gson;
 public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
     private static View[][] views = new View[10][10];
-    private int _xDelta;
-    private int _yDelta;
-    private boolean move = false;
     private int ship, colocados, casillas;
     private final int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
     private int total_ships = 0;
-    private TextView text;
+    private TextView infoship;
     private ImageView image;
 
     @Override
@@ -92,7 +89,7 @@ public class NewGameActivity extends Activity {
             }
         });
 
-        text = (TextView) findViewById(R.id.num_fields);
+        infoship = (TextView) findViewById(R.id.num_fields);
 
         ImageView ship5 = (ImageView) findViewById(R.id.ship5);
         onClickListener(ship5, CASILLAS5, 5);
@@ -107,7 +104,7 @@ public class NewGameActivity extends Activity {
         ship = 0;
         colocados = 0;
         casillas = 0;
-        text.setText("");
+        infoship.setText("");
     }
 
     private void onClickListener(ImageView v, final int tipo, final int num) {
@@ -115,7 +112,7 @@ public class NewGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (colocados == casillas) {
-                    text.setText("Barco de " + num + " casillas");
+                    infoship.setText(getString(R.string.shipof) + num + getString(R.string.squares));
                     colocados = 0;
                     ship = tipo;
                     casillas = num;
@@ -237,9 +234,9 @@ public class NewGameActivity extends Activity {
         } else bien = false;
         if (!nobarco || !bien) {
             AlertDialog alert = new AlertDialog.Builder(this)
-                    .setMessage("El barco no está correctamente colocado. Coloquelo bien.")
+                    .setMessage(R.string.noship)
                     .setCancelable(false)
-                    .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
                             colocados = 0;
                             for(int i = 0; i < 10; i++){
@@ -265,7 +262,7 @@ public class NewGameActivity extends Activity {
     
     private void alertShip(){
         AlertDialog alert = new AlertDialog.Builder(this)
-                .setMessage("Termine de colocar el anterior barco antes de empezar con uno nuevo")
+                .setMessage(R.string.placeshipfirst)
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
@@ -277,9 +274,9 @@ public class NewGameActivity extends Activity {
 
     private void colocarBarcos() {
         AlertDialog alert = new AlertDialog.Builder(this)
-                .setMessage("No ha colocado todos los barcos en el tablero.")
+                .setMessage(R.string.placeallships)
                 .setCancelable(false)
-                .setPositiveButton("Hacerlo", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.doit, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                     }
                 })
@@ -289,8 +286,13 @@ public class NewGameActivity extends Activity {
 
     private void resetBoard(){
         AlertDialog alert = new AlertDialog.Builder(this)
-                .setMessage("¿Borrar la configuración del tablero?")
+                .setMessage(R.string.deleteconf)
                 .setCancelable(false)
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         for(int i = 0; i < 10; i++){
@@ -299,14 +301,11 @@ public class NewGameActivity extends Activity {
                                 views[i][j].setBackgroundResource(R.drawable.cell_shape);
                             }
                         }
-                    }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                        infoship.setText("");
                     }
                 })
                 .show();
+
     }
 
     public static class AlertDialogInfo extends DialogFragment {
@@ -317,14 +316,10 @@ public class NewGameActivity extends Activity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("INFO");
-            builder.setMessage("Place your ships on the board as you like. You can place:"
-                    + "\n1 carrier (5 squares)"
-                    + "\n1 battleship (4 squares)"
-                    + "\n2 cruisers (3 squares)"
-                    + "\n1 destroyer (2 squares)");
+            builder.setTitle(R.string.info);
+            builder.setMessage(R.string.shipinfo);
             builder.setCancelable(false);
-            builder.setPositiveButton("OK",
+            builder.setPositiveButton(R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                         }

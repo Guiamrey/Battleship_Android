@@ -85,7 +85,7 @@ public class GameActivity extends Activity {
             }
         };
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+        builder.setTitle(R.string.resetinggame).setMessage(R.string.resetgamesure).setPositiveButton(R.string.yes, dialogClickListener)
                 .setNegativeButton("No", dialogClickListener);
 
         Button startGameButton = (Button) findViewById(R.id.newGameButton);
