@@ -152,7 +152,6 @@ public class NewGameActivity extends Activity {
                         RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) v.getLayoutParams();
                         _xDelta = X - Params.leftMargin;
                         _yDelta = Y - Params.topMargin;
-                        System.out.println(X + " " + Y + " / " + _xDelta + " " + _yDelta + " / " + Params.leftMargin + " " + Params.topMargin);
                         break;
                     case MotionEvent.ACTION_UP:
                         if(!move){

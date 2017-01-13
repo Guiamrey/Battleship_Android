@@ -2,7 +2,6 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +20,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import com.google.gson.Gson;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -163,7 +165,7 @@ public class GameActivity extends Activity {
         });
     }
 
-    public static void setMatrixMachine(){
+    public void setMatrixMachine(){
 
         Random rand = new Random();
         boolean shipOK = false;
@@ -177,7 +179,7 @@ public class GameActivity extends Activity {
 
 
 
-        System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        log("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
         setShip(from, to, line, direction, matrixMachine);
 
         //Barco de 4
@@ -192,7 +194,7 @@ public class GameActivity extends Activity {
 
             shipOK = true;
             shipOK = isAShip(from, to, line, direction, matrixMachine);
-            System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -213,7 +215,7 @@ public class GameActivity extends Activity {
             shipOK = true;
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            System.out.println("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -235,7 +237,7 @@ public class GameActivity extends Activity {
             shipOK = true;
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            System.out.println("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -281,15 +283,15 @@ public class GameActivity extends Activity {
      */
 
     private void printMatrix(){
-        System.out.println("\\   A    B    C    D    E    F    G    H    I    J");
+        log("\\   A    B    C    D    E    F    G    H    I    J");
         for (int i = 0; i < matrixHuman.length ; i++) {
-            System.out.print(i+1);
+            log(Integer.toString(i+1));
             for (int j = 0; j < matrixHuman.length ; j++) {
-                if(i==9 && j==0) System.out.print(" "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+                if(i==9 && j==0) log(" "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
 
-                else System.out.print("  "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
+                else log("  "+matrixHuman[i][j][0]+"/"+matrixHuman[i][j][1]);
             }
-            System.out.print("\n");
+            log("\n");
         }
     }
 
@@ -344,7 +346,7 @@ public class GameActivity extends Activity {
         final int Y = y;
         if(matrixHuman[x][y][0]==1) {
             matrixHuman[x][y][1] = 2; //tocado
-            System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " TOCADO");
+            log("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " TOCADO");
             hundidos++;
             wait.postDelayed(new Runnable() {
                 public void run() {
@@ -360,7 +362,7 @@ public class GameActivity extends Activity {
             return true;
         }
         matrixHuman[x][y][1] = 1;    //agua
-        System.out.println("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
+        log("JUGADA: fila  " + (x+1) + " columna  " + (y+1) + " AGUA");
         wait.postDelayed(new Runnable() {
             public void run() {
                 drawHitOrMiss(X,Y, false);
@@ -868,5 +870,24 @@ public class GameActivity extends Activity {
         }
 
         return true;
+    }
+
+    public void log(String text) {
+        File logFile = new File("sdcard/log.file");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 
 public class Settings extends Activity {
 
@@ -86,6 +89,13 @@ public class Settings extends Activity {
             }
         });
 
+        ImageButton log = (ImageButton) findViewById(R.id.log);
+        log.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogDialog();
+            }
+        });
     }
 
     private void showInfoDialog() {
@@ -105,6 +115,42 @@ public class Settings extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Games modes");
             builder.setMessage(getResources().getString(R.string.information_rules));
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
+            return builder.create();
+        }
+    }
+
+    private void showLogDialog() {
+
+        DialogFragment logDialog = new LogDialogInfo().newInstance();
+        logDialog.show(getFragmentManager(), "Log file");
+
+    }
+
+    public static class LogDialogInfo extends DialogFragment {
+        public static LogDialogInfo newInstance() {
+            return new LogDialogInfo();
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Log file");
+            File file = new File("sdcard/log.file");
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                byte[] data = new byte[(int) file.length()];
+                fileInputStream.read(data);
+                fileInputStream.close();
+                builder.setMessage(new String(data, "UTF-8"));
+            } catch (Exception e) {
+                builder.setMessage(null);
+            }
             builder.setCancelable(false);
             builder.setPositiveButton("OK",
                     new DialogInterface.OnClickListener() {
