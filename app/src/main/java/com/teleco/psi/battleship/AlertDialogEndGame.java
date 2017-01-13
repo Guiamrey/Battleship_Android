@@ -25,7 +25,6 @@ public class AlertDialogEndGame extends DialogFragment{
         builder.setPositiveButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        System.out.println("Exiting...");
                         getActivity().finish();
                     }
                 });
