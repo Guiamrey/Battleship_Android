@@ -14,6 +14,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -30,11 +31,11 @@ import com.google.gson.Gson;
 public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
     private static View[][] views = new View[10][10];
-    private int ship, colocados, casillas;
+    private int ship, colocados, casillas, numfilter;
     private final int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
     private int total_ships = 0;
     private TextView infoship;
-    private ImageView image;
+    private ImageView image, colorfilter[] = new ImageView[5];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,6 @@ public class NewGameActivity extends Activity {
                 resetBoard();
             }
         });
-
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
         final TableLayout table = createBoard();
         frameLayout.addView(table);
@@ -104,6 +104,7 @@ public class NewGameActivity extends Activity {
         ship = 0;
         colocados = 0;
         casillas = 0;
+        numfilter = 0;
         infoship.setText("");
     }
 
@@ -184,11 +185,10 @@ public class NewGameActivity extends Activity {
                     color = ((ColorDrawable) background).getColor();
                 }
                 if (color == Color.TRANSPARENT) {
-                    //matrix[i - 1][j - 1][0] = 1;
                     matrix[i - 1][j - 1][0] = ship;
                     v.setBackgroundColor(Color.BLACK);
                     colocados++;
-                    if (colocados == casillas) check_ship(i, j, v);
+                    if (colocados == casillas) check_ship(i-1, j-1);
                 } else {
                     matrix[i - 1][j - 1][0] = 0;
                     colocados--;
@@ -198,55 +198,58 @@ public class NewGameActivity extends Activity {
         });
     }
 
-    private void check_ship(int i, int j, final View v) {
-        boolean nobarco, bien;
+    private void check_ship(int i, int j) { //i: fila, j: columna (matrix[fila][colunma] i,j de 0 a 9
+        boolean barco, bien; // barco: true si el barco está bien colocado, false si no // bien: si hay el numero de casillas  que deberia tener el barco marcadas en la matriz es true
         boolean horizontal = false;
-        if ((matrix[i][j - 1][0] == ship) || (matrix[i - 2][j - 1][0] == ship)) {
-            horizontal = true;
-            nobarco = true;
-        } else if ((matrix[i - 1][j][0] == ship) || (matrix[i - 1][j - 2][0] == ship)) {
+        if ((matrix[i+1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
             horizontal = false;
-            nobarco = true;
-        } else nobarco = false;
-        if (nobarco) {
+            barco = true;
+        } else if ((matrix[i][j+1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+            horizontal = true;
+            barco = true;
+        } else barco = false;
+        if (barco) {
             int c = 0;
-            if (horizontal) { //horizontal
-                for (int k = 9; k >= 0; k--) {
-                    if (matrix[k][j - 1][0] == ship) {
-                        for (int x = k - casillas + 1; x <= k; x++) {
-                            if (matrix[x][j - 1][0] == ship) c++;
+            if (!horizontal) { //vertical
+                for (int k = 0; k <= 9; k++) {
+                    if (matrix[k][j][0] == ship) {
+                        for (int x = k + casillas - 1; x >= k; x--) { //x: ultima casilla donde debería haber barco, desde ahí contamos las casillas marcadas
+                            if (matrix[x][j][0] == ship) c++;
                         }
                         break;
                     }
                 }
-                bien = (c == casillas);
-            } else { //vertical
-                for (int k = 9; k >= 0; k--) {
-                    if (matrix[i - 1][k][0] == ship) {
-                        for (int x = k - casillas + 1; x <= k; x++) {
-                            if (matrix[i - 1][k][0] == ship) c++;
+            } else { //horizontal
+                for (int k = 0; k <= 9; k++) {
+                    if (matrix[i][k][0] == ship) {
+                        for (int x = k + casillas - 1; x >= k; x--) {
+                            if (matrix[i][x][0] == ship) c++;
                         }
                         break;
                     }
                 }
-                bien = (c == casillas);
             }
+            bien = (c == casillas);
         } else bien = false;
-        if (!nobarco || !bien) {
+        if (!barco || !bien) {
             AlertDialog alert = new AlertDialog.Builder(this)
                     .setMessage(R.string.noship)
                     .setCancelable(false)
                     .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
-                            colocados = 0;
                             for(int i = 0; i < 10; i++){
                                 for (int j = 0; j < 10; j++){
                                     if( matrix[i][j][0] == ship ){
                                         matrix[i][j][0] = 0;
-                                        v.setBackgroundResource(R.drawable.cell_shape);
+                                        views[i][j].setBackgroundResource(R.drawable.cell_shape);
                                     }
                                 }
                             }
+                            ship = 0;
+                            colocados = 0;
+                            casillas = 0;
+                            numfilter = 0;
+                            infoship.setText("");
                         }
                     })
                     .show();
@@ -256,6 +259,8 @@ public class NewGameActivity extends Activity {
             ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
             image.setColorFilter(filter);
             total_ships++;
+            colorfilter[numfilter] = image;
+            numfilter++;
             removeClickListenerViews();
         }
     }
@@ -301,6 +306,13 @@ public class NewGameActivity extends Activity {
                                 views[i][j].setBackgroundResource(R.drawable.cell_shape);
                             }
                         }
+                        for(int i = 0; i < numfilter; i++){
+                            colorfilter[i].clearColorFilter();
+                        }
+                        ship = 0;
+                        colocados = 0;
+                        casillas = 0;
+                        numfilter = 0;
                         infoship.setText("");
                     }
                 })
@@ -327,58 +339,5 @@ public class NewGameActivity extends Activity {
             return builder.create();
         }
     }
-    
-    /*private void onTouchListener(ImageView v) {
 
-        v.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //Recogemos las coordenadas del dedo
-                final int X = (int) event.getRawX();
-                final int Y = (int) event.getRawY();
-                //Dependiendo de la accion recogida..
-                switch (event.getAction() & MotionEvent.ACTION_MASK) {
-                    //Al tocar la pantalla
-                    case MotionEvent.ACTION_DOWN:
-                        move = false;
-                        //Recogemos los parametros de la imagen que hemo tocado
-                        RelativeLayout.LayoutParams Params = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        _xDelta = X - Params.leftMargin;
-                        _yDelta = Y - Params.topMargin;
-                        System.out.println(X + " " + Y + " / " + _xDelta + " " + _yDelta + " / " + Params.leftMargin + " " + Params.topMargin);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if(!move){
-                            if(Float.compare(v.getRotation(), (float) 0.0) < 0) {
-                                v.setRotation(v.getRotation() + 90);
-                            }else{
-                                v.setRotation(v.getRotation() - 90);
-                            }
-                        }
-                        //Al levantar el dedo simplemento mostramos un mensaje
-                        break;
-                    case MotionEvent.ACTION_POINTER_DOWN:
-                        //No hace falta utilizarlo
-                        break;
-                    case MotionEvent.ACTION_POINTER_UP:
-                        //No hace falta utilizarlo
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        move = true;
-                        //Al mover el dedo vamos actualizando los margenes de la imagen para crear efecto de arrastrado
-                        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) v.getLayoutParams();
-                        layoutParams.leftMargin = X - _xDelta;
-                        layoutParams.topMargin = Y - _yDelta;
-                        *//*int top = layoutParams.topMargin;
-                        int left = layoutParams.leftMargin;
-                        if ((left < 140) || (top < 678) || (top > 1438))*//*
-                        v.setLayoutParams(layoutParams);
-                        break;
-                }
-                //Se podría decir que 'dibujamos' la posición de la imagen en el marco.
-                v.invalidate();
-                return true;
-            }
-        });
-    }*/
 }
