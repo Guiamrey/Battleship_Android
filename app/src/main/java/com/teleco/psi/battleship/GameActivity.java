@@ -42,8 +42,9 @@ public class GameActivity extends Activity {
     private static final int SHIPS = 0;
     private static final int GAME_STATE = 1;
     private static final int PROBABILITY = 2;
-    private static final int TOUCHED = 1;
+    private static final int TOUCHED = 2;
     private static final int WATER = 1;
+    private static final int UNKNOWN = 0;
 
     ////
 
@@ -78,6 +79,12 @@ public class GameActivity extends Activity {
         shipsDownIA = 0;
         shipsDownHuman = 0;
         step = 1;
+        invertCounter = 0;
+        vertical = false;
+        horizontal = false;
+        lastHit = false;
+        orientation = 1;
+        pos = 1;
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -261,11 +268,11 @@ public class GameActivity extends Activity {
     public static boolean isAShipTogether(int from, int to, int line, int direction, int[][][] matrixAux){
         if (direction==0){ //Horizontal
             for (int column=from; column<=to; column++){
-                if (matrixAux[line][column][0] == 1) return false;
+                if (matrixAux[line][column][SHIPS] == 1) return false;
             }
         } else { //Vertical
             for (int row=from; row<=to; row++){
-                if (matrixAux[row][line][0] == 1) return false;
+                if (matrixAux[row][line][SHIPS] == 1) return false;
             }
         }
         return true;
@@ -386,7 +393,7 @@ public class GameActivity extends Activity {
         bestAction[ROW] = -1;
         for (int row = 0; row < MATRIX_SIZE ; row++) {
             for (int column = 0; column < MATRIX_SIZE ; column++) {
-                if (matrixHuman[row][column][GAME_STATE] == 0 && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]){
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]){
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -401,7 +408,7 @@ public class GameActivity extends Activity {
                 int column = rand.nextInt(MATRIX_SIZE);
                 int row = rand.nextInt(MATRIX_SIZE);
 
-                if(matrixHuman[row][column][GAME_STATE] == 0) {
+                if(matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -422,8 +429,8 @@ public class GameActivity extends Activity {
     private boolean hitOrMiss(int row, int column){
         final int X = row;
         final int Y = column;
-        if(matrixHuman[row][column][SHIPS]==1) {
-            matrixHuman[row][column][SHIPS] = 2; //tocado
+        if(matrixHuman[row][column][SHIPS] == 1) {
+            matrixHuman[row][column][GAME_STATE] = TOUCHED; //tocado
             System.out.println("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " TOCADO");
             hundidos++;
 
@@ -442,7 +449,7 @@ public class GameActivity extends Activity {
             return true;
         }
 
-        matrixHuman[row][column][GAME_STATE] = 1;    //agua
+        matrixHuman[row][column][GAME_STATE] = WATER;    //agua
         System.out.println("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " AGUA");
         wait.postDelayed(new Runnable() {
             public void run() {
@@ -564,26 +571,22 @@ public class GameActivity extends Activity {
             int row = Integer.parseInt(playsStr[ROW]);
             int column = Integer.parseInt(playsStr[COLUMN]);
 
-            if (matrixHuman[row][column][GAME_STATE] == 0 && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
+            if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
                 bestAction[ROW] = row;
                 bestAction[COLUMN] = column;
-                bestAction[VALUE] = matrixHuman[row][column][2];
+                bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
             }
         }
 
         hit = hitOrMiss(bestAction[ROW], bestAction[COLUMN]);
 
         if(hit){
-            /*
-            lastAction[0] = bestAction[0];
-            lastAction[1] = bestAction[1];
-            */
             if(bestAction[ROW] == lastAction [ROW]) { //si la fila donde hemos tocado, es la misma que la de la anterior jugada => horizontal
                 horizontal = true;
-                step = 3;
             }else{
                 vertical = true;
             }
+            step = 3;
         }
     }
 
@@ -594,7 +597,50 @@ public class GameActivity extends Activity {
      * @param column column where the IA knows that there is a boat there
      */
     private void shipFound(int row, int column){
-        boolean hit;
+        boolean hit = false;
+        int upDown = 0;
+        int movement = 0;
+
+        while (true) {
+            if (invertCounter == 2) {
+                shipDown();
+                break;
+            }
+
+            if(horizontal){
+                upDown = checkLimits(column - pos * orientation);
+            } else if(vertical){
+                upDown = checkLimits(row - pos * orientation);
+            }
+
+            if (upDown == orientation) {
+                changeDirection();
+                continue;
+            }
+
+            //asignamos nuestra jugada
+            if(horizontal){
+                movement = matrixHuman[row][column - pos * orientation][GAME_STATE];
+            } else if(vertical){
+                movement = matrixHuman[row - pos * orientation][column][GAME_STATE];
+            }
+
+            if(movement == UNKNOWN) { //si no se ha tirado, lo hacemos
+                if(horizontal) hit = hitOrMiss(row, column - pos * orientation);
+                else if(vertical) hit = hitOrMiss(row - pos * orientation, column);
+
+                if (hit) continueDirection();
+                else changeDirection();
+                break;
+            }else if (movement == WATER){ //si es agua, cambiamos de direccion y seguimos
+                changeDirection();
+                continue;
+            }else if (movement == TOUCHED) { //si hemos tocado, seguimos en esa direccion
+                pos++;
+                continue;
+            }
+        }
+/*
 
         if(horizontal) { //TODO Lo mismo... y traducir.
             while (true) {
@@ -609,17 +655,18 @@ public class GameActivity extends Activity {
                     continue;
                 }
 
-                if (matrixHuman[row][column - pos * orientation][1] == 0) {
+                if (matrixHuman[row][column - pos * orientation][GAME_STATE] == UNKNOWN) {
                     hit = hitOrMiss(row, column - pos * orientation);
-                } else {
+                    if (hit) continueDirection();
+                    else changeDirection();
+                    break;
+                } else if (matrixHuman[row][column - pos * orientation][GAME_STATE] == TOUCHED){ //solo seguir si esa casilla ha sido tocada
                     pos++;
                     continue;
+                }else if (matrixHuman[row][column - pos * orientation][GAME_STATE] == WATER) { // si es agua invertimos
+                    changeDirection();
+                    continue;
                 }
-
-                if (hit) continueDirection();
-                else changeDirection();
-
-                break;
             }
         }
         if(vertical) {
@@ -635,19 +682,21 @@ public class GameActivity extends Activity {
                     continue;
                 }
 
-                if (matrixHuman[row - pos * orientation][column][GAME_STATE] == 0) {
+                if (matrixHuman[row - pos * orientation][column][GAME_STATE] == UNKNOWN) {
                     hit = hitOrMiss(row - pos * orientation, column);
-                } else {
+                    if (hit) continueDirection();
+                    else changeDirection();
+                    break;
+                } else if (matrixHuman[row - pos * orientation][column][GAME_STATE] == TOUCHED){ //solo seguir si esa casilla ha sido tocada
                     pos++;
                     continue;
+                }else if (matrixHuman[row - pos * orientation][column][GAME_STATE] == WATER) { // si es agua invertimos
+                    changeDirection();
+                    continue;
                 }
-
-                if (hit) continueDirection();
-                else changeDirection();
-
-                break;
             }
         }
+        */
     }
 
     private void shipDown() {
@@ -656,6 +705,7 @@ public class GameActivity extends Activity {
         horizontal = false;
         invertCounter = 0;
         lastHit = false;
+        step = 1;
     }
 
     private void changeDirection(){
