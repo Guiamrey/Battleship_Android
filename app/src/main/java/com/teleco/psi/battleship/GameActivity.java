@@ -69,6 +69,7 @@ public class GameActivity extends Activity {
     private boolean humanTurn = false;
     private static int winner;
     private static final int NUMBER_SHIPS = 17;
+    private static int step = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class GameActivity extends Activity {
         setContentView(R.layout.game_activity);
         shipsDownIA = 0;
         shipsDownHuman = 0;
+        step = 1;
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -207,7 +209,6 @@ public class GameActivity extends Activity {
             from = rand.nextInt(6);
             to = from + 3;
 
-            shipOK = true;
             shipOK = isAShip(from, to, line, direction, matrixMachine);
             System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
@@ -557,8 +558,6 @@ public class GameActivity extends Activity {
     private void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
         boolean hit;
         int[] bestAction =  new int[3];
-        int nPosiblePlays = possiblePlays.size();
-        int nPlaysTested = 0;
 
         for (String possiblePlay : possiblePlays) {
             String[] playsStr = possiblePlay.split("-");
