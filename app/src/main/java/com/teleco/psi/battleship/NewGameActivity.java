@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,7 +50,7 @@ public class NewGameActivity extends Activity {
         startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences settings = getSharedPreferences("Matrix", 0);
+                SharedPreferences settings = getSharedPreferences("Matrix", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = settings.edit();
                 Gson gson = new Gson();
                 String json = gson.toJson(matrix);

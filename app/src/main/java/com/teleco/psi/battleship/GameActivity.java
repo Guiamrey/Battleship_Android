@@ -2,6 +2,7 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.os.WorkSource;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -59,6 +61,7 @@ public class GameActivity extends Activity {
     private boolean vertical = false;
     private boolean horizontal = false;
     private boolean lastHit = false;
+    private int row, column;
     private int pos = 1, orientation = 1;
     private int invertCounter =0 ;
     private int[] lastAction = new int[3];
@@ -72,7 +75,8 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
-
+        shipsDownIA = 0;
+        shipsDownHuman = 0;
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -201,7 +205,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(4);
+            from = rand.nextInt(6);
             to = from + 3;
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
@@ -219,7 +223,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(3);
+            from = rand.nextInt(7);
             to = from + 2;
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
@@ -239,7 +243,7 @@ public class GameActivity extends Activity {
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
-            from = rand.nextInt(2);
+            from = rand.nextInt(8);
             to = from + 1;
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
@@ -252,7 +256,7 @@ public class GameActivity extends Activity {
         }
     }
 
-    private static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+    public static boolean isAShipTogether(int from, int to, int line, int direction, int[][][] matrixAux){
         if (direction==0){ //Horizontal
             for (int column=from; column<=to; column++){
                 if (matrixAux[line][column][0] == 1) return false;
@@ -265,7 +269,72 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    private void startAlgorithm(){
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux){
+        if (direction==0){ //Horizontal
+            for (int i=from; i<=to; i++){
+                if (line > 0){
+                    if (matrixAux[line-1][i][0] == 1) return false;
+                }
+
+                if ((i != 0) && (i != 9)){
+
+                    if (line > 0){
+                        if (matrixAux[line-1][i-1][0] == 1) return false;
+                        if (matrixAux[line-1][i+1][0] == 1) return false;
+                    }
+
+                    if (matrixAux[line][i-1][0] == 1) return false;
+                    if (matrixAux[line][i+1][0] == 1) return false;
+
+                    if (line < 9){
+                        if (matrixAux[line+1][i-1][0] == 1) return false;
+                        if (matrixAux[line+1][i+1][0] == 1) return false;
+                    }
+
+                }
+
+                if (matrixAux[line][i][0] == 1) return false;
+
+                if (line < 9){
+                    if (matrixAux[line+1][i][0] == 1) return false;
+                }
+            }
+        } else { //Vertical
+            for (int i=from; i<=to; i++){
+                if (line > 0) {
+                    if (matrixAux[i][line-1][0] == 1) return false;
+                }
+
+                if (i != 0){
+
+                    if (line > 0){
+                        if (matrixAux[i-1][line-1][0] == 1) return false;
+                        if (matrixAux[i+1][line-1][0] == 1) return false;
+                    }
+
+                    if (matrixAux[i-1][line][0] == 1) return false;
+                    if (matrixAux[i+1][line][0] == 1) return false;
+
+                    if (line < 9){
+                        if (matrixAux[i-1][line+1][0] == 1) return false;
+                        if (matrixAux[i+1][line+1][0] == 1) return false;
+                    }
+
+                }
+
+                if (matrixAux[i][line][0] == 1) return false;
+
+                if (line < 9){
+                    if (matrixAux[i][line+1][0] == 1) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    public void startAlgorithm(){
         stopUserInteractions = true;
         while (IATurn){
             if( step == 1 ){
@@ -654,12 +723,19 @@ public class GameActivity extends Activity {
 */
     public void inicializeBase (){
         //centrales
-
+        matrixHuman[4][4][2] = 100;
+        matrixHuman[4][5][2] = 100;
+        matrixHuman[5][4][2] = 100;
+        matrixHuman[4][5][2] = 100;
         //rodeando las centrales
-        matrixHuman[3][4][2] = 9;
-        matrixHuman[3][5][2] = 9;
-        matrixHuman[6][4][2] = 9;
-        matrixHuman[6][5][2] = 9;
+        matrixHuman[4][3][2] = 90;
+        matrixHuman[4][6][2] = 90;
+        matrixHuman[5][3][2] = 90;
+        matrixHuman[5][6][2] = 90;
+        matrixHuman[3][4][2] = 90;
+        matrixHuman[3][5][2] = 90;
+        matrixHuman[6][4][2] = 90;
+        matrixHuman[6][5][2] = 90;
         //un nivel mas hacia afuera
         matrixHuman[3][3][2] = 82;
         matrixHuman[3][6][2] = 82;

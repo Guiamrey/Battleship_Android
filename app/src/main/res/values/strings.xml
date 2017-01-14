@@ -4,7 +4,8 @@
     <string name="options">Options</string>
     <string name="about">About</string>
     <string name="settings">Settings</string>
-    <string name="ok">Save</string>
+    <string name="save">Save</string>
+    <string name="no_save">Don´t save</string>
     <string name="language">Language</string>
     <string name="difficulty">Difficulty</string>
     <string name="rules">Rules</string>
@@ -35,10 +36,14 @@
         <item>English</item>
         <item>Español</item>
     </string-array>
+    <string-array name="language_options_reverso">
+        <item>Español</item>
+        <item>English</item>
+    </string-array>
     <string-array name="difficulty_options">
-        <item>Hard</item>
-        <item>Medium</item>
         <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
     </string-array>
     <string-array name="rules_options">
         <item>Classic</item>
@@ -58,4 +63,5 @@
     Game modes: \n\n1. Classic\nEach player can shot one square at time. Turn changes unless the player hit a ship. The player with ship still afloat.
     \n\n2. Supershots\nSame game mode as Classic, with the difference that ships sink with a single shot.
     </string>
+    <string name="back_pressed">Back key pressed. Are you sure you don´t want to save the settings?</string>
 </resources>
