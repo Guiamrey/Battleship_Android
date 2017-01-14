@@ -187,7 +187,7 @@ public class GameActivity extends Activity {
         });
     }
 
-    private static void setMatrixMachine(){
+    private void setMatrixMachine(){
         Random rand = new Random();
         boolean shipOK = false;
 
@@ -361,7 +361,7 @@ public class GameActivity extends Activity {
     private void printMatrix(){
         log("\\   A    B    C    D    E    F    G    H    I    J");
         for (int row = 0; row < MATRIX_SIZE ; row++) {
-            log(row+1);
+            log(Integer.toString(row+1));
             for (int column = 0; column < MATRIX_SIZE ; column++) {
                 if(row == LAST_POS && column == FIRST_POS) log(" "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
                 else log("  "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
