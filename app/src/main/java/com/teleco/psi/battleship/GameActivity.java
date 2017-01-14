@@ -69,7 +69,6 @@ public class GameActivity extends Activity {
     private boolean humanTurn = false;
     private static int winner;
     private static final int NUMBER_SHIPS = 17;
-    private int step = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,12 +207,14 @@ public class GameActivity extends Activity {
             from = rand.nextInt(6);
             to = from + 3;
 
+            shipOK = true;
             shipOK = isAShip(from, to, line, direction, matrixMachine);
             System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
             }
+
         }
 
         int shipThree = 0;
@@ -332,7 +333,6 @@ public class GameActivity extends Activity {
 
         return true;
     }
-
 
     public void startAlgorithm(){
         stopUserInteractions = true;
@@ -557,6 +557,8 @@ public class GameActivity extends Activity {
     private void checkProbablyPos(List<String> possiblePlays, int[] lastAction){
         boolean hit;
         int[] bestAction =  new int[3];
+        int nPosiblePlays = possiblePlays.size();
+        int nPlaysTested = 0;
 
         for (String possiblePlay : possiblePlays) {
             String[] playsStr = possiblePlay.split("-");
