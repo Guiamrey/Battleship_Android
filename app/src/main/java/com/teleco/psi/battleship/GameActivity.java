@@ -600,7 +600,9 @@ public class GameActivity extends Activity {
         int upDown = 0;
         int movement = 0;
 
-        while (true) {
+        boolean keepOnTrying = true;
+
+        while (keepOnTrying) {
             if (invertCounter == 2) {
                 shipDown();
                 break;
@@ -624,6 +626,31 @@ public class GameActivity extends Activity {
                 movement = matrixHuman[row - pos * orientation][column][GAME_STATE];
             }
 
+
+            switch (movement){
+
+                case UNKNOWN: { //si no se ha tirado, lo hacemos
+                    if(horizontal) hit = hitOrMiss(row, column - pos * orientation);
+                    else if(vertical) hit = hitOrMiss(row - pos * orientation, column);
+
+                    if (hit) continueDirection();
+                    else changeDirection();
+                    keepOnTrying = false;
+                    break;
+                }
+
+                case WATER: { //si es agua, cambiamos de direccion y seguimos
+                    changeDirection();
+                    break;
+                }
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    pos++;
+                    break;
+                }
+            }
+
+            /*
             if(movement == UNKNOWN) { //si no se ha tirado, lo hacemos
                 if(horizontal) hit = hitOrMiss(row, column - pos * orientation);
                 else if(vertical) hit = hitOrMiss(row - pos * orientation, column);
@@ -637,7 +664,7 @@ public class GameActivity extends Activity {
             }else if (movement == TOUCHED) { //si hemos tocado, seguimos en esa direccion
                 pos++;
                 continue;
-            }
+            }*/
         }
 /*
 
