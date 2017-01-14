@@ -187,7 +187,7 @@ public class GameActivity extends Activity {
         });
     }
 
-    private static void setMatrixMachine(){
+    private void setMatrixMachine(){
         Random rand = new Random();
         boolean shipOK = false;
 
@@ -198,7 +198,7 @@ public class GameActivity extends Activity {
         int from = rand.nextInt(5);
         int to = from + 4;
 
-        System.out.println("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        log("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
         setShip(from, to, line, direction, matrixMachine);
 
         //Barco de 4
@@ -210,7 +210,7 @@ public class GameActivity extends Activity {
             to = from + 3;
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
-            System.out.println("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -230,7 +230,7 @@ public class GameActivity extends Activity {
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            System.out.println("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -250,7 +250,7 @@ public class GameActivity extends Activity {
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            System.out.println("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -359,15 +359,14 @@ public class GameActivity extends Activity {
      * It only prints the boats, and the state of the box.
      */
     private void printMatrix(){
-        System.out.println("\\   A    B    C    D    E    F    G    H    I    J");
+        log("\\   A    B    C    D    E    F    G    H    I    J");
         for (int row = 0; row < MATRIX_SIZE ; row++) {
-            System.out.print(row+1);
+            log(Integer.toString(row+1));
             for (int column = 0; column < MATRIX_SIZE ; column++) {
-                if(row == LAST_POS && column == FIRST_POS) System.out.print(" "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
-
-                else System.out.print("  "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
+                if(row == LAST_POS && column == FIRST_POS) log(" "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
+                else log("  "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
             }
-            System.out.print("\n");
+            log("\n");
         }
     }
 
@@ -424,7 +423,7 @@ public class GameActivity extends Activity {
         final int Y = column;
         if(matrixHuman[row][column][SHIPS]==1) {
             matrixHuman[row][column][SHIPS] = 2; //tocado
-            System.out.println("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " TOCADO");
+            log("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " TOCADO");
             hundidos++;
 
             wait.postDelayed(new Runnable() {
@@ -941,5 +940,24 @@ public class GameActivity extends Activity {
             }
         }
         return true;
+    }
+
+    public void log(String text) {
+        File logFile = new File("sdcard/log.file");
+        if (!logFile.exists()) {
+            try {
+                logFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
