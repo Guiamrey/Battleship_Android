@@ -2,6 +2,7 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,11 +10,14 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.os.WorkSource;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -63,7 +67,7 @@ public class GameActivity extends Activity {
     private boolean lastHit = false;
     private int row, column;
     private int pos = 1, orientation = 1;
-    private int invertCounter =0 ;
+    private int invertCounter = 0 ;
     private float[] lastAction = new float[3];
     private boolean IATurn = false;
     private boolean humanTurn = false;
@@ -89,7 +93,7 @@ public class GameActivity extends Activity {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (which){
+                switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         Intent start_game = new Intent(getApplicationContext(), NewGameActivity.class);
                         startActivity(start_game);
@@ -101,11 +105,11 @@ public class GameActivity extends Activity {
             }
         };
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+        builder.setTitle(R.string.resetinggame).setMessage(R.string.resetgamesure).setPositiveButton(R.string.yes, dialogClickListener)
                 .setNegativeButton("No", dialogClickListener);
 
         Button startGameButton = (Button) findViewById(R.id.newGameButton);
-        startGameButton.setOnClickListener(new View.OnClickListener(){
+        startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 builder.show();
@@ -136,14 +140,14 @@ public class GameActivity extends Activity {
         inicializeBase();
     }
 
-    private TableLayout createBoard(boolean clickable){
+    private TableLayout createBoard(boolean clickable) {
         String[] AJ = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-        String[] num = {"\\","1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        String[] num = {"\\", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
 
         TableLayout tableLayout = new TableLayout(this);
-        tableLayout.setPadding(0,15,0,0);
+        tableLayout.setPadding(0, 15, 0, 0);
         TableLayout.LayoutParams layoutParams = new TableLayout.LayoutParams();
-        layoutParams.setMargins(100,0,100,0);
+        layoutParams.setMargins(100, 0, 100, 0);
         layoutParams.height = 260;
         for (int i = 0; i <= MATRIX_SIZE; i++) {
             TableRow row = new TableRow(this);
@@ -156,10 +160,11 @@ public class GameActivity extends Activity {
                     field.setText(num[j]);
                 } else if (j == 0) field.setText(AJ[i - 1]);
                 field.setTextSize(15);
-                field.setPadding(8,6,0,0);
+                field.setPadding(8, 6, 0, 0);
                 field.setGravity(Gravity.CENTER);
                 if (clickable) {
                     if (!(i == 0 || j == 0)) {
+                        viewsMachine[i - 1][j - 1] = field;
                         addClickListener(field, i, j);
                     }
                 }
@@ -171,18 +176,23 @@ public class GameActivity extends Activity {
 
     }
 
-    private void addClickListener(final TextView view, final int row, final int column){
+    private void addClickListener(final TextView view, final int row, final int column) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (matrixMachine[row - 1][column - 1][SHIPS] == 1) {
-                    view.setBackgroundColor(Color.RED);
-                    shipsDownHuman++;
+                if (matrixMachine[row - 1][column - 1][SHIPS] != 0) {
+                    if(supershots){
+                        supershot(matrixMachine[row - 1][column - 1][SHIPS], false);
+                    }else {
+                        view.setBackgroundColor(Color.RED);
+                        shipsDownHuman++;
+                    }
                     checkFinalGame();
                     return;
                 } else {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
+                    view.setOnClickListener(null);
                 }
                 IATurn = true;
                 humanTurn = false;
@@ -192,7 +202,32 @@ public class GameActivity extends Activity {
         });
     }
 
-    private void setMatrixMachine(){
+    private void supershot(int ship, boolean human) {
+        if(human) {
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixHuman[fila][columna][SHIPS] == ship) {
+                        matrixHuman[fila][columna][GAME_STATE] = TOUCHED;
+                        viewsHuman[fila][columna].setBackgroundColor(Color.RED);
+                        shipsDownIA++;
+                    }
+                }
+            }
+        }else{
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixMachine[fila][columna][SHIPS] == ship) {
+                        matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
+                        viewsMachine[fila][columna].setBackgroundColor(Color.RED);
+                        shipsDownHuman++;
+			            viewsMachine[fila][columna].setOnClickListener(null);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setMatrixMachine() {
         Random rand = new Random();
         boolean shipOK = false;
 
@@ -203,11 +238,14 @@ public class GameActivity extends Activity {
         int from = rand.nextInt(5);
         int to = from + 4;
 
-        log("SHIP 5 - true: Line: " + (line+1)  + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-        setShip(from, to, line, direction, matrixMachine);
+        int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
+
+        log("SHIP 5 - true: Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+        setShip(from, to, line, direction, matrixMachine, CASILLAS5);
 
         //Barco de 4
-        while (!shipOK){
+
+        while (!shipOK) {
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
 
@@ -215,7 +253,7 @@ public class GameActivity extends Activity {
             to = from + 3;
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
-            log("SHIP 4 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 4 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
                 setShip(from, to, line, direction, matrixMachine);
@@ -235,17 +273,18 @@ public class GameActivity extends Activity {
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            log("SHIP 3 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 3 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine);
+                setShip(from, to, line, direction, matrixMachine, type);
                 shipThree++;
+                type = CASILLAS3_2;
             }
         }
 
         shipOK = false;
 
-        while (!shipOK){
+        while (!shipOK) {
 
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
@@ -255,84 +294,84 @@ public class GameActivity extends Activity {
 
             shipOK = isAShip(from, to, line, direction, matrixMachine);
 
-            log("SHIP 2 - " + shipOK + ": Line: " + (line+1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+            log("SHIP 2 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine);
+                setShip(from, to, line, direction, matrixMachine, CASILLAS2);
             }
         }
     }
 
-    public static boolean isAShipTogether(int from, int to, int line, int direction, float[][][] matrixAux){
-        if (direction==0){ //Horizontal
-            for (int column=from; column<=to; column++){
-                if (matrixAux[line][column][SHIPS] == 1) return false;
+    public static boolean isAShipTogether(int from, int to, int line, int direction, int[][][] matrixAux) {
+        if (direction == 0) { //Horizontal
+            for (int column = from; column <= to; column++) {
+                if (matrixAux[line][column][SHIPS] != 0) return false;
             }
         } else { //Vertical
-            for (int row=from; row<=to; row++){
-                if (matrixAux[row][line][SHIPS] == 1) return false;
+            for (int row = from; row <= to; row++) {
+                if (matrixAux[row][line][SHIPS] != 0) return false;
             }
         }
         return true;
     }
 
-    public static boolean isAShip(int from, int to, int line, int direction, float[][][] matrixAux){
-        if (direction==0){ //Horizontal
-            for (int i=from; i<=to; i++){
-                if (line > 0){
-                    if (matrixAux[line-1][i][0] == 1) return false;
-                }
-
-                if ((i != 0) && (i != 9)){
-
-                    if (line > 0){
-                        if (matrixAux[line-1][i-1][0] == 1) return false;
-                        if (matrixAux[line-1][i+1][0] == 1) return false;
-                    }
-
-                    if (matrixAux[line][i-1][0] == 1) return false;
-                    if (matrixAux[line][i+1][0] == 1) return false;
-
-                    if (line < 9){
-                        if (matrixAux[line+1][i-1][0] == 1) return false;
-                        if (matrixAux[line+1][i+1][0] == 1) return false;
-                    }
-
-                }
-
-                if (matrixAux[line][i][0] == 1) return false;
-
-                if (line < 9){
-                    if (matrixAux[line+1][i][0] == 1) return false;
-                }
-            }
-        } else { //Vertical
-            for (int i=from; i<=to; i++){
+    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux) {
+        if (direction == 0) { //Horizontal
+            for (int i = from; i <= to; i++) {
                 if (line > 0) {
-                    if (matrixAux[i][line-1][0] == 1) return false;
+                    if (matrixAux[line - 1][i][0] != 0) return false;
                 }
 
-                if (i != 0){
+                if ((i != 0) && (i != 9)) {
 
-                    if (line > 0){
-                        if (matrixAux[i-1][line-1][0] == 1) return false;
-                        if (matrixAux[i+1][line-1][0] == 1) return false;
+                    if (line > 0) {
+                        if (matrixAux[line - 1][i - 1][0] != 0) return false;
+                        if (matrixAux[line - 1][i + 1][0] != 0) return false;
                     }
 
-                    if (matrixAux[i-1][line][0] == 1) return false;
-                    if (matrixAux[i+1][line][0] == 1) return false;
+                    if (matrixAux[line][i - 1][0] != 0) return false;
+                    if (matrixAux[line][i + 1][0] != 0) return false;
 
-                    if (line < 9){
-                        if (matrixAux[i-1][line+1][0] == 1) return false;
-                        if (matrixAux[i+1][line+1][0] == 1) return false;
+                    if (line < 9) {
+                        if (matrixAux[line + 1][i - 1][0] != 0) return false;
+                        if (matrixAux[line + 1][i + 1][0] != 0) return false;
                     }
 
                 }
 
-                if (matrixAux[i][line][0] == 1) return false;
+                if (matrixAux[line][i][0] != 0) return false;
 
-                if (line < 9){
-                    if (matrixAux[i][line+1][0] == 1) return false;
+                if (line < 9) {
+                    if (matrixAux[line + 1][i][0] != 0) return false;
+                }
+            }
+        } else { //Vertical
+            for (int i = from; i <= to; i++) {
+                if (line > 0) {
+                    if (matrixAux[i][line - 1][0] != 0) return false;
+                }
+
+                if (i != 0) {
+
+                    if (line > 0) {
+                        if (matrixAux[i - 1][line - 1][0] != 0) return false;
+                        if (matrixAux[i + 1][line - 1][0] != 0) return false;
+                    }
+
+                    if (matrixAux[i - 1][line][0] != 0) return false;
+                    if (matrixAux[i + 1][line][0] != 0) return false;
+
+                    if (line < 9) {
+                        if (matrixAux[i - 1][line + 1][0] != 0) return false;
+                        if (matrixAux[i + 1][line + 1][0] != 0) return false;
+                    }
+
+                }
+
+                if (matrixAux[i][line][0] != 0) return false;
+
+                if (line < 9) {
+                    if (matrixAux[i][line + 1][0] != 0) return false;
                 }
             }
         }
@@ -340,19 +379,21 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    public void startAlgorithm(){
+    public void startAlgorithm() {
         stopUserInteractions = true;
-        while (IATurn){
-            if( step == 1 ){
-                lastAction =  choosePlay();
-                lastHit = hitOrMiss((int)lastAction[ROW], (int)lastAction[COLUMN]);
+        while (IATurn) {
+            if (step == 1) {
+                lastAction = choosePlay();
+                lastHit = hitOrMiss((int) lastAction[ROW], (int) lastAction[COLUMN]);
 
                 if (lastHit) {
                     step = 2;
                 }
-            }else if(step == 2){
+            } else if(supershots) {
+                step = 1;
+            } else if (step == 2) {
                 bestAfterHit(lastAction);
-            }else if(step == 3){
+            } else if (step == 3) {
                 shipFound((int) lastAction[ROW], (int) lastAction[COLUMN]);
             }
         }
@@ -363,13 +404,13 @@ public class GameActivity extends Activity {
      * This function prints the matrix in console.
      * It only prints the boats, and the state of the box.
      */
-    private void printMatrix(){
+    private void printMatrix() {
         log("\\   A    B    C    D    E    F    G    H    I    J");
-        for (int row = 0; row < MATRIX_SIZE ; row++) {
-            log(Integer.toString(row+1));
-            for (int column = 0; column < MATRIX_SIZE ; column++) {
-                if(row == LAST_POS && column == FIRST_POS) log(" "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
-                else log("  "+matrixHuman[row][column][SHIPS]+"/"+matrixHuman[row][column][GAME_STATE]);
+        for (int row = 0; row < MATRIX_SIZE; row++) {
+            log(Integer.toString(row + 1));
+            for (int column = 0; column < MATRIX_SIZE; column++) {
+                if(row == LAST_POS && column == FIRST_POS) log(" "+matrixHuman[row][column][SHIPS] + "/" + matrixHuman[row][column][GAME_STATE]);
+                else log("  " + matrixHuman[row][column][SHIPS] + "/" + matrixHuman[row][column][GAME_STATE]);
             }
             log("\n");
         }
@@ -382,12 +423,12 @@ public class GameActivity extends Activity {
      *
      * @return bestAction [3] bestAction[0]  row, bestAction[1]  column, bestAction[2]  probability of the shot.
      */
-    private float[] choosePlay(){
+    private float[] choosePlay() {
         float[] bestAction = new float[3];
         bestAction[ROW] = -1;
-        for (int row = 0; row < MATRIX_SIZE ; row++) {
-            for (int column = 0; column < MATRIX_SIZE ; column++) {
-                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]){
+        for (int row = 0; row < MATRIX_SIZE; row++) {
+            for (int column = 0; column < MATRIX_SIZE; column++) {
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -395,14 +436,14 @@ public class GameActivity extends Activity {
             }
         }
 
-        if(bestAction[ROW] == -1) {
+        if (bestAction[ROW] == -1) {
             Random rand = new Random();
 
-            while(true) {
+            while (true) {
                 int column = rand.nextInt(MATRIX_SIZE);
                 int row = rand.nextInt(MATRIX_SIZE);
 
-                if(matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -416,11 +457,11 @@ public class GameActivity extends Activity {
     /**
      * This function check if the shot is success or not
      *
-     * @param row row of the shot
+     * @param row    row of the shot
      * @param column column of the shot
      * @return boolean which indicates hit or not.
      */
-    private boolean hitOrMiss(int row, int column){
+    private boolean hitOrMiss(int row, int column) {
         for (int i = 0; i < MATRIX_SIZE ; i++) {
             for (int j = 0; column < MATRIX_SIZE ; j++) {
                 if(i == LAST_POS && j == FIRST_POS) System.out.println(matrixHuman[i][j][PROBABILITY]);
@@ -431,28 +472,27 @@ public class GameActivity extends Activity {
 
         final int X = row;
         final int Y = column;
-        if(matrixHuman[row][column][SHIPS] == 1) {
-            matrixHuman[row][column][GAME_STATE] = TOUCHED; //tocado
-            log("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " TOCADO");
+        if (matrixHuman[row][column][SHIPS] != 0) {
+            if(supershots){
+                supershot(matrixHuman[row][column][SHIPS], true);
+            }else {
+                matrixHuman[row][column][GAME_STATE] = TOUCHED; //tocado
+                log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " TOCADO");
 
-            wait.postDelayed(new Runnable() {
-                public void run() {
-                    drawHitOrMiss(X, Y, true);
-                }
-            }, 2000);
+                wait.postDelayed(new Runnable() {
+                    public void run() {
+                        drawHitOrMiss(X, Y, true);
+                    }
+                }, 2000);
 
-            if(IATurn){
                 shipsDownIA++;
-            }else{
-                shipsDownHuman++;
             }
-            matrixHuman = updateMatrixValues(matrixHuman, row, column, true);
             checkFinalGame();
             return true;
         }
 
         matrixHuman[row][column][GAME_STATE] = WATER;    //agua
-        log("JUGADA: fila  " + (row+1) + " columna  " + (column+1) + " AGUA");
+        log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " AGUA");
 
         wait.postDelayed(new Runnable() {
             public void run() {
@@ -471,8 +511,8 @@ public class GameActivity extends Activity {
 
     private void drawHitOrMiss(int row, int column, boolean hit) {
         TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
-        TableRow rowTable = (TableRow) board.getChildAt(row+1);
-        TextView field = (TextView) rowTable.getChildAt(column+1);
+        TableRow rowTable = (TableRow) board.getChildAt(row + 1);
+        TextView field = (TextView) rowTable.getChildAt(column + 1);
         if (hit)
             field.setBackgroundColor(Color.RED);
         else
@@ -481,20 +521,22 @@ public class GameActivity extends Activity {
 
     /**
      * This function put the boats in the matrix
-     * @param from where the boat starts
-     * @param to where the boat finish
-     * @param line the line where the boat is
-     * @param direction the horientation of the boat, vertical (1) or horizontal (0)
+     *
+     * @param from        where the boat starts
+     * @param to          where the boat finish
+     * @param line        the line where the boat is
+     * @param direction   the horientation of the boat, vertical (1) or horizontal (0)
      * @param matrixHuman the board game
+     * @param type        the number to identify each ship separately
      */
     private static void setShip(int from, int to, int line, int direction, float[][][] matrixHuman){
-        if (direction == HORIZONTAL){ //Horizontal
-            for (int column=from; column<=to; column++){
-                matrixHuman[line][column][SHIPS] = 1;
+        if (direction == HORIZONTAL) { //Horizontal
+            for (int column = from; column <= to; column++) {
+                matrixHuman[line][column][SHIPS] = type;
             }
         } else { //Vertical
-            for (int row=from; row<=to; row++){
-                matrixHuman[row][line][SHIPS] = 1;
+            for (int row = from; row <= to; row++) {
+                matrixHuman[row][line][SHIPS] = type;
             }
         }
     }
@@ -506,14 +548,14 @@ public class GameActivity extends Activity {
      * @param lastAction array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      * @return A list with the possible plays.
      */
-    private List<String> findArround(float[] lastAction){
+    private List<String> findArround(float[] lastAction) {
         List<String> possiblePlays = new ArrayList<>();
 
-        if(lastAction[ROW] == LAST_POS){  // buscar hacia arriba o lados
-            if(lastAction[COLUMN] == FIRST_POS) { //hacia arriba o derecha
+        if (lastAction[ROW] == LAST_POS) {  // buscar hacia arriba o lados
+            if (lastAction[COLUMN] == FIRST_POS) { //hacia arriba o derecha
                 possiblePlays.add("9-1");
                 possiblePlays.add("8-0");
-            } else if(lastAction[COLUMN] == LAST_POS){ //hacia arriba o izquierda
+            } else if (lastAction[COLUMN] == LAST_POS) { //hacia arriba o izquierda
                 possiblePlays.add("8-9");
                 possiblePlays.add("9-8");
             } else { // buscar mejor jugada proxima a ese barco
@@ -521,31 +563,31 @@ public class GameActivity extends Activity {
                 possiblePlays.add("9-" + (lastAction[COLUMN] + 1));
                 possiblePlays.add("8-" + (lastAction[COLUMN]));
             }
-        }else if(lastAction[ROW]== FIRST_POS) { // hacia abajo o los lados
-            if(lastAction[COLUMN] == FIRST_POS) { // hacia abajo o derecha
+        } else if (lastAction[ROW] == FIRST_POS) { // hacia abajo o los lados
+            if (lastAction[COLUMN] == FIRST_POS) { // hacia abajo o derecha
                 possiblePlays.add("0-1");
                 possiblePlays.add("1-0");
-            } else if(lastAction[COLUMN] == LAST_POS){ //hacia abajo o izquierda
+            } else if (lastAction[COLUMN] == LAST_POS) { //hacia abajo o izquierda
                 possiblePlays.add("0-8");
                 possiblePlays.add("1-9");
             } else { // buscar mejor jugada proxima a ese barco
-                possiblePlays.add("0-"+ (lastAction[COLUMN] - 1));
-                possiblePlays.add("0-"+ (lastAction[COLUMN] + 1));
-                possiblePlays.add("1-"+ lastAction[COLUMN]);
+                possiblePlays.add("0-" + (lastAction[COLUMN] - 1));
+                possiblePlays.add("0-" + (lastAction[COLUMN] + 1));
+                possiblePlays.add("1-" + lastAction[COLUMN]);
             }
-        } else if(lastAction[COLUMN]== FIRST_POS){
+        } else if (lastAction[COLUMN] == FIRST_POS) {
             possiblePlays.add(lastAction[ROW] + "-" + (lastAction[COLUMN] + 1));
-            possiblePlays.add((lastAction[ROW]+1) + "-" + lastAction[COLUMN]);
-            possiblePlays.add((lastAction[ROW]-1) + "-" + lastAction[COLUMN]);
-        }else if (lastAction[COLUMN] == LAST_POS){
+            possiblePlays.add((lastAction[ROW] + 1) + "-" + lastAction[COLUMN]);
+            possiblePlays.add((lastAction[ROW] - 1) + "-" + lastAction[COLUMN]);
+        } else if (lastAction[COLUMN] == LAST_POS) {
             possiblePlays.add(lastAction[ROW] + "-" + (lastAction[COLUMN] - 1));
-            possiblePlays.add((lastAction[ROW]+1) + "-" + lastAction[COLUMN]);
-            possiblePlays.add((lastAction[ROW]-1) + "-" + lastAction[COLUMN]);
-        }else{
-            possiblePlays.add((lastAction[ROW]) + "-" + (lastAction[COLUMN]+1));
-            possiblePlays.add((lastAction[ROW]) + "-" + (lastAction[COLUMN]-1));
-            possiblePlays.add((lastAction[ROW]+1) + "-" + lastAction[COLUMN]);
-            possiblePlays.add((lastAction[ROW]-1) + "-" + lastAction[COLUMN]);
+            possiblePlays.add((lastAction[ROW] + 1) + "-" + lastAction[COLUMN]);
+            possiblePlays.add((lastAction[ROW] - 1) + "-" + lastAction[COLUMN]);
+        } else {
+            possiblePlays.add((lastAction[ROW]) + "-" + (lastAction[COLUMN] + 1));
+            possiblePlays.add((lastAction[ROW]) + "-" + (lastAction[COLUMN] - 1));
+            possiblePlays.add((lastAction[ROW] + 1) + "-" + lastAction[COLUMN]);
+            possiblePlays.add((lastAction[ROW] - 1) + "-" + lastAction[COLUMN]);
         }
         return possiblePlays;
     }
@@ -555,7 +597,7 @@ public class GameActivity extends Activity {
      * the rest of the ship.
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
-    private void bestAfterHit(float[] lastAction){
+    private void bestAfterHit(float[] lastAction) {
         List<String> possiblePlays = findArround(lastAction);
         checkProbablyPos(possiblePlays, lastAction);
     }
@@ -564,7 +606,7 @@ public class GameActivity extends Activity {
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
      * @param possiblePlays List with the possible plays where the boat can be
-     * @param lastAction array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
+     * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
     private void checkProbablyPos(List<String> possiblePlays, float[] lastAction){
         boolean hit;
@@ -597,23 +639,25 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
-     * @param row row where the IA knows that there is a boat there
+     * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
-    private void shipFound(int row, int column){
+    private void shipFound(int row, int column) {
         boolean hit = false;
         int upDown = 0;
         int movement = 0;
 
-        while (true) {
+        boolean keepOnTrying = true;
+
+        while (keepOnTrying) {
             if (invertCounter == 2) {
                 shipDown();
                 break;
             }
 
-            if(horizontal){
+            if (horizontal) {
                 upDown = checkLimits(column - pos * orientation);
-            } else if(vertical){
+            } else if (vertical) {
                 upDown = checkLimits(row - pos * orientation);
             }
 
@@ -623,25 +667,34 @@ public class GameActivity extends Activity {
             }
 
             //asignamos nuestra jugada
-            if(horizontal){
+            if (horizontal) {
                 movement = (int) matrixHuman[row][column - pos * orientation][GAME_STATE];
-            } else if(vertical){
+            } else if (vertical) {
                 movement = (int) matrixHuman[row - pos * orientation][column][GAME_STATE];
             }
 
-            if(movement == UNKNOWN) { //si no se ha tirado, lo hacemos
-                if(horizontal) hit = hitOrMiss(row, column - pos * orientation);
-                else if(vertical) hit = hitOrMiss(row - pos * orientation, column);
 
-                if (hit) continueDirection();
-                else changeDirection();
-                break;
-            }else if (movement == WATER){ //si es agua, cambiamos de direccion y seguimos
-                changeDirection();
-                continue;
-            }else if (movement == TOUCHED) { //si hemos tocado, seguimos en esa direccion
-                pos++;
-                continue;
+            switch (movement) {
+
+                case UNKNOWN: { //si no se ha tirado, lo hacemos
+                    if (horizontal) hit = hitOrMiss(row, column - pos * orientation);
+                    else if (vertical) hit = hitOrMiss(row - pos * orientation, column);
+
+                    if (hit) continueDirection();
+                    else changeDirection();
+                    keepOnTrying = false;
+                    break;
+                }
+
+                case WATER: { //si es agua, cambiamos de direccion y seguimos
+                    changeDirection();
+                    break;
+                }
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    pos++;
+                    break;
+                }
             }
         }
     }
@@ -655,33 +708,34 @@ public class GameActivity extends Activity {
         step = 1;
     }
 
-    private void changeDirection(){
+    private void changeDirection() {
         pos = 1;
         orientation = orientation * (-1);
         invertCounter++;
     }
 
-    private void continueDirection(){
+    private void continueDirection() {
         lastHit = true;
         pos++;
     }
 
     /**
      * This function check the limits of the board.
+     *
      * @param position index of the board
      * @return 0 for the position is good, 1, if your position is under the minimum index, and -1 if your position is over the maximun index
      */
-    private int checkLimits(int position){
-        if(position < FIRST_POS){
+    private int checkLimits(int position) {
+        if (position < FIRST_POS) {
             return 1;
-        }else if(position > LAST_POS){
+        } else if (position > LAST_POS) {
             return -1;
-        }else{
+        } else {
             return 0;
         }
     }
 
-    static int getWinner(){
+    static int getWinner() {
         return winner;
     }
 
@@ -689,17 +743,16 @@ public class GameActivity extends Activity {
         return stopUserInteractions || super.dispatchTouchEvent(ev);
     }
 
-    private void checkFinalGame(){
-        if(shipsDownHuman == NUMBER_SHIPS){
+    private void checkFinalGame() {
+        if (shipsDownHuman == NUMBER_SHIPS) {
             winner = 1;
             DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
             endGameDialog.show(getFragmentManager(), "Alert");
-        } else if(shipsDownIA == NUMBER_SHIPS){
+        } else if (shipsDownIA == NUMBER_SHIPS) {
             winner = 2;
             DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
             endGameDialog.show(getFragmentManager(), "Alert");
         }
-
         totalGames++;
     }
 
@@ -712,14 +765,14 @@ public class GameActivity extends Activity {
     }
 
     public static void learningDefense(){
-        for (int row = 0; row < MATRIX_SIZE; row++) {
-            for (int column  = 0; column < MATRIX_SIZE; column++) {
-                matrixBaseDefense[row][column] = ((totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1));
+        for (int row = 0; row < 10; row++) {
+            for (int column  = 0; column < 10; column++) {
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
             }
         }
     }
 
-    public void inicializeBase (){
+    public void inicializeBase() {
         //centrales
         matrixHuman[4][4][2] = 100;
         matrixHuman[4][5][2] = 100;
@@ -911,30 +964,30 @@ public class GameActivity extends Activity {
 */
     private List<String> placesWithCorrectSize(int[] bestPlace, int sizeBoat){ //el menos deberia quitarse si los barcos no pueden estar juntos
         List<String> possiblePlays = new ArrayList<>();
-        if((bestPlace[0] + sizeBoat-1) < 10){
+        if((bestPlace[0] + sizeBoat - 1) < 10){
             possiblePlays.add((bestPlace[0] + 1 ) + "-" + bestPlace[1]);
         }
-        if((bestPlace[0] - sizeBoat-1) >= 0){
+        if((bestPlace[0] - sizeBoat - 1) >= 0){
             possiblePlays.add((bestPlace[0] - 1 ) + "-" + bestPlace[1]);
         }
-        if((bestPlace[1] + sizeBoat-1) < 10){
+        if((bestPlace[1] + sizeBoat - 1) < 10){
             possiblePlays.add(bestPlace[0] + "-" + (bestPlace[1] + 1));
         }
-        if((bestPlace[1] - sizeBoat-1) >= 0){
+        if((bestPlace[1] - sizeBoat - 1) >= 0){
             possiblePlays.add(bestPlace[0] + "-" + (bestPlace[1] - 1));
         }
         return possiblePlays;
     }
 
-    private static boolean isAShip(int from, int to, int line, int direction){
+    private static boolean isAShip(int from, int to, int line, int direction) {
 
-        if (direction == HORIZONTAL){ //Horizontal
-            for (int column = from; column <= to; column++){
-                if (matrixMachine[line][column][SHIPS] == 1) return false;
+        if (direction == HORIZONTAL) { //Horizontal
+            for (int column = from; column <= to; column++) {
+                if (matrixMachine[line][column][SHIPS] != 0) return false;
             }
         } else { //Vertical
-            for (int row = from; row <= to; row++){
-                if (matrixMachine[row][line][SHIPS] == 1) return false;
+            for (int row = from; row <= to; row++) {
+                if (matrixMachine[row][line][SHIPS] != 0) return false;
             }
         }
         return true;

@@ -56,4 +56,21 @@
     \n2. Superdisparo. Mismo modo de juego que el modo clásico, con la diferencia de que los barcos se hunden con un sólo disparo. </string>
     <string name="back_pressed">Se ha pulsado el botón \"Atrás\". ¿Está seguro de que no quiere guardar los ajustes?</string>
     <string name="no_save">No guardar</string>
+    <string name="noship">El barco no está correctamente colocado.\n\n Las casillas deben ser consecutivas y estar en una sola dirección.</string>
+    <string name="reset">Resetear barco</string>
+    <string name="deleteconf">¿Borrar la configuración del tablero?</string>
+    <string name="placeshipfirst">Termine de colocar el anterior barco antes de empezar con uno nuevo</string>
+    <string name="placeallships">No ha colocado todos los barcos en el tablero.</string>
+    <string name="doit">Hacerlo</string>
+    <string name="shipof">"Barco de "</string>
+    <string name="squares">" casillas"</string>
+    <string name="gamesmodes">Modos de juego</string>
+    <string name="shipinfo">Para colocar los barcos toque las imágenes y, después, seleccione las casillas donde quiera colocarlo.  \n\nSeleccione tantas casillas como se indique al tocar el barco.</string>
+    <string name="ok">Vale</string>
+    <string name="yes">Sí</string>
+    <string name="resetgamesure">¿Estás seguro?</string>
+    <string name="resetinggame">Estás intentando empezar nuevo juego.</string>
+    <string name="noadjacent">No están permitidos los barcos adyacentes. Coloquelos separados entre sí.</string>
+    <string name="another">Barco ya colocado. Seleccione otro.</string>
+    <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
 </resources>
