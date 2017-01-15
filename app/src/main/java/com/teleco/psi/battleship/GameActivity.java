@@ -22,7 +22,6 @@ import android.widget.FrameLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -54,8 +53,8 @@ public class GameActivity extends Activity {
     private static double alpha = 0.2;
     private static int totalGames;
     private FrameLayout light;
-    private int[][][] matrixHuman = new int[MATRIX_SIZE][MATRIX_SIZE][3];
-    private static int[][][] matrixMachine = new int[MATRIX_SIZE][MATRIX_SIZE][3];
+    private int [][][] matrixHuman = new int[MATRIX_SIZE][MATRIX_SIZE][3];
+    private static int [][][] matrixMachine = new int[MATRIX_SIZE][MATRIX_SIZE][3];
     private static View[][] viewsHuman = new View[MATRIX_SIZE][MATRIX_SIZE];
     private static View[][] viewsMachine = new View[MATRIX_SIZE][MATRIX_SIZE];
     private FrameLayout frameLayoutHuman;
@@ -84,7 +83,7 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         /** Comprobar el modo de juego: Clásico o superdisparos
-         *   Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
+         *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
          */
         supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
@@ -206,7 +205,6 @@ public class GameActivity extends Activity {
                         view.setBackgroundColor(Color.RED);
                         shipsDownHuman++;
                     }
-                    view.setOnClickListener(null);
                     checkFinalGame();
                     return;
                 } else {
@@ -240,6 +238,7 @@ public class GameActivity extends Activity {
                         matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
                         viewsMachine[fila][columna].setBackgroundColor(Color.RED);
                         shipsDownHuman++;
+			viewsMachine[file][columna].setOnClickListener(null);
                     }
                 }
             }
@@ -616,7 +615,6 @@ public class GameActivity extends Activity {
     /**
      * Function that calls when the IA hits a boat two times and try to found
      * the rest of the ship.
-     *
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
     private void bestAfterHit(int[] lastAction) {
@@ -627,7 +625,6 @@ public class GameActivity extends Activity {
     /**
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
-     *
      * @param possiblePlays List with the possible plays where the boat can be
      * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
@@ -662,7 +659,6 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
-     *
      * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
