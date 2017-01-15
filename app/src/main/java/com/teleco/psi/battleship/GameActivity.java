@@ -1028,7 +1028,7 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    public void log(String text) {
+    private void log(String text) {
         File logFile = new File("sdcard/log.file");
         if (!logFile.exists()) {
             try {
@@ -1045,5 +1045,44 @@ public class GameActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveMatrixBase(float[][] matrixBase, String type) {
+        SharedPreferences settings = getSharedPreferences("MatrixBase", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        SharedPreferences.Editor editor;
+        String json;
+        switch (type.toUpperCase()) {
+            case "ATTACK":
+                editor = settings.edit();
+                json = gson.toJson(matrixBase);
+                editor.putString("MatrixBaseAtatck", json);
+                editor.commit();
+                break;
+            case "DEFEND":
+                editor = settings.edit();
+                json = gson.toJson(matrixBase);
+                editor.putString("MatrixBaseDefend", json);
+                editor.commit();
+                break;
+        }
+    }
+
+    private float[][] loadMatrixBase(String type) {
+        SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
+        Gson gson = new Gson();
+        String json;
+        float[][] matrixBase = null;
+        switch (type.toUpperCase()) {
+            case "ATTACK":
+                json = settings.getString("MatrixBaseAttack", "");
+                matrixBase = gson.fromJson(json, float[][].class);
+                break;
+            case "DEFEND":
+                json = settings.getString("MatrixBaseDefend", "");
+                matrixBase = gson.fromJson(json, float[][].class);
+                break;
+        }
+        return matrixBase;
     }
 }
