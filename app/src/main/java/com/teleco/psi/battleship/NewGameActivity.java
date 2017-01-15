@@ -30,12 +30,21 @@ import com.google.gson.Gson;
 
 public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
+    /** Matriz donde se guardan las views que componen el tablero */
     private static View[][] views = new View[10][10];
+    /** - ship: valor asociado al barco que se está colocando en el momento que se guardará en la matriz. Ver wiki para más info.
+     *  - colocados: numero de casillas marcadas durante la colocación de un barco. Aumenta cada vez que el usuario pulsa una casilla. Disminuye si el usuario pulsa una casilla ya marcada.
+     *  - casillas: número de casillas que debe de ocupar el barco que se está colocando en el momento.
+     *  - numfilter: número de views cambiadas a blanco y negro.
+     */
     private int ship, colocados, casillas, numfilter;
     private int total_ships = 0;
     private TextView infoship;
+    /** - image: ImageView del barco que se ha pulsado para colocar. Sirve para ponerla en balnco y negro cuando el barco esta colcoado correctamente.
+     *  - colorfilter: conjunto de ImageView a que se les ha aplicado el filtro de blanco y negro. Al resetear el tablero vuelven al color original.
+     */
     private ImageView image, colorfilter[] = new ImageView[5];
-    private boolean allow_adyacent_ships;
+    private boolean allow_adjacent_ships;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,21 +55,20 @@ public class NewGameActivity extends Activity {
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_game);
-
+        /** Es el botón para resetear el tablero */
         ImageButton delete = (ImageButton) findViewById(R.id.trashicon);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                colocados = 0;
-                ship = 0;
-                casillas = 0;
                 resetBoard();
             }
         });
+
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.frame);
         final TableLayout table = createBoard();
         frameLayout.addView(table);
 
+        /** Para comenzar el juego. Se comprueba primero que se hayan colocado todos los barcos */
         Button startGameButton = (Button) findViewById(R.id.start_game);
         startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +88,7 @@ public class NewGameActivity extends Activity {
                 }
             }
         });
+
         Button infoButton = (Button) findViewById(R.id.info);
         infoButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,9 +117,15 @@ public class NewGameActivity extends Activity {
         casillas = 0;
         numfilter = 0;
         infoship.setText("");
-        allow_adyacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
+        allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
     }
 
+    /**
+     * Añade el ClickListener a las ImageViews de los barcos.
+     * @param v ImageView del barco.
+     * @param tipo Según el barco que sea tiene asociado un valor u otro, para que cada barco esté identificado en la matriz con un número diferente.
+     * @param num Número de casillas que ocupa el barco.
+     */
     private void onClickListener(ImageView v, final int tipo, final int num) {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,6 +144,9 @@ public class NewGameActivity extends Activity {
         });
     }
 
+    /**
+     * Se añaden los ClickListener a las Views. Llama a la función 'addClickListener'.
+     */
     private void addClickListenerViews() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -138,6 +156,9 @@ public class NewGameActivity extends Activity {
         }
     }
 
+    /**
+     * Elimina el ClickListener de todas las Views del tablero, para que no se puedan pulsar si no hay marcado ningún barco para colocar.
+     */
     private void removeClickListenerViews() {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -146,6 +167,10 @@ public class NewGameActivity extends Activity {
         }
     }
 
+    /**
+     * Crea el tablero para marcar las casillas.
+     * @return Devuelve el TableLayout'.
+     */
     protected TableLayout createBoard() {
         String[] AJ = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
         String[] num = {"\\", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -179,7 +204,13 @@ public class NewGameActivity extends Activity {
         return tableLayout;
     }
 
-    private void addClickListener(final View view, final int i, final int j) { //i: fila, j: columna // i y j desde 1 a 10
+    /**
+     * Añade el ClickListener a las casillas de la matriz.
+     * @param view View correspondiente a la casilla a añadir el ClickListener
+     * @param i fila de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
+     * @param j columna de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
+     */
+    private void addClickListener(final View view, final int i, final int j) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,8 +233,21 @@ public class NewGameActivity extends Activity {
         });
     }
 
-    private void check_ship(int i, int j) { //i: fila, j: columna (matrix[fila][colunma] i,j de 0 a 9
-        boolean barco, bien; // barco: true si el barco está bien colocado, false si no // bien: si hay el numero de casillas  que deberia tener el barco marcadas en la matriz es true
+    /**
+     * Comprueba que el barco está bien colocado. Las casillas no están dispersas, el barco no está en L, si se tiene que comprobar que no pueda haber barcos juntos se llama a 'shipsTogether'.
+     * Se comprueba primero la orientación del barco.
+     * @param i fila de la última casilla colocada del barco (de 0 a 9)
+     * @param j columna de la última casilla colocada del barco (de 0 a 9)
+     *
+     *          Dentro de la función:
+     *           - boolean barco: se establece el valor a true o false si el barco está bien colocado.
+     *           - boolean bien: se establece el valor a true o false si en la fila/columna en la que está orientado el barco hay el número de casillas correctas marcadas con el valor asociado al barco.
+     *           - int primera: casilla donde empieza el barco.
+     *           - int ultima: casilla donde termina el barco.
+     *           - int line: fila o columna donde está ubicado el barco.
+     */
+    private void check_ship(int i, int j) {
+        boolean barco, bien;
         boolean horizontal = false;
         int primera = 0, ultima = 0, line = 0;
         if (i == 9) {
@@ -231,20 +275,16 @@ public class NewGameActivity extends Activity {
                 barco = true;
             } else barco = false;
         }
-        for (int a = 0; a < 10; a++) {
-            for (int b = 0; b < 10; b++) {
-                if (matrix[a][b][0] == ship) System.out.println("---> (" + a + "," + b + ")");
-            }
-        }
         if (barco) {
-            int c = 0;
+            /** Si el barco está bien colocado se procede a contar el número de casillas en la posición donde debería estar el barco. */
+            int c = 0; /** Se cuentas las casillas con el valor asociado al barco, guardado en la variable global 'ship' */
             if (!horizontal) { //vertical
                 for (int k = 0; k <= 9; k++) {
                     if (matrix[k][j][0] == ship) {
                         primera = k;
                         ultima = k + casillas - 1;
                         line = j;
-                        for (int x = ultima; x >= k; x--) { //x: ultima casilla donde debería haber barco, desde ahí contamos las casillas marcadas
+                        for (int x = ultima; x >= k; x--) { /** Desde 'ultima' contamos las casillas marcadas yendo hacia atrás */
                             if (matrix[x][j][0] == ship) c++;
                         }
                         break;
@@ -264,9 +304,9 @@ public class NewGameActivity extends Activity {
                 }
             }
             bien = (c == casillas);
-            System.out.println("primera: " + primera + "   ultima: " + ultima + "   line: " + line);
         } else bien = false;
         if (!barco || !bien) {
+            /** Si el barco no está bien colocado o no hay el número de casillas correcto se lanza un diálogo para resetear el barco y volver a colocarlo. */
             AlertDialog alert = new AlertDialog.Builder(this)
                     .setMessage(R.string.noship)
                     .setCancelable(false)
@@ -285,7 +325,10 @@ public class NewGameActivity extends Activity {
                     })
                     .show();
         } else {
-            if (!allow_adyacent_ships) {
+            /** Si la opción de barcos adyacentes no está marcada se comprueba que no haya barcos juntos. Si la función 'shipTogether' devuelve false se lanza un diálogo para informar al usuario
+             * de la colocación inválida del barco y resetearlo
+             */
+            if (!allow_adjacent_ships) {
                 if (!shipsTogether(primera, ultima, line, horizontal)) {
                     AlertDialog alert = new AlertDialog.Builder(this)
                             .setMessage(R.string.noadjacent)
@@ -305,6 +348,10 @@ public class NewGameActivity extends Activity {
                             })
                             .show();
                 } else {
+                    /** Una vez comprobado que el barco está completamente bien colocado, se marca la imagen del barco tocada en blanco y negro para no dejar tocarla, de aumenta el número de barcos colocados
+                     * y se eliminan los ClickListener de las casillas hasta que se vuelva tocar un barco.
+                     * Se resetea el TextView que indica el número de casillas a colocar.
+                     */
                     ColorMatrix matrix = new ColorMatrix();
                     matrix.setSaturation(0);
                     ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
@@ -329,6 +376,9 @@ public class NewGameActivity extends Activity {
         }
     }
 
+    /**
+     * Muestra un diálogo al tocar otro barco para colocarlo sin haber terminado el colocar el anterior para que se termine.
+     */
     private void alertShip() {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setMessage(R.string.placeshipfirst)
@@ -340,7 +390,10 @@ public class NewGameActivity extends Activity {
                 .show();
     }
 
-
+    /**
+     * Muestra un diálogo al tocar el botón de comenzar juego sin haber colocado todos los barcos.
+     * No deja continuar a la pantalla siguiente hasta haber colocado todos los barcos.
+     */
     private void colocarBarcos() {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setMessage(R.string.placeallships)
@@ -352,7 +405,10 @@ public class NewGameActivity extends Activity {
                 .show();
     }
 
-
+    /**
+     * Muestra un diálogo al tocar el icono de la papelera.
+     * Si 'OK', resetea el tablero completo, borrando las casillas marcadas en negro y volviendo las imágenes de los barcos al color original.
+     */
     private void resetBoard() {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setMessage(R.string.deleteconf)
@@ -385,6 +441,9 @@ public class NewGameActivity extends Activity {
 
     }
 
+    /**
+     * Diálogo que aparece al tocar el botón de INFO en la colocación de los barcos.
+     */
     public static class AlertDialogInfo extends DialogFragment {
         public static NewGameActivity.AlertDialogInfo newInstance() {
             return new AlertDialogInfo();
@@ -405,6 +464,14 @@ public class NewGameActivity extends Activity {
         }
     }
 
+    /**
+     * Comprueba si alrededor del barco ya establecido hay un barco. Solo se llama si la opción de permitir barcos adyacentes está desmarcada en los ajustes.
+     * @param primero casilla donde empieza el barco (empezando desde la casilla 0).
+     * @param ultimo casilla donde termina el barco.
+     * @param line fila o columna donde está ubicado el barco.
+     * @param horizontal boolean que indica la orientación del barco.
+     * @return retorna true si se puede colocar el barco y false si no.
+     */
     private boolean shipsTogether(int primero, int ultimo, int line, boolean horizontal) {
         if (horizontal) { //Horizontal
             for (int i = primero; i <= ultimo; i++) {
