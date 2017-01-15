@@ -32,10 +32,10 @@ public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
     private static View[][] views = new View[10][10];
     private int ship, colocados, casillas, numfilter;
-    private final int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
     private int total_ships = 0;
     private TextView infoship;
     private ImageView image, colorfilter[] = new ImageView[5];
+    private boolean allow_adyacent_ships;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class NewGameActivity extends Activity {
         startGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(total_ships == 5) {
+                if (total_ships == 5) {
                     SharedPreferences settings = getSharedPreferences("Matrix", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
                     Gson gson = new Gson();
@@ -75,7 +75,7 @@ public class NewGameActivity extends Activity {
                     Intent start_game = new Intent(getApplicationContext(), GameActivity.class);
                     startActivity(start_game);
                     finish();
-                }else{
+                } else {
                     colocarBarcos();
                 }
             }
@@ -90,6 +90,8 @@ public class NewGameActivity extends Activity {
         });
 
         infoship = (TextView) findViewById(R.id.num_fields);
+
+        int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
 
         ImageView ship5 = (ImageView) findViewById(R.id.ship5);
         onClickListener(ship5, CASILLAS5, 5);
@@ -106,6 +108,7 @@ public class NewGameActivity extends Activity {
         casillas = 0;
         numfilter = 0;
         infoship.setText("");
+        allow_adyacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
     }
 
     private void onClickListener(ImageView v, final int tipo, final int num) {
@@ -127,16 +130,17 @@ public class NewGameActivity extends Activity {
     }
 
     private void addClickListenerViews() {
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 10; j++){
-                addClickListener(views[i][j], i+1, j+1);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (matrix[i][j][0] == 0)
+                    addClickListener(views[i][j], i + 1, j + 1);
             }
         }
     }
 
-    private void removeClickListenerViews(){
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 10; j++){
+    private void removeClickListenerViews() {
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
                 views[i][j].setOnClickListener(null);
             }
         }
@@ -158,7 +162,7 @@ public class NewGameActivity extends Activity {
                 TextView field = new TextView(this);
                 field.setBackgroundResource(R.drawable.cell_shape);
                 if (!(i == 0 || j == 0)) {
-                    views[i-1][j-1] = field;
+                    views[i - 1][j - 1] = field;
                 }
                 if (i == 0) {
                     field.setText(num[j]);
@@ -175,7 +179,7 @@ public class NewGameActivity extends Activity {
         return tableLayout;
     }
 
-    private void addClickListener(final View view, final int i, final int j) {
+    private void addClickListener(final View view, final int i, final int j) { //i: fila, j: columna // i y j desde 1 a 10
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +192,7 @@ public class NewGameActivity extends Activity {
                     matrix[i - 1][j - 1][0] = ship;
                     v.setBackgroundColor(Color.BLACK);
                     colocados++;
-                    if (colocados == casillas) check_ship(i-1, j-1);
+                    if (colocados == casillas) check_ship(i - 1, j - 1);
                 } else {
                     matrix[i - 1][j - 1][0] = 0;
                     colocados--;
@@ -201,19 +205,46 @@ public class NewGameActivity extends Activity {
     private void check_ship(int i, int j) { //i: fila, j: columna (matrix[fila][colunma] i,j de 0 a 9
         boolean barco, bien; // barco: true si el barco está bien colocado, false si no // bien: si hay el numero de casillas  que deberia tener el barco marcadas en la matriz es true
         boolean horizontal = false;
-        if ((matrix[i+1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
-            horizontal = false;
-            barco = true;
-        } else if ((matrix[i][j+1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
-            horizontal = true;
-            barco = true;
-        } else barco = false;
+        int primera = 0, ultima = 0, line = 0;
+        if (i == 9) {
+            if ((matrix[i - 2][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+                horizontal = false;
+                barco = true;
+            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                horizontal = true;
+                barco = true;
+            } else barco = false;
+        } else if (j == 9) {
+            if ((matrix[i + 1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+                horizontal = false;
+                barco = true;
+            } else if ((matrix[i][j - 2][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                horizontal = true;
+                barco = true;
+            } else barco = false;
+        } else {
+            if ((matrix[i + 1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+                horizontal = false;
+                barco = true;
+            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                horizontal = true;
+                barco = true;
+            } else barco = false;
+        }
+        for (int a = 0; a < 10; a++) {
+            for (int b = 0; b < 10; b++) {
+                if (matrix[a][b][0] == ship) System.out.println("---> (" + a + "," + b + ")");
+            }
+        }
         if (barco) {
             int c = 0;
             if (!horizontal) { //vertical
                 for (int k = 0; k <= 9; k++) {
                     if (matrix[k][j][0] == ship) {
-                        for (int x = k + casillas - 1; x >= k; x--) { //x: ultima casilla donde debería haber barco, desde ahí contamos las casillas marcadas
+                        primera = k;
+                        ultima = k + casillas - 1;
+                        line = j;
+                        for (int x = ultima; x >= k; x--) { //x: ultima casilla donde debería haber barco, desde ahí contamos las casillas marcadas
                             if (matrix[x][j][0] == ship) c++;
                         }
                         break;
@@ -222,7 +253,10 @@ public class NewGameActivity extends Activity {
             } else { //horizontal
                 for (int k = 0; k <= 9; k++) {
                     if (matrix[i][k][0] == ship) {
-                        for (int x = k + casillas - 1; x >= k; x--) {
+                        primera = k;
+                        ultima = k + casillas - 1;
+                        line = i;
+                        for (int x = ultima; x >= k; x--) {
                             if (matrix[i][x][0] == ship) c++;
                         }
                         break;
@@ -230,6 +264,7 @@ public class NewGameActivity extends Activity {
                 }
             }
             bien = (c == casillas);
+            System.out.println("primera: " + primera + "   ultima: " + ultima + "   line: " + line);
         } else bien = false;
         if (!barco || !bien) {
             AlertDialog alert = new AlertDialog.Builder(this)
@@ -237,35 +272,64 @@ public class NewGameActivity extends Activity {
                     .setCancelable(false)
                     .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
-                            for(int i = 0; i < 10; i++){
-                                for (int j = 0; j < 10; j++){
-                                    if( matrix[i][j][0] == ship ){
+                            for (int i = 0; i < 10; i++) {
+                                for (int j = 0; j < 10; j++) {
+                                    if (matrix[i][j][0] == ship) {
                                         matrix[i][j][0] = 0;
                                         views[i][j].setBackgroundResource(R.drawable.cell_shape);
                                     }
                                 }
                             }
-                            ship = 0;
                             colocados = 0;
-                            casillas = 0;
-                            numfilter = 0;
-                            infoship.setText("");
                         }
                     })
                     .show();
         } else {
-            ColorMatrix matrix = new ColorMatrix();
-            matrix.setSaturation(0);
-            ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-            image.setColorFilter(filter);
-            total_ships++;
-            colorfilter[numfilter] = image;
-            numfilter++;
-            removeClickListenerViews();
+            if (!allow_adyacent_ships) {
+                if (!shipsTogether(primera, ultima, line, horizontal)) {
+                    AlertDialog alert = new AlertDialog.Builder(this)
+                            .setMessage(R.string.noadjacent)
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.reset, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    for (int i = 0; i < 10; i++) {
+                                        for (int j = 0; j < 10; j++) {
+                                            if (matrix[i][j][0] == ship) {
+                                                matrix[i][j][0] = 0;
+                                                views[i][j].setBackgroundResource(R.drawable.cell_shape);
+                                            }
+                                        }
+                                    }
+                                    colocados = 0;
+                                }
+                            })
+                            .show();
+                } else {
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.setSaturation(0);
+                    ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                    image.setColorFilter(filter);
+                    total_ships++;
+                    colorfilter[numfilter] = image;
+                    numfilter++;
+                    removeClickListenerViews();
+                    infoship.setText("");
+                }
+            } else {
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                image.setColorFilter(filter);
+                total_ships++;
+                colorfilter[numfilter] = image;
+                numfilter++;
+                removeClickListenerViews();
+                infoship.setText("");
+            }
         }
     }
-    
-    private void alertShip(){
+
+    private void alertShip() {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setMessage(R.string.placeshipfirst)
                 .setCancelable(false)
@@ -289,7 +353,7 @@ public class NewGameActivity extends Activity {
     }
 
 
-    private void resetBoard(){
+    private void resetBoard() {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setMessage(R.string.deleteconf)
                 .setCancelable(false)
@@ -300,14 +364,15 @@ public class NewGameActivity extends Activity {
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        for(int i = 0; i < 10; i++){
-                            for (int j = 0; j < 10; j++){
+                        for (int i = 0; i < 10; i++) {
+                            for (int j = 0; j < 10; j++) {
                                 matrix[i][j][0] = 0;
                                 views[i][j].setBackgroundResource(R.drawable.cell_shape);
                             }
                         }
-                        for(int i = 0; i < numfilter; i++){
-                            colorfilter[i].clearColorFilter();
+                        for (ImageView aColorfilter : colorfilter) {
+                            if (aColorfilter != null)
+                                aColorfilter.setColorFilter(null);
                         }
                         ship = 0;
                         colocados = 0;
@@ -338,6 +403,67 @@ public class NewGameActivity extends Activity {
                     });
             return builder.create();
         }
+    }
+
+    private boolean shipsTogether(int primero, int ultimo, int line, boolean horizontal) {
+        if (horizontal) { //Horizontal
+            for (int i = primero; i <= ultimo; i++) {
+                if (line > 0) {
+                    if (matrix[line - 1][i][0] != 0) return false;
+                }
+
+                if ((i != 0) && (i != 9)) {
+
+                    if (line > 0) {
+                        if (matrix[line - 1][i - 1][0] != 0) return false;
+                        if (matrix[line - 1][i + 1][0] != 0) return false;
+                    }
+
+                    if (i == primero)
+                        if (matrix[line][i - 1][0] != 0) return false;
+                    if (i == ultimo)
+                        if (matrix[line][i + 1][0] != 0) return false;
+
+                    if (line < 9) {
+                        if (matrix[line + 1][i - 1][0] != 0) return false;
+                        if (matrix[line + 1][i + 1][0] != 0) return false;
+                    }
+
+                }
+                if (line < 9) {
+                    if (matrix[line + 1][i][0] != 0) return false;
+                }
+            }
+        } else { //Vertical
+            for (int i = primero; i <= ultimo; i++) {
+                if (line > 0) {
+                    if (matrix[i][line - 1][0] != 0) return false;
+                }
+
+                if (i != 0) {
+
+                    if (line > 0) {
+                        if (matrix[i - 1][line - 1][0] != 0) return false;
+                        if (matrix[i + 1][line - 1][0] != 0) return false;
+                    }
+                    if (i == primero)
+                        if (matrix[i - 1][line][0] != 0) return false;
+                    if (i == ultimo)
+                        if (matrix[i + 1][line][0] != 0) return false;
+
+                    if (line < 9) {
+                        if (matrix[i - 1][line + 1][0] != 0) return false;
+                        if (matrix[i + 1][line + 1][0] != 0) return false;
+                    }
+
+                }
+                if (line < 9) {
+                    if (matrix[i][line + 1][0] != 0) return false;
+                }
+            }
+        }
+
+        return true;
     }
 
 }

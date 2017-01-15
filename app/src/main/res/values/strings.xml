@@ -74,9 +74,10 @@
     <string name="squares">" squares"</string>
     <string name="gamesmodes">Games modes</string>
     <string name="shipinfo">To place your ships touch the images and then select the squares where you want to place the ship. \n\nSelect as many squares as indicated when touching the ship.</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="resetgamesure">Are you sure?</string>
     <string name="resetinggame">You are trying to reset the game.</string>
+    <string name="noadjacent">Adjacent ships are not allowed. Place them separated between each other.</string>
 
 </resources>
