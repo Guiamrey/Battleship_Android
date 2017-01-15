@@ -38,7 +38,7 @@ public class NewGameActivity extends Activity {
      *  - numfilter: número de views cambiadas a blanco y negro.
      */
     private int ship, colocados, casillas, numfilter;
-    private int total_ships = 0;
+    private int total_ships = 0, placed[] = new int[7];
     private TextView infoship;
     /** - image: ImageView del barco que se ha pulsado para colocar. Sirve para ponerla en balnco y negro cuando el barco esta colcoado correctamente.
      *  - colorfilter: conjunto de ImageView a que se les ha aplicado el filtro de blanco y negro. Al resetear el tablero vuelven al color original.
@@ -118,6 +118,8 @@ public class NewGameActivity extends Activity {
         numfilter = 0;
         infoship.setText("");
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
+        for(int i = 2; i < placed.length; i++)
+            placed[i] = 0;
     }
 
     /**
@@ -131,12 +133,16 @@ public class NewGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (colocados == casillas) {
-                    infoship.setText(getString(R.string.shipof) + num + getString(R.string.squares));
-                    colocados = 0;
-                    ship = tipo;
-                    casillas = num;
-                    image = (ImageView) v;
-                    addClickListenerViews();
+                    if(placed[tipo] != 1) {
+                        infoship.setText(getString(R.string.shipof) + num + getString(R.string.squares));
+                        colocados = 0;
+                        ship = tipo;
+                        casillas = num;
+                        image = (ImageView) v;
+                        addClickListenerViews();
+                    }else{
+                        infoship.setText(R.string.another);
+                    }
                 } else {
                     alertShip();
                 }
@@ -361,6 +367,7 @@ public class NewGameActivity extends Activity {
                     numfilter++;
                     removeClickListenerViews();
                     infoship.setText("");
+                    placed[ship] = 1;
                 }
             } else {
                 ColorMatrix matrix = new ColorMatrix();
@@ -372,7 +379,11 @@ public class NewGameActivity extends Activity {
                 numfilter++;
                 removeClickListenerViews();
                 infoship.setText("");
+                placed[ship] = 1;
             }
+        }
+        if(total_ships == 5){
+            infoship.setText(R.string.fuun);
         }
     }
 
@@ -429,6 +440,9 @@ public class NewGameActivity extends Activity {
                         for (ImageView aColorfilter : colorfilter) {
                             if (aColorfilter != null)
                                 aColorfilter.setColorFilter(null);
+                        }
+                        for(int i = 2; i < placed.length; i++){
+                            placed[i] = 0;
                         }
                         ship = 0;
                         colocados = 0;

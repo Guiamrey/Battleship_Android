@@ -71,4 +71,6 @@
     <string name="resetgamesure">¿Estás seguro?</string>
     <string name="resetinggame">Estás intentando empezar nuevo juego.</string>
     <string name="noadjacent">No están permitidos los barcos adyacentes. Coloquelos separados entre sí.</string>
+    <string name="another">Barco ya colocado. Seleccione otro.</string>
+    <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
 </resources>

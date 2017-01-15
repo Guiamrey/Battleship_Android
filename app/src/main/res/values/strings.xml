@@ -79,5 +79,7 @@
     <string name="resetgamesure">Are you sure?</string>
     <string name="resetinggame">You are trying to reset the game.</string>
     <string name="noadjacent">Adjacent ships are not allowed. Place them separated between each other.</string>
+    <string name="another">Ship already placed. Select another one.</string>
+    <string name="fuun">Click \'Start Game\' and start the battle!!</string>
 
 </resources>
