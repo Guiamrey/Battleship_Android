@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class GameActivity extends Activity {
+    private boolean supershots;
     /// CONSTANT
     private static final int FIRST_POS = 0;
     private static final int LAST_POS = 9;
@@ -53,6 +55,8 @@ public class GameActivity extends Activity {
     private FrameLayout light;
     private float [][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
     private static float [][][] matrixMachine = new float [MATRIX_SIZE][MATRIX_SIZE][3];
+    private static View[][] viewsHuman = new View[MATRIX_SIZE][MATRIX_SIZE];
+    private static View[][] viewsMachine = new View[MATRIX_SIZE][MATRIX_SIZE];
 
     private static float [][] matrixBaseAttack = new float [MATRIX_SIZE][MATRIX_SIZE];
     private static float [][] matrixBaseDefense = new float [MATRIX_SIZE][MATRIX_SIZE];;
@@ -74,10 +78,17 @@ public class GameActivity extends Activity {
     private static int winner;
     private static final int NUMBER_SHIPS = 17;
     private static int step = 1;
+    private boolean allow_adjacent_ships;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /** Comprobar el modo de juego: Clásico o superdisparos
+         *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
+         */
+        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
+        allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
         setContentView(R.layout.game_activity);
         shipsDownIA = 0;
         shipsDownHuman = 0;
@@ -182,7 +193,7 @@ public class GameActivity extends Activity {
             public void onClick(View v) {
                 if (matrixMachine[row - 1][column - 1][SHIPS] != 0) {
                     if(supershots){
-                        supershot(matrixMachine[row - 1][column - 1][SHIPS], false);
+                        supershot((int) matrixMachine[row - 1][column - 1][SHIPS], false);
                     }else {
                         view.setBackgroundColor(Color.RED);
                         shipsDownHuman++;
@@ -256,13 +267,13 @@ public class GameActivity extends Activity {
             log("SHIP 4 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine);
+                setShip(from, to, line, direction, matrixMachine, CASILLAS4);
             }
 
         }
 
         int shipThree = 0;
-
+        int type = CASILLAS3_1;
         while (shipThree != 2){
 
             line = rand.nextInt(MATRIX_SIZE);
@@ -315,7 +326,7 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    public static boolean isAShip(int from, int to, int line, int direction, int[][][] matrixAux) {
+    public static boolean isAShip(int from, int to, int line, int direction, float [][][] matrixAux) {
         if (direction == 0) { //Horizontal
             for (int i = from; i <= to; i++) {
                 if (line > 0) {
@@ -474,7 +485,7 @@ public class GameActivity extends Activity {
         final int Y = column;
         if (matrixHuman[row][column][SHIPS] != 0) {
             if(supershots){
-                supershot(matrixHuman[row][column][SHIPS], true);
+                supershot((int) matrixHuman[row][column][SHIPS], true);
             }else {
                 matrixHuman[row][column][GAME_STATE] = TOUCHED; //tocado
                 log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " TOCADO");
@@ -529,7 +540,7 @@ public class GameActivity extends Activity {
      * @param matrixHuman the board game
      * @param type        the number to identify each ship separately
      */
-    private static void setShip(int from, int to, int line, int direction, float[][][] matrixHuman){
+    private static void setShip(int from, int to, int line, int direction, float[][][] matrixHuman, int type){
         if (direction == HORIZONTAL) { //Horizontal
             for (int column = from; column <= to; column++) {
                 matrixHuman[line][column][SHIPS] = type;
