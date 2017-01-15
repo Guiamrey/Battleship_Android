@@ -85,10 +85,10 @@ public class MainActivity extends Activity {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-            builder.setTitle("ABOUT");
-            builder.setMessage("iBattleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+            builder.setTitle(R.string.about);
+            builder.setMessage("Battleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
             builder.setCancelable(false);
-            builder.setPositiveButton("OK",
+            builder.setPositiveButton("Ok",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,
                                             int id) {

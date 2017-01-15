@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class GameActivity extends Activity {
+    private boolean supershots;
     /// CONSTANT
     private static final int FIRST_POS = 0;
     private static final int LAST_POS = 9;
@@ -75,6 +77,12 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /* Comprobar el modo de juego: Clásico o superdisparos
+        * Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
+        */
+        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
+
         setContentView(R.layout.game_activity);
         shipsDownIA = 0;
         shipsDownHuman = 0;
@@ -102,7 +110,7 @@ public class GameActivity extends Activity {
             }
         };
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
+        builder.setTitle(R.string.resetinggame).setMessage(R.string.resetgamesure).setPositiveButton(R.string.yes, dialogClickListener)
                 .setNegativeButton("No", dialogClickListener);
 
         Button startGameButton = (Button) findViewById(R.id.newGameButton);
@@ -209,6 +217,7 @@ public class GameActivity extends Activity {
         setShip(from, to, line, direction, matrixMachine);
 
         //Barco de 4
+
         while (!shipOK){
             line = rand.nextInt(MATRIX_SIZE);
             direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
