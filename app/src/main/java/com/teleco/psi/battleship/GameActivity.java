@@ -238,7 +238,7 @@ public class GameActivity extends Activity {
                         matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
                         viewsMachine[fila][columna].setBackgroundColor(Color.RED);
                         shipsDownHuman++;
-			viewsMachine[file][columna].setOnClickListener(null);
+			            viewsMachine[fila][columna].setOnClickListener(null);
                     }
                 }
             }
