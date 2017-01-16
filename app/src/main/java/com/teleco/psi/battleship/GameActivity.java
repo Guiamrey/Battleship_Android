@@ -1044,7 +1044,7 @@ public class GameActivity extends Activity {
     @Override
     public void onBackPressed() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
-                .setMessage(R.string.leave_game)
+                .setMessage("¿SEGURO?")
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
