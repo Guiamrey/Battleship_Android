@@ -284,7 +284,7 @@ public class GameActivity extends Activity {
             from = rand.nextInt(6);
             to = from + 3;
 
-            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            shipOK = isAShip(from, to, line, direction);
             log("SHIP 4 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
             if (shipOK) {
@@ -303,7 +303,7 @@ public class GameActivity extends Activity {
             from = rand.nextInt(7);
             to = from + 2;
 
-            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            shipOK = isAShip(from, to, line, direction);
 
             log("SHIP 3 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
@@ -324,7 +324,7 @@ public class GameActivity extends Activity {
             from = rand.nextInt(8);
             to = from + 1;
 
-            shipOK = isAShip(from, to, line, direction, matrixMachine);
+            shipOK = isAShip(from, to, line, direction);
 
             log("SHIP 2 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
 
@@ -332,82 +332,6 @@ public class GameActivity extends Activity {
                 setShip(from, to, line, direction, matrixMachine, CASILLAS2);
             }
         }
-    }
-
-    public static boolean isAShipTogether(int from, int to, int line, int direction, int[][][] matrixAux) {
-        if (direction == 0) { //Horizontal
-            for (int column = from; column <= to; column++) {
-                if (matrixAux[line][column][SHIPS] != 0) return false;
-            }
-        } else { //Vertical
-            for (int row = from; row <= to; row++) {
-                if (matrixAux[row][line][SHIPS] != 0) return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isAShip(int from, int to, int line, int direction, float[][][] matrixAux) {
-        if (direction == 0) { //Horizontal
-            for (int i = from; i <= to; i++) {
-                if (line > 0) {
-                    if (matrixAux[line - 1][i][0] != 0) return false;
-                }
-
-                if ((i != 0) && (i != 9)) {
-
-                    if (line > 0) {
-                        if (matrixAux[line - 1][i - 1][0] != 0) return false;
-                        if (matrixAux[line - 1][i + 1][0] != 0) return false;
-                    }
-
-                    if (matrixAux[line][i - 1][0] != 0) return false;
-                    if (matrixAux[line][i + 1][0] != 0) return false;
-
-                    if (line < 9) {
-                        if (matrixAux[line + 1][i - 1][0] != 0) return false;
-                        if (matrixAux[line + 1][i + 1][0] != 0) return false;
-                    }
-                }
-
-                if (matrixAux[line][i][0] != 0) return false;
-
-                if (line < 9) {
-                    if (matrixAux[line + 1][i][0] != 0) return false;
-                }
-            }
-        } else { //Vertical
-            for (int i = from; i <= to; i++) {
-                if (line > 0) {
-                    if (matrixAux[i][line - 1][0] != 0) return false;
-                }
-
-                if (i != 0) {
-
-                    if (line > 0) {
-                        if (matrixAux[i - 1][line - 1][0] != 0) return false;
-                        if (matrixAux[i + 1][line - 1][0] != 0) return false;
-                    }
-
-                    if (matrixAux[i - 1][line][0] != 0) return false;
-                    if (matrixAux[i + 1][line][0] != 0) return false;
-
-                    if (line < 9) {
-                        if (matrixAux[i - 1][line + 1][0] != 0) return false;
-                        if (matrixAux[i + 1][line + 1][0] != 0) return false;
-                    }
-
-                }
-
-                if (matrixAux[i][line][0] != 0) return false;
-
-                if (line < 9) {
-                    if (matrixAux[i][line + 1][0] != 0) return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     public void startAlgorithm() {
@@ -1006,6 +930,14 @@ public class GameActivity extends Activity {
         return possiblePlays;
     }
 
+    /** Function that search around a given position if some ship can be set.
+     *
+     * @param from begin of the ship
+     * @param to end of the ship
+     * @param line line where ship will be
+     * @param direction horizontal (0) or vertical (1)
+     * @return true if ship can be set, false in other case.
+     */
     private static boolean isAShip(int from, int to, int line, int direction) {
 
         if (ALLOW_ADJACENT_SHIPS){
