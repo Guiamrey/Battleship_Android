@@ -638,9 +638,10 @@ public class GameActivity extends Activity {
         float[] bestAction = new float[3];
 
         for (String possiblePlay : possiblePlays) {
+            System.out.println(possiblePlay);
             String[] playsStr = possiblePlay.split("-");
-            int row = Integer.parseInt(playsStr[ROW]);
-            int column = Integer.parseInt(playsStr[COLUMN]);
+            int row = (int)Float.parseFloat(playsStr[ROW]);
+            int column = (int)Float.parseFloat(playsStr[COLUMN]);
 
             if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
                 bestAction[ROW] = row;
@@ -1044,7 +1045,7 @@ public class GameActivity extends Activity {
     @Override
     public void onBackPressed() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
-                .setMessage("¿SEGURO?")
+                .setMessage("SEGURO??")
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
