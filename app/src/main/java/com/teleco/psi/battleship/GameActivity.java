@@ -92,6 +92,12 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        try {
+            System.setErr(new PrintStream(new FileOutputStream(new File("sdcard/log.file"))));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         /** Comprobar el modo de juego: Clásico o superdisparos
          *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
          */
