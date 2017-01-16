@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +30,7 @@ import com.google.gson.Gson;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -80,16 +83,34 @@ public class GameActivity extends Activity {
     private static final int NUMBER_SHIPS = 17;
     private static int step = 1;
     private boolean allow_adjacent_ships;
+    private int level = 0;
+    private static final int EASY = 0;
+    private static final int MEDIUM = 1;
+    private static final int HARD = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /** Comprobar el modo de juego: Clásico o superdisparos
          *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
          */
-        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
-        log("Modo supershots: "+supershots);
+        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic");
+        log("Modo de juego--> "+getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic"));
+        log("Idioma --> "+getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","en"));
+        log("Barcos adyacentes --> "+getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE).getBoolean("checked",false));
+        log("Dificultad --> "+getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy"));
+
+        log("Default language --> "+Locale.getDefault().getDisplayLanguage());
+        String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
+        if(lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("facil")){
+            level = EASY;
+        }else if(lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")){
+            level = MEDIUM;
+        }else level = HARD;
+
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
+
         setContentView(R.layout.game_activity);
         setupLearning();
         inicializeVarAlgorithm();
@@ -599,7 +620,6 @@ public class GameActivity extends Activity {
     /**
      * Function that calls when the IA hits a boat two times and try to found
      * the rest of the ship.
-     *
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
     private void bestAfterHit(float[] lastAction) {
@@ -610,7 +630,6 @@ public class GameActivity extends Activity {
     /**
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
-     *
      * @param possiblePlays List with the possible plays where the boat can be
      * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
@@ -644,7 +663,6 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
-     *
      * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
@@ -1020,7 +1038,27 @@ public class GameActivity extends Activity {
         }
     }
 
-    private void saveMatrixBase(float[][] matrixBase, String type) {
+    /**
+     * Se llama cuando se pulsa el botón de atrás del dispositivo, para que el jugador confirme si quiere salir de la partida en juego.
+     */
+    @Override
+    public void onBackPressed() {
+        AlertDialog alertbox = new AlertDialog.Builder(this)
+                .setMessage(R.string.leave_game)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                })
+                .show();
+    }
+
+        private void saveMatrixBase(float[][] matrixBase, String type) {
         SharedPreferences settings = getSharedPreferences("MatrixBase", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         SharedPreferences.Editor editor;
@@ -1039,7 +1077,7 @@ public class GameActivity extends Activity {
                 editor.commit();
                 break;
         }
-    }
+    }	
 
     private float[][] loadMatrixBase(String type) {
         SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
@@ -1056,7 +1094,6 @@ public class GameActivity extends Activity {
                 matrixBase = gson.fromJson(json, float[][].class);
                 break;
         }
-        //printLogMatrix(matrixBase);
 
         return matrixBase;
     }
