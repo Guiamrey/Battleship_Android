@@ -61,7 +61,6 @@ public class GameActivity extends Activity {
 
     private static float[][] matrixBaseAttack = new float[MATRIX_SIZE][MATRIX_SIZE];
     private static float[][] matrixBaseDefense = new float[MATRIX_SIZE][MATRIX_SIZE];
-    ;
 
     private FrameLayout frameLayoutHuman;
     private boolean stopUserInteractions = false;
@@ -85,22 +84,15 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         /** Comprobar el modo de juego: Clásico o superdisparos
          *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
          */
         supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
+        log("Modo supershots: "+supershots);
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
         setContentView(R.layout.game_activity);
-        shipsDownIA = 0;
-        shipsDownHuman = 0;
-        step = 1;
-        invertCounter = 0;
-        vertical = false;
-        horizontal = false;
-        lastHit = false;
-        orientation = 1;
-        pos = 1;
+        setupLearning();
+        inicializeVarAlgorithm();
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -200,7 +192,7 @@ public class GameActivity extends Activity {
                     } else {
                         view.setBackgroundColor(Color.RED);
                         shipsDownHuman++;
-                        matrixMachine = updateMatrixValues(matrixMachine, row, column, true);
+                        matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
                     }
                     checkFinalGame();
                     return;
@@ -208,7 +200,7 @@ public class GameActivity extends Activity {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
                     view.setOnClickListener(null);
-                    matrixMachine = updateMatrixValues(matrixMachine, row, column, false);
+                    matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
 
                 }
                 IATurn = true;
@@ -355,7 +347,6 @@ public class GameActivity extends Activity {
                         if (matrixAux[line + 1][i - 1][0] != 0) return false;
                         if (matrixAux[line + 1][i + 1][0] != 0) return false;
                     }
-
                 }
 
                 if (matrixAux[line][i][0] != 0) return false;
@@ -416,7 +407,6 @@ public class GameActivity extends Activity {
                 shipFound((int) lastAction[ROW], (int) lastAction[COLUMN]);
             }
         }
-        //printMatrix();
     }
 
     /***
@@ -502,24 +492,25 @@ public class GameActivity extends Activity {
             }
             checkFinalGame();
             return true;
+        } else {
+            matrixHuman[row][column][GAME_STATE] = WATER;    //agua
+            log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " AGUA");
+
+            wait.postDelayed(new Runnable() {
+                public void run() {
+                    drawHitOrMiss(X, Y, false);
+                    stopUserInteractions = false;
+                    light.setBackgroundResource(R.drawable.verde);
+                }
+            }, 2000);
+
+            IATurn = !IATurn;
+            humanTurn = !humanTurn;
+            matrixHuman = updateMatrixValues(matrixHuman, row, column, false);
+            checkFinalGame();
+            return false;
+
         }
-
-        matrixHuman[row][column][GAME_STATE] = WATER;    //agua
-        log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " AGUA");
-
-        wait.postDelayed(new Runnable() {
-            public void run() {
-                drawHitOrMiss(X, Y, false);
-                stopUserInteractions = false;
-                light.setBackgroundResource(R.drawable.verde);
-            }
-        }, 2000);
-
-        IATurn = !IATurn;
-        humanTurn = !humanTurn;
-        matrixHuman = updateMatrixValues(matrixHuman, row, column, false);
-        checkFinalGame();
-        return false;
     }
 
     private void drawHitOrMiss(int row, int column, boolean hit) {
@@ -646,7 +637,6 @@ public class GameActivity extends Activity {
                 horizontal = true;
             else
                 vertical = true;
-
             step = 3;
         }
     }
@@ -689,9 +679,7 @@ public class GameActivity extends Activity {
                 movement = (int) matrixHuman[row - pos * orientation][column][GAME_STATE];
             }
 
-
             switch (movement) {
-
                 case UNKNOWN: { //si no se ha tirado, lo hacemos
                     if (horizontal) hit = hitOrMiss(row, column - pos * orientation);
                     else if (vertical) hit = hitOrMiss(row - pos * orientation, column);
@@ -762,30 +750,33 @@ public class GameActivity extends Activity {
     private void checkFinalGame() {
         if (shipsDownHuman == NUMBER_SHIPS) {
             winner = 1;
-            DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
-            endGameDialog.show(getFragmentManager(), "Alert");
+            endGame();
         } else if (shipsDownIA == NUMBER_SHIPS) {
             winner = 2;
-            DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
-            endGameDialog.show(getFragmentManager(), "Alert");
+            endGame();
         }
-        totalGames++;
     }
 
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
+                System.out.println(row + " X " + column );
+                System.out.println(matrixBaseAttack[row][column] + " - " + (alpha * matrixHuman[row][column][2]));
                 matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * matrixHuman[row][column][2])) / (totalGames + 1));
             }
         }
+        saveMatrixBase(matrixBaseAttack, "ATTACK");
+        printLogMatrix(matrixBaseAttack);
     }
 
-    public static void learningDefense() {
+    public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
                 matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
             }
         }
+        saveMatrixBase(matrixBaseDefense, "DEFENSE");
+        printLogMatrix(matrixBaseDefense);
     }
 
     public void inicializeBase() {
@@ -1010,7 +1001,7 @@ public class GameActivity extends Activity {
         return true;
     }
 
-    public void log(String text) {
+    private void log(String text) {
         File logFile = new File("sdcard/log.file");
         if (!logFile.exists()) {
             try {
@@ -1029,19 +1020,63 @@ public class GameActivity extends Activity {
         }
     }
 
-    public float[][][] updateMatrixValues(float matrix[][][], int row, int column, boolean hit) {
-        System.out.println("ANTES");
-
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j][PROBABILITY] + " ");
-                else System.out.print(matrix[i][j][PROBABILITY] + " ");
-            }
-            System.out.println("\n");
+    private void saveMatrixBase(float[][] matrixBase, String type) {
+        SharedPreferences settings = getSharedPreferences("MatrixBase", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        SharedPreferences.Editor editor;
+        String json;
+        switch (type.toUpperCase()) {
+            case "ATTACK":
+                editor = settings.edit();
+                json = gson.toJson(matrixBase);
+                editor.putString("MatrixBaseAtatck", json);
+                editor.commit();
+                break;
+            case "DEFEND":
+                editor = settings.edit();
+                json = gson.toJson(matrixBase);
+                editor.putString("MatrixBaseDefend", json);
+                editor.commit();
+                break;
         }
-        System.out.println("DESPUES");
+    }
 
+    private float[][] loadMatrixBase(String type) {
+        SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
+        Gson gson = new Gson();
+        String json;
+        float[][] matrixBase = null;
+        switch (type.toUpperCase()) {
+            case "ATTACK":
+                json = settings.getString("MatrixBaseAttack", null);
+                matrixBase = gson.fromJson(json, float[][].class);
+                break;
+            case "DEFEND":
+                json = settings.getString("MatrixBaseDefend", null);
+                matrixBase = gson.fromJson(json, float[][].class);
+                break;
+        }
+        //printLogMatrix(matrixBase);
+
+        return matrixBase;
+    }
+
+    private void saveTotalGames(int totalGames) {
+        SharedPreferences settings = getSharedPreferences("TotalGames", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor;
+        editor = settings.edit();
+        editor.putInt("TotalGames", totalGames);
+        editor.commit();
+    }
+
+    private int loadTotalGames() {
+        SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
+        int totalGames;
+        totalGames = settings.getInt("TotalGames", 0);
+        return totalGames;
+    }
+
+    public float[][][] updateMatrixValues(float matrix[][][], int row, int column, boolean hit) {
         matrix[row][column][PROBABILITY] = updatePos(matrix[row][column][PROBABILITY], hit, 1);
         List<String> pos = getAdjacentPos(matrix, row, column);
         for (String posUpdate : pos) {
@@ -1050,16 +1085,6 @@ public class GameActivity extends Activity {
             int columnUpdate = Integer.parseInt(posStr[COLUMN]);
             matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, 2);
         }
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j][PROBABILITY] + " ");
-                else System.out.print(matrix[i][j][PROBABILITY] + " ");
-            }
-            System.out.println("\n");
-        }
-        System.out.println("---------------------");
-
         return matrix;
     }
 
@@ -1117,5 +1142,72 @@ public class GameActivity extends Activity {
         }
 
         return possiblePlays;
+    }
+
+
+    private void setupLearning(){
+        if(loadMatrixBase("Attack") == null) {
+            inicializeBase();
+        } else {
+            matrixBaseAttack = loadMatrixBase("Attack");
+            printLogMatrix(matrixBaseAttack);
+            initMatrix(matrixHuman, matrixBaseAttack);
+        }
+
+        if(loadMatrixBase("Defense") == null){
+            matrixBaseDefense= new float[MATRIX_SIZE][MATRIX_SIZE];
+        } else {
+            matrixBaseDefense = loadMatrixBase("Defense");
+            printLogMatrix(matrixBaseDefense);
+            initMatrix(matrixMachine, matrixBaseDefense);
+        }
+        totalGames = loadTotalGames();
+        System.out.println(totalGames);
+    }
+
+    private void initMatrix(float [][][] matrixGame, float[][] matrixLearning) {
+        for (int row = 0; row < MATRIX_SIZE; row++) {
+            for (int column = 0; column < MATRIX_SIZE; column++) {
+                matrixGame[row][column][2] = matrixLearning[row][column];
+                if (row == LAST_POS && column == FIRST_POS)
+                    System.out.print(matrixLearning[row][column] + " ");
+                else System.out.print(matrixLearning[row][column] + " ");
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private void inicializeVarAlgorithm() {
+        shipsDownIA = 0;
+        shipsDownHuman = 0;
+        step = 1;
+        invertCounter = 0;
+        vertical = false;
+        horizontal = false;
+        lastHit = false;
+        orientation = 1;
+        pos = 1;
+    }
+
+    private void printLogMatrix(float[][] matrix){
+        System.out.println("-----------------");
+        for (int i = 0; i < MATRIX_SIZE; i++) {
+            for (int j = 0; j < MATRIX_SIZE; j++) {
+                if (i == LAST_POS && j == FIRST_POS)
+                    System.out.print(matrix[i][j] + " ");
+                else System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println("\n");
+        }
+        System.out.println("--------X--------");
+    }
+
+    private void endGame() {
+        DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
+        endGameDialog.show(getFragmentManager(), "Alert");
+        totalGames++;
+        learningAttack();
+        learningDefense();
+        saveTotalGames(totalGames);
     }
 }
