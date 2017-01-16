@@ -26,6 +26,11 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 
 public class NewGameActivity extends Activity {
     private static int[][][] matrix = new int[10][10][3];
@@ -47,6 +52,12 @@ public class NewGameActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
+            System.setErr(new PrintStream(new FileOutputStream(new File("sdcard/log.file"))));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         for (int[][] row : matrix) {
             for (int[] column : row) {
                 column[0] = 0;
