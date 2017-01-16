@@ -1065,7 +1065,7 @@ public class GameActivity extends Activity {
                 })
                 .show();
     }
-}
+
 
     public float[][][] updateMatrixValues(float matrix[][][], int row, int column, boolean hit) {
         System.out.println("ANTES");
