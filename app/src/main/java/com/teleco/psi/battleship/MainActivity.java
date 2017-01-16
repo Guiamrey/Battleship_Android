@@ -30,8 +30,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        String language = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
-        Locale locale = new Locale(language);
+        String language = getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "");
+        Locale locale;
+        if (language.equals(""))
+            locale = Locale.getDefault();
+        else
+            locale = new Locale(language);
         Resources res = getResources();
         Configuration config = res.getConfiguration();
         config.locale = locale;
@@ -39,7 +43,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         Button newGameButton = (Button) findViewById(R.id.newGameButton);
-        newGameButton.setOnClickListener(new View.OnClickListener(){
+        newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent game_intent = new Intent(getApplicationContext(), NewGameActivity.class);
@@ -49,7 +53,7 @@ public class MainActivity extends Activity {
         });
 
         Button optionsButton = (Button) findViewById(R.id.optionsButton);
-        optionsButton.setOnClickListener(new View.OnClickListener(){
+        optionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent options_intent = new Intent(getApplicationContext(), Settings.class);
@@ -64,7 +68,7 @@ public class MainActivity extends Activity {
                 showAboutDialog();
             }
         });
-   }
+    }
 
     private void showAboutDialog() {
 
@@ -86,9 +90,9 @@ public class MainActivity extends Activity {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
             builder.setTitle(R.string.about);
-            builder.setMessage("Battleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+            builder.setMessage(R.string.aboutBattleship);
             builder.setCancelable(false);
-            builder.setPositiveButton("Ok",
+            builder.setPositiveButton(R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,
                                             int id) {

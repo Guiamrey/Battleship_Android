@@ -37,8 +37,8 @@ public class Settings extends Activity {
 
     @Override
     protected void onResume() {
-        String language = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
-        if(language.equals("es")){
+        String language = getResources().getConfiguration().locale.getDisplayLanguage();
+        if(language.equals("español")){
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));
         }
@@ -221,6 +221,7 @@ public class Settings extends Activity {
                     .setCancelable(false)
                     .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface arg0, int arg1) {
+                            saveAll();
                             finish();
                         }
                     })
@@ -232,7 +233,6 @@ public class Settings extends Activity {
                             config.locale = locale;
                             res.updateConfiguration(config, res.getDisplayMetrics());
                             finish();
-                            //close();
                         }
                     })
                     .show();

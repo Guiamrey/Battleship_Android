@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,11 +24,13 @@ import android.widget.FrameLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -53,8 +57,8 @@ public class GameActivity extends Activity {
     private static double alpha = 0.2;
     private static int totalGames;
     private FrameLayout light;
-    private int [][][] matrixHuman = new int[MATRIX_SIZE][MATRIX_SIZE][3];
-    private static int [][][] matrixMachine = new int[MATRIX_SIZE][MATRIX_SIZE][3];
+    private int[][][] matrixHuman = new int[MATRIX_SIZE][MATRIX_SIZE][3];
+    private static int[][][] matrixMachine = new int[MATRIX_SIZE][MATRIX_SIZE][3];
     private static View[][] viewsHuman = new View[MATRIX_SIZE][MATRIX_SIZE];
     private static View[][] viewsMachine = new View[MATRIX_SIZE][MATRIX_SIZE];
     private FrameLayout frameLayoutHuman;
@@ -76,6 +80,10 @@ public class GameActivity extends Activity {
     private static final int NUMBER_SHIPS = 17;
     private static int step = 1;
     private boolean allow_adjacent_ships;
+    private int level = 0;
+    private static final int EASY = 0;
+    private static final int MEDIUM = 1;
+    private static final int HARD = 2;
 
 
     @Override
@@ -85,7 +93,20 @@ public class GameActivity extends Activity {
         /** Comprobar el modo de juego: Clásico o superdisparos
          *  Clásico y Classic contienen 'sic'. Si lo guardado en ajustes no lo contiene entonces el modo de juego es Supershots
          */
-        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "").contains("sic");
+        supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic");
+        log("Modo de juego--> "+getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic"));
+        log("Idioma --> "+getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","en"));
+        log("Barcos adyacentes --> "+getSharedPreferences("Adyacent_ships" , Context.MODE_PRIVATE).getBoolean("checked",false));
+        log("Dificultad --> "+getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy"));
+
+        log("Default language --> "+Locale.getDefault().getDisplayLanguage());
+        String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
+        if(lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("facil")){
+            level = EASY;
+        }else if(lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")){
+            level = MEDIUM;
+        }else level = HARD;
+
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
         setContentView(R.layout.game_activity);
@@ -148,8 +169,8 @@ public class GameActivity extends Activity {
                 }
             }
         }
-        for(int a = 0; a < 10; a++){
-            for (int b = 0; b < 10; b++){
+        for (int a = 0; a < 10; a++) {
+            for (int b = 0; b < 10; b++) {
                 System.out.print(matrixMachine[a][b][0] + " ");
             }
             System.out.println();
@@ -199,9 +220,9 @@ public class GameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (matrixMachine[row - 1][column - 1][SHIPS] != 0) {
-                    if(supershots){
+                    if (supershots) {
                         supershot(matrixMachine[row - 1][column - 1][SHIPS], false);
-                    }else {
+                    } else {
                         view.setBackgroundColor(Color.RED);
                         shipsDownHuman++;
                     }
@@ -221,7 +242,7 @@ public class GameActivity extends Activity {
     }
 
     private void supershot(int ship, boolean human) {
-        if(human) {
+        if (human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == ship) {
@@ -231,14 +252,14 @@ public class GameActivity extends Activity {
                     }
                 }
             }
-        }else{
+        } else {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixMachine[fila][columna][SHIPS] == ship) {
                         matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
                         viewsMachine[fila][columna].setBackgroundColor(Color.RED);
                         shipsDownHuman++;
-			            viewsMachine[fila][columna].setOnClickListener(null);
+                        viewsMachine[fila][columna].setOnClickListener(null);
                     }
                 }
             }
@@ -407,7 +428,7 @@ public class GameActivity extends Activity {
                 if (lastHit) {
                     step = 2;
                 }
-            } else if(supershots) {
+            } else if (supershots) {
                 step = 1;
             } else if (step == 2) {
                 bestAfterHit(lastAction);
@@ -488,9 +509,9 @@ public class GameActivity extends Activity {
         final int X = row;
         final int Y = column;
         if (matrixHuman[row][column][SHIPS] != 0) {
-            if(supershots){
+            if (supershots) {
                 supershot(matrixHuman[row][column][SHIPS], true);
-            }else {
+            } else {
                 matrixHuman[row][column][GAME_STATE] = TOUCHED; //tocado
                 log("JUGADA: fila  " + (row + 1) + " columna  " + (column + 1) + " TOCADO");
                 hundidos++;
@@ -615,6 +636,7 @@ public class GameActivity extends Activity {
     /**
      * Function that calls when the IA hits a boat two times and try to found
      * the rest of the ship.
+     *
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
     private void bestAfterHit(int[] lastAction) {
@@ -625,6 +647,7 @@ public class GameActivity extends Activity {
     /**
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
+     *
      * @param possiblePlays List with the possible plays where the boat can be
      * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
@@ -659,6 +682,7 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
+     *
      * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
@@ -1105,5 +1129,25 @@ public class GameActivity extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Se llama cuando se pulsa el botón de atrás del dispositivo, para que el jugador confirme si quiere salir de la partida en juego.
+     */
+    @Override
+    public void onBackPressed() {
+        AlertDialog alertbox = new AlertDialog.Builder(this)
+                .setMessage(R.string.leave_game)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                })
+                .show();
     }
 }

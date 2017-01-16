@@ -73,4 +73,5 @@
     <string name="noadjacent">No están permitidos los barcos adyacentes. Coloquelos separados entre sí.</string>
     <string name="another">Barco ya colocado. Seleccione otro.</string>
     <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
+    <string name="leave_game">¿Eestá seguro de que quiere abandonar el juego actual?</string>
 </resources>

@@ -448,6 +448,7 @@ public class NewGameActivity extends Activity {
                         casillas = 0;
                         numfilter = 0;
                         infoship.setText("");
+                        removeClickListenerViews();
                     }
                 })
                 .show();

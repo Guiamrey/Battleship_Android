@@ -81,5 +81,7 @@
     <string name="noadjacent">Adjacent ships are not allowed. Place them separated between each other.</string>
     <string name="another">Ship already placed. Select another one.</string>
     <string name="fuun">Click \'Start Game\' and start the battle!!</string>
+    <string name="leave_game">Are you sure you want to leave the current game?</string>
+    <string name="aboutBattleship">Battleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
 
 </resources>
