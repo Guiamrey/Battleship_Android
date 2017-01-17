@@ -163,8 +163,6 @@ public class GameActivity extends Activity {
                 }
             }
         }
-
-        inicializeBase();
     }
 
     private TableLayout createBoard(boolean clickable) {
@@ -200,7 +198,6 @@ public class GameActivity extends Activity {
             tableLayout.addView(row, layoutParams);
         }
         return tableLayout;
-
     }
 
     private void addClickListener(final TextView view, final int row, final int column) {
@@ -351,24 +348,6 @@ public class GameActivity extends Activity {
             } else if (step == 3) {
                 shipFound((int) lastAction[ROW], (int) lastAction[COLUMN]);
             }
-        }
-    }
-
-    /***
-     * This function prints the matrix in console.
-     * It only prints the boats, and the state of the box.
-     */
-    private void printMatrix() {
-        log("\\   A    B    C    D    E    F    G    H    I    J");
-        for (int row = 0; row < MATRIX_SIZE; row++) {
-            log(Integer.toString(row + 1));
-            for (int column = 0; column < MATRIX_SIZE; column++) {
-                if (row == LAST_POS && column == FIRST_POS)
-                    log(" " + matrixHuman[row][column][SHIPS] + "/" + matrixHuman[row][column][GAME_STATE]);
-                else
-                    log("  " + matrixHuman[row][column][SHIPS] + "/" + matrixHuman[row][column][GAME_STATE]);
-            }
-            log("\n");
         }
     }
 
@@ -562,7 +541,6 @@ public class GameActivity extends Activity {
         float[] bestAction = new float[3];
 
         for (String possiblePlay : possiblePlays) {
-            System.out.println(possiblePlay);
             String[] playsStr = possiblePlay.split("-");
             int row = (int)Float.parseFloat(playsStr[ROW]);
             int column = (int)Float.parseFloat(playsStr[COLUMN]);
@@ -703,9 +681,10 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                System.out.println(row + " X " + column );
-                System.out.println(matrixBaseAttack[row][column] + " - " + (alpha * matrixHuman[row][column][2]));
-                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * matrixHuman[row][column][2])) / (totalGames + 1));
+                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] + (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames + 1));
+
+                if(matrixBaseAttack[row][column] > 100) matrixBaseAttack[row][column] = 100;
+                else if(matrixBaseAttack[row][column] < 0) matrixBaseAttack[row][column] = 0;
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
@@ -715,14 +694,17 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] + (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][2]))) / (totalGames + 1);
+
+                if(matrixBaseDefense[row][column] > 100) matrixBaseDefense[row][column] = 100;
+                else if(matrixBaseDefense[row][column] < 0) matrixBaseDefense[row][column] = 0;
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFENSE");
         printLogMatrix(matrixBaseDefense);
     }
 
-    public void inicializeBase() {
+    public void inicializeBaseAttack() {
         //centrales
         matrixHuman[4][4][2] = 100;
         matrixHuman[4][5][2] = 100;
@@ -836,6 +818,122 @@ public class GameActivity extends Activity {
         matrixHuman[0][9][2] = 0;
         matrixHuman[9][0][2] = 0;
         matrixHuman[9][9][2] = 0;
+    }
+
+    public void inicializeBaseDefense() {
+        //centrales
+        matrixMachine[4][4][2] = 100 - 100;
+        matrixMachine[4][5][2] = 100 - 100;
+        matrixMachine[5][4][2] = 100 - 100;
+        matrixMachine[4][5][2] = 100 - 100;
+        //rodeando las centrales
+        matrixMachine[4][3][2] = 100 - 90;
+        matrixMachine[4][6][2] = 100 - 90;
+        matrixMachine[5][3][2] = 100 - 90;
+        matrixMachine[5][6][2] = 100 - 90;
+        matrixMachine[3][4][2] = 100 - 90;
+        matrixMachine[3][5][2] = 100 - 90;
+        matrixMachine[6][4][2] = 100 - 90;
+        matrixMachine[6][5][2] = 100 - 90;
+        //un nivel mas hacia afuera
+        matrixMachine[3][3][2] = 100 - 82;
+        matrixMachine[3][6][2] = 100 - 82;
+        matrixMachine[6][3][2] = 100 - 82;
+        matrixMachine[6][6][2] = 100 - 82;
+        matrixMachine[4][2][2] = 100 - 82;
+        matrixMachine[5][2][2] = 100 - 82;
+        matrixMachine[4][7][2] = 100 - 82;
+        matrixMachine[5][7][2] = 100 - 82;
+        matrixMachine[2][4][2] = 100 - 82;
+        matrixMachine[2][5][2] = 100 - 82;
+        matrixMachine[7][4][2] = 100 - 82;
+        matrixMachine[7][5][2] = 100 - 82;
+        ///
+        matrixMachine[3][2][2] = 100 - 73;
+        matrixMachine[2][3][2] = 100 - 73;
+        matrixMachine[2][6][2] = 100 - 73;
+        matrixMachine[3][7][2] = 100 - 73;
+        matrixMachine[6][2][2] = 100 - 73;
+        matrixMachine[7][3][2] = 100 - 73;
+        matrixMachine[6][7][2] = 100 - 73;
+        matrixMachine[7][6][2] = 100 - 73;
+        //
+        matrixMachine[4][1][2] = 100 - 64;
+        matrixMachine[5][1][2] = 100 - 64;
+        matrixMachine[4][8][2] = 100 - 64;
+        matrixMachine[5][8][2] = 100 - 64;
+        matrixMachine[8][4][2] = 100 - 64;
+        matrixMachine[8][5][2] = 100 - 64;
+        matrixMachine[1][4][2] = 100 - 64;
+        matrixMachine[1][5][2] = 100 - 64;
+        matrixMachine[2][2][2] = 100 - 64;
+        matrixMachine[2][7][2] = 100 - 64;
+        matrixMachine[7][7][2] = 100 - 64;
+        matrixMachine[7][2][2] = 100 - 64;
+        //
+        matrixMachine[3][1][2] = 100 - 55;
+        matrixMachine[1][3][2] = 100 - 55;
+        matrixMachine[1][6][2] = 100 - 55;
+        matrixMachine[3][8][2] = 100 - 55;
+        matrixMachine[6][1][2] = 100 - 55;
+        matrixMachine[8][3][2] = 100 - 55;
+        matrixMachine[6][8][2] = 100 - 55;
+        matrixMachine[8][6][2] = 100 - 55;
+        //
+        matrixMachine[0][4][2] = 100 - 46;
+        matrixMachine[0][5][2] = 100 - 46;
+        matrixMachine[9][4][2] = 100 - 46;
+        matrixMachine[9][5][2] = 100 - 46;
+        matrixMachine[4][0][2] = 100 - 46;
+        matrixMachine[5][0][2] = 100 - 46;
+        matrixMachine[4][9][2] = 100 - 46;
+        matrixMachine[5][9][2] = 100 - 46;
+        matrixMachine[1][2][2] = 100 - 46;
+        matrixMachine[2][1][2] = 100 - 46;
+        matrixMachine[1][7][2] = 100 - 46;
+        matrixMachine[2][8][2] = 100 - 46;
+        matrixMachine[7][1][2] = 100 - 46;
+        matrixMachine[8][2][2] = 100 - 46;
+        matrixMachine[8][7][2] = 100 - 46;
+        matrixMachine[7][8][2] = 100 - 46;
+        //
+        matrixMachine[0][3][2] = 100 - 36;
+        matrixMachine[3][0][2] = 100 - 36;
+        matrixMachine[0][6][2] = 100 - 36;
+        matrixMachine[3][9][2] = 100 - 36;
+        matrixMachine[1][7][2] = 100 - 36;
+        matrixMachine[2][8][2] = 100 - 36;
+        matrixMachine[6][0][2] = 100 - 36;
+        matrixMachine[9][3][2] = 100 - 36;
+        matrixMachine[9][6][2] = 3100 - 6;
+        matrixMachine[6][9][2] = 100 - 36;
+        //
+        matrixMachine[2][0][2] = 100 - 27;
+        matrixMachine[1][1][2] = 100 - 27;
+        matrixMachine[0][2][2] = 100 - 27;
+        matrixMachine[0][7][2] = 100 - 27;
+        matrixMachine[1][8][2] = 100 - 27;
+        matrixMachine[2][9][2] = 100 - 27;
+        matrixMachine[7][0][2] = 100 - 27;
+        matrixMachine[8][1][2] = 100 - 27;
+        matrixMachine[9][2][2] = 100 - 27;
+        matrixMachine[9][7][2] = 100 - 27;
+        matrixMachine[8][8][2] = 100 - 27;
+        matrixMachine[7][9][2] = 100 - 27;
+        //
+        matrixMachine[0][1][2] = 100 - 18;
+        matrixMachine[1][0][2] = 100 - 18;
+        matrixMachine[0][8][2] = 100 - 18;
+        matrixMachine[1][9][2] = 100 - 18;
+        matrixMachine[8][0][2] = 100 - 18;
+        matrixMachine[9][1][2] = 100 - 18;
+        matrixMachine[8][9][2] = 100 - 18;
+        matrixMachine[9][8][2] = 100 - 18;
+        //
+        matrixMachine[0][0][2] = 100 - 0;
+        matrixMachine[0][9][2] = 100 - 0;
+        matrixMachine[9][0][2] = 100 - 0;
+        matrixMachine[9][9][2] = 100 - 0;
     }
 
     /*
@@ -1110,7 +1208,7 @@ public class GameActivity extends Activity {
             case "ATTACK":
                 editor = settings.edit();
                 json = gson.toJson(matrixBase);
-                editor.putString("MatrixBaseAtatck", json);
+                editor.putString("MatrixBaseAttatck", json);
                 editor.commit();
                 break;
             case "DEFEND":
@@ -1137,7 +1235,6 @@ public class GameActivity extends Activity {
                 matrixBase = gson.fromJson(json, float[][].class);
                 break;
         }
-
         return matrixBase;
     }
 
@@ -1227,28 +1324,44 @@ public class GameActivity extends Activity {
 
     private void setupLearning(){
         if(loadMatrixBase("Attack") == null) {
-            inicializeBase();
+            inicializeBaseAttack();
+            initMatrixBase(matrixBaseAttack, matrixHuman);
         } else {
             matrixBaseAttack = loadMatrixBase("Attack");
+            System.out.println("LOAD ATTACK");
             printLogMatrix(matrixBaseAttack);
-            initMatrix(matrixHuman, matrixBaseAttack);
+            initMatrixGame(matrixHuman, matrixBaseAttack);
         }
 
         if(loadMatrixBase("Defense") == null){
-            matrixBaseDefense= new float[MATRIX_SIZE][MATRIX_SIZE];
+            inicializeBaseDefense();
+            initMatrixBase(matrixBaseDefense, matrixMachine);
         } else {
             matrixBaseDefense = loadMatrixBase("Defense");
+            System.out.println("LOAD DEFENSE");
             printLogMatrix(matrixBaseDefense);
-            initMatrix(matrixMachine, matrixBaseDefense);
+            initMatrixGame(matrixMachine, matrixBaseDefense);
         }
         totalGames = loadTotalGames();
         System.out.println(totalGames);
     }
 
-    private void initMatrix(float [][][] matrixGame, float[][] matrixLearning) {
+    private void initMatrixGame(float [][][] matrixGame, float[][] matrixLearning) {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
                 matrixGame[row][column][2] = matrixLearning[row][column];
+                if (row == LAST_POS && column == FIRST_POS)
+                    System.out.print(matrixLearning[row][column] + " ");
+                else System.out.print(matrixLearning[row][column] + " ");
+            }
+            System.out.println("\n");
+        }
+    }
+
+    private void initMatrixBase(float[][] matrixLearning, float [][][] matrixGame) {
+        for (int row = 0; row < MATRIX_SIZE; row++) {
+            for (int column = 0; column < MATRIX_SIZE; column++) {
+                matrixLearning[row][column] = matrixGame[row][column][2];
                 if (row == LAST_POS && column == FIRST_POS)
                     System.out.print(matrixLearning[row][column] + " ");
                 else System.out.print(matrixLearning[row][column] + " ");
