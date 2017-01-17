@@ -1110,7 +1110,7 @@ public class GameActivity extends Activity {
             case "ATTACK":
                 editor = settings.edit();
                 json = gson.toJson(matrixBase);
-                editor.putString("MatrixBaseAtatck", json);
+                editor.putString("MatrixBaseAttack", json);
                 editor.commit();
                 break;
             case "DEFEND":
@@ -1123,7 +1123,7 @@ public class GameActivity extends Activity {
     }	
 
     private float[][] loadMatrixBase(String type) {
-        SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
+        SharedPreferences settings = getSharedPreferences("MatrixBase", Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json;
         float[][] matrixBase = null;
