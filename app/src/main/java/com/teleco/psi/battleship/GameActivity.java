@@ -719,7 +719,7 @@ public class GameActivity extends Activity {
         printLogMatrix(matrixBaseDefense);
     }
 
-    public void inicializeBase() {
+    public void inicializeBaseAttack() {
         //centrales
         matrixHuman[4][4][2] = 100;
         matrixHuman[4][5][2] = 100;
@@ -833,6 +833,123 @@ public class GameActivity extends Activity {
         matrixHuman[0][9][2] = 0;
         matrixHuman[9][0][2] = 0;
         matrixHuman[9][9][2] = 0;
+    }
+
+
+    public void inicializeBaseDefense() {
+        //centrales
+        matrixMachine[4][4][2] = 100 - 100;
+        matrixMachine[4][5][2] = 100 - 100;
+        matrixMachine[5][4][2] = 100 - 100;
+        matrixMachine[4][5][2] = 100 - 100;
+        //rodeando las centrales
+        matrixMachine[4][3][2] = 100 - 90;
+        matrixMachine[4][6][2] = 100 - 90;
+        matrixMachine[5][3][2] = 100 - 90;
+        matrixMachine[5][6][2] = 100 - 90;
+        matrixMachine[3][4][2] = 100 - 90;
+        matrixMachine[3][5][2] = 100 - 90;
+        matrixMachine[6][4][2] = 100 - 90;
+        matrixMachine[6][5][2] = 100 - 90;
+        //un nivel mas hacia afuera
+        matrixMachine[3][3][2] = 100 - 82;
+        matrixMachine[3][6][2] = 100 - 82;
+        matrixMachine[6][3][2] = 100 - 82;
+        matrixMachine[6][6][2] = 100 - 82;
+        matrixMachine[4][2][2] = 100 - 82;
+        matrixMachine[5][2][2] = 100 - 82;
+        matrixMachine[4][7][2] = 100 - 82;
+        matrixMachine[5][7][2] = 100 - 82;
+        matrixMachine[2][4][2] = 100 - 82;
+        matrixMachine[2][5][2] = 100 - 82;
+        matrixMachine[7][4][2] = 100 - 82;
+        matrixMachine[7][5][2] = 100 - 82;
+        ///
+        matrixMachine[3][2][2] = 100 - 73;
+        matrixMachine[2][3][2] = 100 - 73;
+        matrixMachine[2][6][2] = 100 - 73;
+        matrixMachine[3][7][2] = 100 - 73;
+        matrixMachine[6][2][2] = 100 - 73;
+        matrixMachine[7][3][2] = 100 - 73;
+        matrixMachine[6][7][2] = 100 - 73;
+        matrixMachine[7][6][2] = 100 - 73;
+        //
+        matrixMachine[4][1][2] = 100 - 64;
+        matrixMachine[5][1][2] = 100 - 64;
+        matrixMachine[4][8][2] = 100 - 64;
+        matrixMachine[5][8][2] = 100 - 64;
+        matrixMachine[8][4][2] = 100 - 64;
+        matrixMachine[8][5][2] = 100 - 64;
+        matrixMachine[1][4][2] = 100 - 64;
+        matrixMachine[1][5][2] = 100 - 64;
+        matrixMachine[2][2][2] = 100 - 64;
+        matrixMachine[2][7][2] = 100 - 64;
+        matrixMachine[7][7][2] = 100 - 64;
+        matrixMachine[7][2][2] = 100 - 64;
+        //
+        matrixMachine[3][1][2] = 100 - 55;
+        matrixMachine[1][3][2] = 100 - 55;
+        matrixMachine[1][6][2] = 100 - 55;
+        matrixMachine[3][8][2] = 100 - 55;
+        matrixMachine[6][1][2] = 100 - 55;
+        matrixMachine[8][3][2] = 100 - 55;
+        matrixMachine[6][8][2] = 100 - 55;
+        matrixMachine[8][6][2] = 100 - 55;
+        //
+        matrixMachine[0][4][2] = 100 - 46;
+        matrixMachine[0][5][2] = 100 - 46;
+        matrixMachine[9][4][2] = 100 - 46;
+        matrixMachine[9][5][2] = 100 - 46;
+        matrixMachine[4][0][2] = 100 - 46;
+        matrixMachine[5][0][2] = 100 - 46;
+        matrixMachine[4][9][2] = 100 - 46;
+        matrixMachine[5][9][2] = 100 - 46;
+        matrixMachine[1][2][2] = 100 - 46;
+        matrixMachine[2][1][2] = 100 - 46;
+        matrixMachine[1][7][2] = 100 - 46;
+        matrixMachine[2][8][2] = 100 - 46;
+        matrixMachine[7][1][2] = 100 - 46;
+        matrixMachine[8][2][2] = 100 - 46;
+        matrixMachine[8][7][2] = 100 - 46;
+        matrixMachine[7][8][2] = 100 - 46;
+        //
+        matrixMachine[0][3][2] = 100 - 36;
+        matrixMachine[3][0][2] = 100 - 36;
+        matrixMachine[0][6][2] = 100 - 36;
+        matrixMachine[3][9][2] = 100 - 36;
+        matrixMachine[1][7][2] = 100 - 36;
+        matrixMachine[2][8][2] = 100 - 36;
+        matrixMachine[6][0][2] = 100 - 36;
+        matrixMachine[9][3][2] = 100 - 36;
+        matrixMachine[9][6][2] = 3100 - 6;
+        matrixMachine[6][9][2] = 100 - 36;
+        //
+        matrixMachine[2][0][2] = 100 - 27;
+        matrixMachine[1][1][2] = 100 - 27;
+        matrixMachine[0][2][2] = 100 - 27;
+        matrixMachine[0][7][2] = 100 - 27;
+        matrixMachine[1][8][2] = 100 - 27;
+        matrixMachine[2][9][2] = 100 - 27;
+        matrixMachine[7][0][2] = 100 - 27;
+        matrixMachine[8][1][2] = 100 - 27;
+        matrixMachine[9][2][2] = 100 - 27;
+        matrixMachine[9][7][2] = 100 - 27;
+        matrixMachine[8][8][2] = 100 - 27;
+        matrixMachine[7][9][2] = 100 - 27;
+        //
+        matrixMachine[0][1][2] = 100 - 18;
+        matrixMachine[1][0][2] = 100 - 18;
+        matrixMachine[0][8][2] = 100 - 18;
+        matrixMachine[1][9][2] = 100 - 18;
+        matrixMachine[8][0][2] = 100 - 18;
+        matrixMachine[9][1][2] = 100 - 18;
+        matrixMachine[8][9][2] = 100 - 18;
+        matrixMachine[9][8][2] = 100 - 18;
+        //
+        matrixMachine[0][0][2] = 100 - 0;
+        matrixMachine[0][9][2] = 100 - 0;
+        matrixMachine[9][0][2] = 100 - 0;
+        matrixMachine[9][9][2] = 100 - 0;
     }
 
     /*
