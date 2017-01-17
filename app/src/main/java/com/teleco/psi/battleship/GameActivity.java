@@ -2,19 +2,14 @@ package com.teleco.psi.battleship;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.os.WorkSource;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -73,7 +68,6 @@ public class GameActivity extends Activity {
     private boolean vertical = false;
     private boolean horizontal = false;
     private boolean lastHit = false;
-    private int row, column;
     private int pos = 1, orientation = 1;
     private int invertCounter = 0;
     private float[] lastAction = new float[3];
@@ -151,7 +145,13 @@ public class GameActivity extends Activity {
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
-        matrixHuman = gson.fromJson(json, float[][][].class);
+        float[][][] matrix = gson.fromJson(json, float[][][].class);
+        for (int row = 0; row < MATRIX_SIZE; row++) {
+            for (int column = 0; column < MATRIX_SIZE; column++) {
+                matrixHuman[row][column][SHIPS] = matrix[row][column][SHIPS];
+            }
+        }
+
         TableLayout board = (TableLayout) frameLayoutHuman.getChildAt(0);
         for (int row = 1; row <= MATRIX_SIZE; row++) {
             TableRow rowTable = (TableRow) board.getChildAt(row);
@@ -559,7 +559,6 @@ public class GameActivity extends Activity {
         float[] bestAction = new float[3];
 
         for (String possiblePlay : possiblePlays) {
-            System.out.println(possiblePlay);
             String[] playsStr = possiblePlay.split("-");
             int row = (int)Float.parseFloat(playsStr[ROW]);
             int column = (int)Float.parseFloat(playsStr[COLUMN]);
@@ -700,9 +699,7 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                System.out.println(row + " X " + column );
-                System.out.println(matrixBaseAttack[row][column] + " - " + (alpha * matrixHuman[row][column][2]));
-                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * matrixHuman[row][column][2])) / (totalGames + 1));
+                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] + (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames + 1));
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
@@ -712,10 +709,10 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] + (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
             }
         }
-        saveMatrixBase(matrixBaseDefense, "DEFENSE");
+        saveMatrixBase(matrixBaseDefense, "DEFEND");
         printLogMatrix(matrixBaseDefense);
     }
 
@@ -1344,33 +1341,24 @@ public class GameActivity extends Activity {
             initMatrixBase(matrixBaseAttack, matrixHuman);
         } else {
             matrixBaseAttack = loadMatrixBase("Attack");
-            System.out.println("LOAD ATTACK");
-            printLogMatrix(matrixBaseAttack);
             initMatrixGame(matrixHuman, matrixBaseAttack);
         }
 
-        if(loadMatrixBase("Defense") == null){
+        if(loadMatrixBase("DEFEND") == null){
             inicializeBaseDefense();
             initMatrixBase(matrixBaseDefense, matrixMachine);
         } else {
-            matrixBaseDefense = loadMatrixBase("Defense");
-            System.out.println("LOAD DEFENSE");
-            printLogMatrix(matrixBaseDefense);
+            matrixBaseDefense = loadMatrixBase("DEFEND");
             initMatrixGame(matrixMachine, matrixBaseDefense);
         }
         totalGames = loadTotalGames();
-        System.out.println(totalGames);
     }
 
     private void initMatrixGame(float [][][] matrixGame, float[][] matrixLearning) {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
                 matrixGame[row][column][2] = matrixLearning[row][column];
-                if (row == LAST_POS && column == FIRST_POS)
-                    System.out.print(matrixLearning[row][column] + " ");
-                else System.out.print(matrixLearning[row][column] + " ");
             }
-            System.out.println("\n");
         }
     }
 
@@ -1378,11 +1366,7 @@ public class GameActivity extends Activity {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
                 matrixLearning[row][column] = matrixGame[row][column][2];
-                if (row == LAST_POS && column == FIRST_POS)
-                    System.out.print(matrixLearning[row][column] + " ");
-                else System.out.print(matrixLearning[row][column] + " ");
             }
-            System.out.println("\n");
         }
     }
 
