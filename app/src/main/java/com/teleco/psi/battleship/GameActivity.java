@@ -1150,7 +1150,7 @@ public class GameActivity extends Activity {
     }
 
     private int loadTotalGames() {
-        SharedPreferences settings = getSharedPreferences("MatrixBase", 0);
+        SharedPreferences settings = getSharedPreferences("TotalGames", Context.MODE_PRIVATE);
         int totalGames;
         totalGames = settings.getInt("TotalGames", 0);
         return totalGames;

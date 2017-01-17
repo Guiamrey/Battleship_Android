@@ -33,7 +33,7 @@ import java.io.PrintStream;
 
 
 public class NewGameActivity extends Activity {
-    private static int[][][] matrix = new int[10][10][3];
+    private static float[][][] matrix = new float[10][10][3];
     /** Matriz donde se guardan las views que componen el tablero */
     private static View[][] views = new View[10][10];
     /** - ship: valor asociado al barco que se está colocando en el momento que se guardará en la matriz. Ver wiki para más info.
@@ -58,8 +58,8 @@ public class NewGameActivity extends Activity {
             e.printStackTrace();
         }
 
-        for (int[][] row : matrix) {
-            for (int[] column : row) {
+        for (float[][] row : matrix) {
+            for (float[] column : row) {
                 column[0] = 0;
             }
         }
