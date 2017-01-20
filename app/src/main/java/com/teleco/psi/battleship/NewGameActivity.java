@@ -34,18 +34,22 @@ import java.io.PrintStream;
 
 public class NewGameActivity extends Activity {
     private static float[][][] matrix = new float[10][10][3];
-    /** Matriz donde se guardan las views que componen el tablero */
+    /**
+     * Matriz donde se guardan las views que componen el tablero
+     */
     private static View[][] views = new View[10][10];
-    /** - ship: valor asociado al barco que se está colocando en el momento que se guardará en la matriz. Ver wiki para más info.
-     *  - colocados: numero de casillas marcadas durante la colocación de un barco. Aumenta cada vez que el usuario pulsa una casilla. Disminuye si el usuario pulsa una casilla ya marcada.
-     *  - casillas: número de casillas que debe de ocupar el barco que se está colocando en el momento.
-     *  - numfilter: número de views cambiadas a blanco y negro.
+    /**
+     * - ship: valor asociado al barco que se está colocando en el momento que se guardará en la matriz. Ver wiki para más info.
+     * - colocados: numero de casillas marcadas durante la colocación de un barco. Aumenta cada vez que el usuario pulsa una casilla. Disminuye si el usuario pulsa una casilla ya marcada.
+     * - casillas: número de casillas que debe de ocupar el barco que se está colocando en el momento.
+     * - numfilter: número de views cambiadas a blanco y negro.
      */
     private int ship, colocados, casillas, numfilter;
     private int total_ships = 0, placed[] = new int[7];
     private TextView infoship;
-    /** - image: ImageView del barco que se ha pulsado para colocar. Sirve para ponerla en balnco y negro cuando el barco esta colcoado correctamente.
-     *  - colorfilter: conjunto de ImageView a que se les ha aplicado el filtro de blanco y negro. Al resetear el tablero vuelven al color original.
+    /**
+     * - image: ImageView del barco que se ha pulsado para colocar. Sirve para ponerla en balnco y negro cuando el barco esta colcoado correctamente.
+     * - colorfilter: conjunto de ImageView a que se les ha aplicado el filtro de blanco y negro. Al resetear el tablero vuelven al color original.
      */
     private ImageView image, colorfilter[] = new ImageView[5];
     private boolean allow_adjacent_ships;
@@ -84,6 +88,7 @@ public class NewGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (total_ships == 5) {
+                    System.out.println("total ships "+total_ships);
                     SharedPreferences settings = getSharedPreferences("Matrix", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
                     Gson gson = new Gson();
@@ -128,29 +133,30 @@ public class NewGameActivity extends Activity {
         numfilter = 0;
         infoship.setText("");
         allow_adjacent_ships = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
-        for(int i = 2; i < placed.length; i++)
+        for (int i = 2; i < placed.length; i++)
             placed[i] = 0;
     }
 
     /**
      * Añade el ClickListener a las ImageViews de los barcos.
-     * @param v ImageView del barco.
+     *
+     * @param v    ImageView del barco.
      * @param tipo Según el barco que sea tiene asociado un valor u otro, para que cada barco esté identificado en la matriz con un número diferente.
-     * @param num Número de casillas que ocupa el barco.
+     * @param num  Número de casillas que ocupa el barco.
      */
     private void onClickListener(ImageView v, final int tipo, final int num) {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (colocados == casillas) {
-                    if(placed[tipo] != 1) {
+                    if (placed[tipo] != 1) {
                         infoship.setText(getString(R.string.shipof) + num + getString(R.string.squares));
                         colocados = 0;
                         ship = tipo;
                         casillas = num;
                         image = (ImageView) v;
                         addClickListenerViews();
-                    }else{
+                    } else {
                         infoship.setText(R.string.another);
                     }
                 } else {
@@ -185,6 +191,7 @@ public class NewGameActivity extends Activity {
 
     /**
      * Crea el tablero para marcar las casillas.
+     *
      * @return Devuelve el TableLayout'.
      */
     protected TableLayout createBoard() {
@@ -222,9 +229,10 @@ public class NewGameActivity extends Activity {
 
     /**
      * Añade el ClickListener a las casillas de la matriz.
+     *
      * @param view View correspondiente a la casilla a añadir el ClickListener
-     * @param i fila de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
-     * @param j columna de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
+     * @param i    fila de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
+     * @param j    columna de la View para, cuando tocada, marcar en la matriz el valor correspondiente guardado en 'ship' (De 1 a 10).
      */
     private void addClickListener(final View view, final int i, final int j) {
         view.setOnClickListener(new View.OnClickListener() {
@@ -252,34 +260,66 @@ public class NewGameActivity extends Activity {
     /**
      * Comprueba que el barco está bien colocado. Las casillas no están dispersas, el barco no está en L, si se tiene que comprobar que no pueda haber barcos juntos se llama a 'shipsTogether'.
      * Se comprueba primero la orientación del barco.
+     *
      * @param i fila de la última casilla colocada del barco (de 0 a 9)
      * @param j columna de la última casilla colocada del barco (de 0 a 9)
-     *
+     *          <p>
      *          Dentro de la función:
-     *           - boolean barco: se establece el valor a true o false si el barco está bien colocado.
-     *           - boolean bien: se establece el valor a true o false si en la fila/columna en la que está orientado el barco hay el número de casillas correctas marcadas con el valor asociado al barco.
-     *           - int primera: casilla donde empieza el barco.
-     *           - int ultima: casilla donde termina el barco.
-     *           - int line: fila o columna donde está ubicado el barco.
+     *          - boolean barco: se establece el valor a true o false si el barco está bien colocado.
+     *          - boolean bien: se establece el valor a true o false si en la fila/columna en la que está orientado el barco hay el número de casillas correctas marcadas con el valor asociado al barco.
+     *          - int primera: casilla donde empieza el barco.
+     *          - int ultima: casilla donde termina el barco.
+     *          - int line: fila o columna donde está ubicado el barco.
      */
     private void check_ship(int i, int j) {
         boolean barco, bien;
         boolean horizontal = false;
         int primera = 0, ultima = 0, line = 0;
-        if (i == 9) {
+        if (i == 9) { // si la fila es la última comprobar filas hacia arriba
             if ((matrix[i - 2][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
                 horizontal = false;
                 barco = true;
-            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+            } else if (j != 0) {
+                if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                    horizontal = true;
+                    barco = true;
+                } else barco = false;
+            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j + 2][0] == ship)) {
                 horizontal = true;
                 barco = true;
             } else barco = false;
-        } else if (j == 9) {
-            if ((matrix[i + 1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+        } else if (j == 9) { // si la columna es la ultima comprobar columnas hacia atras
+            if ((matrix[i][j - 2][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                horizontal = true;
+                barco = true;
+            } else if (i != 0) {
+                if ((matrix[i + 1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+                    horizontal = false;
+                    barco = true;
+                } else barco = false;
+            } else if ((matrix[i + 1][j][0] == ship) || (matrix[i + 2][j][0] == ship)) {
                 horizontal = false;
                 barco = true;
-            } else if ((matrix[i][j - 2][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+            } else barco = false;
+        } else if (i == 0) { // si la fila es la primera  comprobar filas hacia abajo
+            if ((matrix[i + 2][j][0] == ship) || (matrix[i + 1][j][0] == ship)) {
+                horizontal = false;
+                barco = true;
+            } else if (j != 0) {
+                if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
+                    horizontal = true;
+                    barco = true;
+                } else barco = false;
+            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j + 2][0] == ship)) {
                 horizontal = true;
+                barco = true;
+            } else barco = false;
+        } else if (j == 0) { // si la columna es la primera comprobar columnas hacia delante
+            if ((matrix[i][j + 2][0] == ship) || (matrix[i][j + 1][0] == ship)) {
+                horizontal = true;
+                barco = true;
+            } else if ((matrix[i + 1][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
+                horizontal = false;
                 barco = true;
             } else barco = false;
         } else {
@@ -392,7 +432,7 @@ public class NewGameActivity extends Activity {
                 placed[ship] = 1;
             }
         }
-        if(total_ships == 5){
+        if (total_ships == 5) {
             infoship.setText(R.string.fuun);
         }
     }
@@ -451,9 +491,10 @@ public class NewGameActivity extends Activity {
                             if (aColorfilter != null)
                                 aColorfilter.setColorFilter(null);
                         }
-                        for(int i = 2; i < placed.length; i++){
+                        for (int i = 2; i < placed.length; i++) {
                             placed[i] = 0;
                         }
+                        total_ships = 0;
                         ship = 0;
                         colocados = 0;
                         casillas = 0;
@@ -491,70 +532,90 @@ public class NewGameActivity extends Activity {
 
     /**
      * Comprueba si alrededor del barco ya establecido hay un barco. Solo se llama si la opción de permitir barcos adyacentes está desmarcada en los ajustes.
-     * @param primero casilla donde empieza el barco (empezando desde la casilla 0).
-     * @param ultimo casilla donde termina el barco.
-     * @param line fila o columna donde está ubicado el barco.
+     *
+     * @param primero    casilla donde empieza el barco (empezando desde la casilla 0).
+     * @param ultimo     casilla donde termina el barco.
+     * @param line       fila o columna donde está ubicado el barco.
      * @param horizontal boolean que indica la orientación del barco.
      * @return retorna true si se puede colocar el barco y false si no.
      */
     private boolean shipsTogether(int primero, int ultimo, int line, boolean horizontal) {
+
         if (horizontal) { //Horizontal
             for (int i = primero; i <= ultimo; i++) {
+                //COMPROBAR ENCIMA: Comprobamos las posiciones que están justo encima del barco (siempre y cuando no estén en el borde del tablero)
                 if (line > 0) {
                     if (matrix[line - 1][i][0] != 0) return false;
                 }
-
-                if ((i != 0) && (i != 9)) {
-
-                    if (line > 0) {
-                        if (matrix[line - 1][i - 1][0] != 0) return false;
-                        if (matrix[line - 1][i + 1][0] != 0) return false;
-                    }
-
-                    if (i == primero)
-                        if (matrix[line][i - 1][0] != 0) return false;
-                    if (i == ultimo)
-                        if (matrix[line][i + 1][0] != 0) return false;
-
-                    if (line < 9) {
-                        if (matrix[line + 1][i - 1][0] != 0) return false;
-                        if (matrix[line + 1][i + 1][0] != 0) return false;
-                    }
-
-                }
+                //COMPROBAR DEBAJO: Comprobamos las posiciones que están justo debajo del barco (siempre y cuando no estén en el borde del tablero)
                 if (line < 9) {
                     if (matrix[line + 1][i][0] != 0) return false;
                 }
             }
-        } else { //Vertical
+            //COMPROBAR LATERAL IZQUIERDO: Comprobamos el lateral izquierdo del barco, siempre que estas posiciones no coincidan con los bordes del tablero.
+            if (primero != 0) { //Si no coincide con el borde izquierdo...
+                //Justo la punta del barco
+                if (matrix[line][primero - 1][0] != 0) return false;
+                //Esquina superior izquierda (si se puede)
+                if (line > 0) {
+                    if (matrix[line - 1][primero - 1][0] != 0) return false;
+                }
+                //Esquina inferior izquierda (si se puede)
+                if (line < 9) {
+                    if (matrix[line + 1][primero - 1][0] != 0) return false;
+                }
+            }
+            //COMPROBAR LATERAL DERECHO: Comprobamos el lateral derecho del barcho, siempre que estas posiciones no coincidan con los bordes del tablero.
+            if (ultimo != 9) { //Si no coincide con el borde derecho...
+                //Justo la punta del barco
+                if (matrix[line][ultimo + 1][0] != 0) return false;
+                //Esquina superior derecha (si se puede)
+                if (line > 0) {
+                    if (matrix[line - 1][ultimo + 1][0] != 0) return false;
+                }
+                //Esquina inferior derecha (si se puede)
+                if (line < 9) {
+                    if (matrix[line + 1][ultimo + 1][0] != 0) return false;
+                }
+            }
+        } else {
             for (int i = primero; i <= ultimo; i++) {
+                //COMPROBAR BORDE IZQUIERDO: Comprobamos las posiciones que están justo en el borde izquierdo del barco (siempre y cuando no estén en el borde del tablero)
                 if (line > 0) {
                     if (matrix[i][line - 1][0] != 0) return false;
                 }
-
-                if (i != 0) {
-
-                    if (line > 0) {
-                        if (matrix[i - 1][line - 1][0] != 0) return false;
-                        if (matrix[i + 1][line - 1][0] != 0) return false;
-                    }
-                    if (i == primero)
-                        if (matrix[i - 1][line][0] != 0) return false;
-                    if (i == ultimo)
-                        if (matrix[i + 1][line][0] != 0) return false;
-
-                    if (line < 9) {
-                        if (matrix[i - 1][line + 1][0] != 0) return false;
-                        if (matrix[i + 1][line + 1][0] != 0) return false;
-                    }
-
-                }
+                //COMPROBAR BORDE DERECHO: Comprobamos las posiciones que están justo en el borde derecho del barco (siempre y cuando no estén en el borde del tablero)
                 if (line < 9) {
                     if (matrix[i][line + 1][0] != 0) return false;
                 }
             }
+            //COMPROBAR ENCIMA: Comprobamos las posiciones encima del barco, siempre que estas no coincidan con los bordes del tablero.
+            if (primero != 0) { //Si no coincide con el borde izquierdo...
+                //Justo la punta del barco
+                if (matrix[primero - 1][line][0] != 0) return false;
+                //Esquina superior izquierda (si se puede)
+                if (line > 0) {
+                    if (matrix[primero - 1][line - 1][0] != 0) return false;
+                }
+                //Esquina inferior izquierda (si se puede)
+                if (line < 9) {
+                    if (matrix[primero - 1][line + 1][0] != 0) return false;
+                }
+            }
+            //COMPROBAR DEBAJO: Comprobamos las posiciones debajo del barco, siempre que estas no coincidan con los bordes del tablero.
+            if (ultimo != 9) { //Si no coincide con el borde derecho...
+                //Justo la punta del barco
+                if (matrix[ultimo + 1][line][0] != 0) return false;
+                //Esquina superior derecha (si se puede)
+                if (line > 0) {
+                    if (matrix[ultimo + 1][line - 1][0] != 0) return false;
+                }
+                //Esquina inferior derecha (si se puede)
+                if (line < 9) {
+                    if (matrix[ultimo + 1][line + 1][0] != 0) return false;
+                }
+            }
         }
-
         return true;
     }
 
