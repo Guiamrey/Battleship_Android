@@ -1050,118 +1050,88 @@ public class GameActivity extends Activity {
      * @return true if ship can be set, false in other case.
      */
     private static boolean isAShip(int from, int to, int line, int direction) {
-
         if (ALLOW_ADJACENT_SHIPS){
-
             if (direction == HORIZONTAL) {
                 for (int column = from; column <= to; column++) {
                     if (matrixMachine[line][column][SHIPS] != 0) return false;
                 }
             }
-
             if (direction == VERTICAL){
                 for (int row = from; row <= to; row++) {
                     if (matrixMachine[row][line][SHIPS] != 0) return false;
                 }
             }
-
         } else {
             if (direction == HORIZONTAL) { //Horizontal
-
                 for (int i = from; i <= to; i++) {
-
                     //COMPROBAR ENCIMA: Comprobamos las posiciones que están justo encima del barco (siempre y cuando no estén en el borde del tablero)
                     if (line > 0) {
                         if (matrixMachine[line - 1][i][0] != 0) return false;
                     }
-
                     //COMPROBAR DEBAJO: Comprobamos las posiciones que están justo debajo del barco (siempre y cuando no estén en el borde del tablero)
                     if (line < 9) {
                         if (matrixMachine[line + 1][i][0] != 0) return false;
                     }
-
                 }
-
                 //COMPROBAR LATERAL IZQUIERDO: Comprobamos el lateral izquierdo del barco, siempre que estas posiciones no coincidan con los bordes del tablero.
                 if (from != 0) { //Si no coincide con el borde izquierdo...
-
                     //Justo la punta del barco
                     if (matrixMachine[line][from - 1][0] != 0) return false;
-
                     //Esquina superior izquierda (si se puede)
                     if (line > 0) {
                         if (matrixMachine[line - 1][from - 1][0] != 0) return false;
                     }
-
                     //Esquina inferior izquierda (si se puede)
                     if (line < 9) {
                         if (matrixMachine[line + 1][from - 1][0] != 0) return false;
                     }
-
                 }
-
                 //COMPROBAR LATERAL DERECHO: Comprobamos el lateral derecho del barcho, siempre que estas posiciones no coincidan con los bordes del tablero.
                 if (to != 9) { //Si no coincide con el borde derecho...
-
                     //Justo la punta del barco
                     if (matrixMachine[line][to + 1][0] != 0) return false;
-
                     //Esquina superior derecha (si se puede)
                     if (line > 0) {
                         if (matrixMachine[line - 1][to + 1][0] != 0) return false;
                     }
-
                     //Esquina inferior derecha (si se puede)
                     if (line < 9) {
                         if (matrixMachine[line + 1][to + 1][0] != 0) return false;
                     }
                 }
             }
-
             if (direction == VERTICAL){
-
                 for (int i = from; i <= to; i++){
-
                     //COMPROBAR BORDE IZQUIERDO: Comprobamos las posiciones que están justo en el borde izquierdo del barco (siempre y cuando no estén en el borde del tablero)
                     if (line > 0){
                         if (matrixMachine[i][line-1][0] != 0) return false;
                     }
-
                     //COMPROBAR BORDE DERECHO: Comprobamos las posiciones que están justo en el borde derecho del barco (siempre y cuando no estén en el borde del tablero)
                     if (line < 9){
                         if (matrixMachine[i][line+1][0] != 0) return false;
                     }
                 }
-
                 //COMPROBAR ENCIMA: Comprobamos las posiciones encima del barco, siempre que estas no coincidan con los bordes del tablero.
                 if (from != 0){ //Si no coincide con el borde izquierdo...
-
                     //Justo la punta del barco
                     if(matrixMachine[from-1][line][0] != 0) return false;
-
                     //Esquina superior izquierda (si se puede)
                     if(line > 0){
                         if(matrixMachine[from-1][line-1][0] != 0) return false;
                     }
-
                     //Esquina inferior izquierda (si se puede)
                     if(line < 9){
                         if(matrixMachine[from-1][line+1][0] != 0) return false;
                     }
-
                 }
-
                 //COMPROBAR DEBAJO: Comprobamos las posiciones debajo del barco, siempre que estas no coincidan con los bordes del tablero.
                 if (to != 9) { //Si no coincide con el borde derecho...
-
                     //Justo la punta del barco
                     if(matrixMachine[to+1][line][0] != 0) return false;
-
                     //Esquina superior derecha (si se puede)
                     if(line > 0){
                         if(matrixMachine[to+1][line-1][0] != 0) return false;
                     }
-
                     //Esquina inferior derecha (si se puede)
                     if(line < 9){
                         if(matrixMachine[to+1][line+1][0] != 0) return false;
