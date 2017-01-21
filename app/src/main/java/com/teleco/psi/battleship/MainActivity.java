@@ -7,6 +7,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -40,6 +41,10 @@ public class MainActivity extends Activity {
         Configuration config = res.getConfiguration();
         config.locale = locale;
         res.updateConfiguration(config, res.getDisplayMetrics());
+        SharedPreferences settings = getSharedPreferences("Language", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("Language", language);
+        editor.commit();
         setContentView(R.layout.activity_main);
 
         Button newGameButton = (Button) findViewById(R.id.newGameButton);

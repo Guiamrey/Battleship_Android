@@ -90,7 +90,6 @@ public class GameActivity extends Activity {
          */
         supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic");
         log("Modo de juego--> " + getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic"));
-        log("Idioma --> " + getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "en"));
         log("Barcos adyacentes --> " + getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
         log("Dificultad --> " + getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy"));
 
