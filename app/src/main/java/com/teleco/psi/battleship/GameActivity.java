@@ -82,7 +82,7 @@ public class GameActivity extends Activity {
     private static final int EASY = 0;
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
-
+    private static int MAX_SIZE_SHIP = 5;
     private boolean[] sunkShipsHuman = new boolean[]{false, false, false, false, false};
     private boolean[] sunkShipsMachine = new boolean[]{false, false, false, false, false};
 
@@ -469,9 +469,11 @@ public class GameActivity extends Activity {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
                 if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]) {
-                    bestAction[ROW] = row;
-                    bestAction[COLUMN] = column;
-                    bestAction[VALUE] = matrixHuman[row][column][VALUE];
+                    if(canEnter(row, column)){
+                        bestAction[ROW] = row;
+                        bestAction[COLUMN] = column;
+                        bestAction[VALUE] = matrixHuman[row][column][VALUE];
+                    }
                 }
             }
         }
@@ -483,7 +485,7 @@ public class GameActivity extends Activity {
                 int column = rand.nextInt(MATRIX_SIZE);
                 int row = rand.nextInt(MATRIX_SIZE);
 
-                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && canEnter(row, column)) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -654,9 +656,11 @@ public class GameActivity extends Activity {
             int column = (int) Float.parseFloat(playsStr[COLUMN]);
 
             if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
-                bestAction[ROW] = row;
-                bestAction[COLUMN] = column;
-                bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
+                if(canEnter(row, column)) {
+                    bestAction[ROW] = row;
+                    bestAction[COLUMN] = column;
+                    bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
+                }
             }
         }
 
@@ -925,118 +929,116 @@ public class GameActivity extends Activity {
 
     public void inicializeBaseDefense() {
         //centrales
-        matrixMachine[4][4][2] = 100 - 100;
-        matrixMachine[4][5][2] = 100 - 100;
-        matrixMachine[5][4][2] = 100 - 100;
-        matrixMachine[4][5][2] = 100 - 100;
+        matrixMachine[4][4][2] = 0;
+        matrixMachine[4][5][2] = 0;
+        matrixMachine[5][4][2] = 0;
+        matrixMachine[4][5][2] = 0;
         //rodeando las centrales
-        matrixMachine[4][3][2] = 100 - 90;
-        matrixMachine[4][6][2] = 100 - 90;
-        matrixMachine[5][3][2] = 100 - 90;
-        matrixMachine[5][6][2] = 100 - 90;
-        matrixMachine[3][4][2] = 100 - 90;
-        matrixMachine[3][5][2] = 100 - 90;
-        matrixMachine[6][4][2] = 100 - 90;
-        matrixMachine[6][5][2] = 100 - 90;
+        matrixMachine[4][3][2] = 10;
+        matrixMachine[4][6][2] = 10;
+        matrixMachine[5][3][2] = 10;
+        matrixMachine[5][6][2] = 10;
+        matrixMachine[3][4][2] = 10;
+        matrixMachine[3][5][2] = 10;
+        matrixMachine[6][4][2] = 10;
+        matrixMachine[6][5][2] = 10;
         //un nivel mas hacia afuera
-        matrixMachine[3][3][2] = 100 - 82;
-        matrixMachine[3][6][2] = 100 - 82;
-        matrixMachine[6][3][2] = 100 - 82;
-        matrixMachine[6][6][2] = 100 - 82;
-        matrixMachine[4][2][2] = 100 - 82;
-        matrixMachine[5][2][2] = 100 - 82;
-        matrixMachine[4][7][2] = 100 - 82;
-        matrixMachine[5][7][2] = 100 - 82;
-        matrixMachine[2][4][2] = 100 - 82;
-        matrixMachine[2][5][2] = 100 - 82;
-        matrixMachine[7][4][2] = 100 - 82;
-        matrixMachine[7][5][2] = 100 - 82;
+        matrixMachine[3][3][2] = 18;
+        matrixMachine[3][6][2] = 18;
+        matrixMachine[6][3][2] = 18;
+        matrixMachine[6][6][2] = 18;
+        matrixMachine[4][2][2] = 18;
+        matrixMachine[5][2][2] = 18;
+        matrixMachine[4][7][2] = 18;
+        matrixMachine[5][7][2] = 18;
+        matrixMachine[2][4][2] = 18;
+        matrixMachine[2][5][2] = 18;
+        matrixMachine[7][4][2] = 18;
+        matrixMachine[7][5][2] = 18;
         ///
-        matrixMachine[3][2][2] = 100 - 73;
-        matrixMachine[2][3][2] = 100 - 73;
-        matrixMachine[2][6][2] = 100 - 73;
-        matrixMachine[3][7][2] = 100 - 73;
-        matrixMachine[6][2][2] = 100 - 73;
-        matrixMachine[7][3][2] = 100 - 73;
-        matrixMachine[6][7][2] = 100 - 73;
-        matrixMachine[7][6][2] = 100 - 73;
+        matrixMachine[3][2][2] = 27;
+        matrixMachine[2][3][2] = 27;
+        matrixMachine[2][6][2] = 27;
+        matrixMachine[3][7][2] = 27;
+        matrixMachine[6][2][2] = 27;
+        matrixMachine[7][3][2] = 27;
+        matrixMachine[6][7][2] = 27;
+        matrixMachine[7][6][2] = 27;
         //
-        matrixMachine[4][1][2] = 100 - 64;
-        matrixMachine[5][1][2] = 100 - 64;
-        matrixMachine[4][8][2] = 100 - 64;
-        matrixMachine[5][8][2] = 100 - 64;
-        matrixMachine[8][4][2] = 100 - 64;
-        matrixMachine[8][5][2] = 100 - 64;
-        matrixMachine[1][4][2] = 100 - 64;
-        matrixMachine[1][5][2] = 100 - 64;
-        matrixMachine[2][2][2] = 100 - 64;
-        matrixMachine[2][7][2] = 100 - 64;
-        matrixMachine[7][7][2] = 100 - 64;
-        matrixMachine[7][2][2] = 100 - 64;
+        matrixMachine[4][1][2] = 36;
+        matrixMachine[5][1][2] = 36;
+        matrixMachine[4][8][2] = 36;
+        matrixMachine[5][8][2] = 36;
+        matrixMachine[8][4][2] = 36;
+        matrixMachine[8][5][2] = 36;
+        matrixMachine[1][4][2] = 36;
+        matrixMachine[1][5][2] = 36;
+        matrixMachine[2][2][2] = 36;
+        matrixMachine[2][7][2] = 36;
+        matrixMachine[7][7][2] = 36;
+        matrixMachine[7][2][2] = 36;
         //
-        matrixMachine[3][1][2] = 100 - 55;
-        matrixMachine[1][3][2] = 100 - 55;
-        matrixMachine[1][6][2] = 100 - 55;
-        matrixMachine[3][8][2] = 100 - 55;
-        matrixMachine[6][1][2] = 100 - 55;
-        matrixMachine[8][3][2] = 100 - 55;
-        matrixMachine[6][8][2] = 100 - 55;
-        matrixMachine[8][6][2] = 100 - 55;
+        matrixMachine[3][1][2] = 45;
+        matrixMachine[1][3][2] = 45;
+        matrixMachine[1][6][2] = 45;
+        matrixMachine[3][8][2] = 45;
+        matrixMachine[6][1][2] = 45;
+        matrixMachine[8][3][2] = 45;
+        matrixMachine[6][8][2] = 45;
+        matrixMachine[8][6][2] = 45;
         //
-        matrixMachine[0][4][2] = 100 - 46;
-        matrixMachine[0][5][2] = 100 - 46;
-        matrixMachine[9][4][2] = 100 - 46;
-        matrixMachine[9][5][2] = 100 - 46;
-        matrixMachine[4][0][2] = 100 - 46;
-        matrixMachine[5][0][2] = 100 - 46;
-        matrixMachine[4][9][2] = 100 - 46;
-        matrixMachine[5][9][2] = 100 - 46;
-        matrixMachine[1][2][2] = 100 - 46;
-        matrixMachine[2][1][2] = 100 - 46;
-        matrixMachine[1][7][2] = 100 - 46;
-        matrixMachine[2][8][2] = 100 - 46;
-        matrixMachine[7][1][2] = 100 - 46;
-        matrixMachine[8][2][2] = 100 - 46;
-        matrixMachine[8][7][2] = 100 - 46;
-        matrixMachine[7][8][2] = 100 - 46;
-        matrixMachine[1][7][2] = 100 - 46;
-        matrixMachine[2][8][2] = 100 - 46;
+        matrixMachine[0][4][2] = 54;
+        matrixMachine[0][5][2] = 54;
+        matrixMachine[9][4][2] = 54;
+        matrixMachine[9][5][2] = 54;
+        matrixMachine[4][0][2] = 54;
+        matrixMachine[5][0][2] = 54;
+        matrixMachine[4][9][2] = 54;
+        matrixMachine[5][9][2] = 54;
+        matrixMachine[1][2][2] = 54;
+        matrixMachine[2][1][2] = 54;
+        matrixMachine[1][7][2] = 54;
+        matrixMachine[2][8][2] = 54;
+        matrixMachine[7][1][2] = 54;
+        matrixMachine[8][2][2] = 54;
+        matrixMachine[8][7][2] = 54;
+        matrixMachine[7][8][2] = 54;
         //
-        matrixMachine[0][3][2] = 100 - 36;
-        matrixMachine[3][0][2] = 100 - 36;
-        matrixMachine[0][6][2] = 100 - 36;
-        matrixMachine[3][9][2] = 100 - 36;
-        matrixMachine[6][0][2] = 100 - 36;
-        matrixMachine[9][3][2] = 100 - 36;
-        matrixMachine[9][6][2] = 100 - 36;
-        matrixMachine[6][9][2] = 100 - 36;
+        matrixMachine[0][3][2] = 64;
+        matrixMachine[3][0][2] = 64;
+        matrixMachine[0][6][2] = 64;
+        matrixMachine[3][9][2] = 64;
+        matrixMachine[6][0][2] = 64;
+        matrixMachine[9][3][2] = 64;
+        matrixMachine[9][6][2] = 64;
+        matrixMachine[6][9][2] = 64;
         //
-        matrixMachine[2][0][2] = 100 - 27;
-        matrixMachine[1][1][2] = 100 - 27;
-        matrixMachine[0][2][2] = 100 - 27;
-        matrixMachine[0][7][2] = 100 - 27;
-        matrixMachine[1][8][2] = 100 - 27;
-        matrixMachine[2][9][2] = 100 - 27;
-        matrixMachine[7][0][2] = 100 - 27;
-        matrixMachine[8][1][2] = 100 - 27;
-        matrixMachine[9][2][2] = 100 - 27;
-        matrixMachine[9][7][2] = 100 - 27;
-        matrixMachine[8][8][2] = 100 - 27;
-        matrixMachine[7][9][2] = 100 - 27;
+        matrixMachine[2][0][2] = 73;
+        matrixMachine[1][1][2] = 73;
+        matrixMachine[0][2][2] = 73;
+        matrixMachine[0][7][2] = 73;
+        matrixMachine[1][8][2] = 73;
+        matrixMachine[2][9][2] = 73;
+        matrixMachine[7][0][2] = 73;
+        matrixMachine[8][1][2] = 73;
+        matrixMachine[9][2][2] = 73;
+        matrixMachine[9][7][2] = 73;
+        matrixMachine[8][8][2] = 73;
+        matrixMachine[7][9][2] = 73;
         //
-        matrixMachine[0][1][2] = 100 - 18;
-        matrixMachine[1][0][2] = 100 - 18;
-        matrixMachine[0][8][2] = 100 - 18;
-        matrixMachine[1][9][2] = 100 - 18;
-        matrixMachine[8][0][2] = 100 - 18;
-        matrixMachine[9][1][2] = 100 - 18;
-        matrixMachine[8][9][2] = 100 - 18;
-        matrixMachine[9][8][2] = 100 - 18;
+        matrixMachine[0][1][2] = 82;
+        matrixMachine[1][0][2] = 82;
+        matrixMachine[0][8][2] = 82;
+        matrixMachine[1][9][2] = 82;
+        matrixMachine[8][0][2] = 82;
+        matrixMachine[9][1][2] = 82;
+        matrixMachine[8][9][2] = 82;
+        matrixMachine[9][8][2] = 82;
         //
-        matrixMachine[0][0][2] = 100 - 0;
-        matrixMachine[0][9][2] = 100 - 0;
-        matrixMachine[9][0][2] = 100 - 0;
-        matrixMachine[9][9][2] = 100 - 0;
+        matrixMachine[0][0][2] = 100;
+        matrixMachine[0][9][2] = 100;
+        matrixMachine[9][0][2] = 100;
+        matrixMachine[9][9][2] = 100;
     }
 
     /**
@@ -1250,8 +1252,10 @@ public class GameActivity extends Activity {
             String[] posStr = posUpdate.split("-");
             int rowUptdate = Integer.parseInt(posStr[ROW]);
             int columnUpdate = Integer.parseInt(posStr[COLUMN]);
-            matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, 2);
+            int level = Integer.parseInt(posStr[2]);
+            matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, level);
         }
+
         return matrix;
     }
 
@@ -1271,41 +1275,79 @@ public class GameActivity extends Activity {
 
         if (row == LAST_POS) {  // buscar hacia arriba o lados
             if (column == FIRST_POS) { //hacia arriba o derecha
-                possiblePlays.add("9-1");
-                possiblePlays.add("8-0");
+                possiblePlays.add("9-1-2");
+                possiblePlays.add("8-0-2");
+                possiblePlays.add("7-0-3");
+                possiblePlays.add("9-2-3");
             } else if (column == LAST_POS) { //hacia arriba o izquierda
-                possiblePlays.add("8-9");
-                possiblePlays.add("9-8");
+                possiblePlays.add("8-9-2");
+                possiblePlays.add("9-8-2");
+                possiblePlays.add("9-7-3");
+                possiblePlays.add("8-8-3");
             } else { // buscar mejor jugada proxima a ese barco
-                possiblePlays.add("9-" + (column - 1));
-                possiblePlays.add("9-" + (column + 1));
-                possiblePlays.add("8-" + (column));
+                possiblePlays.add("9-" + (column - 1) + "-2");
+                possiblePlays.add("9-" + (column + 1) + "-2");
+                possiblePlays.add("8-" + (column) + "-2");
+                if(column - 1 != FIRST_POS)
+                    possiblePlays.add("9-" + (column - 2)  + "-3");
+                if(column + 1 != LAST_POS)
+                    possiblePlays.add("9-" + (column + 2)  + "-3");
+
+                possiblePlays.add("7-" + column + "-3");
             }
         } else if (row == FIRST_POS) { // hacia abajo o los lados
             if (column == FIRST_POS) { // hacia abajo o derecha
-                possiblePlays.add("0-1");
-                possiblePlays.add("1-0");
+                possiblePlays.add("0-1-2");
+                possiblePlays.add("1-0-2");
+                possiblePlays.add("0-2-3");
+                possiblePlays.add("2-0-3");
             } else if (column == LAST_POS) { //hacia abajo o izquierda
-                possiblePlays.add("0-8");
-                possiblePlays.add("1-9");
+                possiblePlays.add("0-8-2");
+                possiblePlays.add("1-9-2");
+                possiblePlays.add("0-7-3");
+                possiblePlays.add("2-9-3");
             } else { // buscar mejor jugada proxima a ese barco
-                possiblePlays.add("0-" + (column - 1));
-                possiblePlays.add("0-" + (column + 1));
-                possiblePlays.add("1-" + column);
+                possiblePlays.add("0-" + (column - 1) + "-2");
+                possiblePlays.add("0-" + (column + 1) + "-2");
+                possiblePlays.add("1-" + column + "-2");
+                if((column - 1) != FIRST_POS)
+                    possiblePlays.add("0-" + (column - 2) + "-3");
+                if ((column + 1) != LAST_POS)
+                    possiblePlays.add("0-" + (column + 2) + "-3");
+                possiblePlays.add("2-" + column + "-3");
             }
         } else if (column == FIRST_POS) {
-            possiblePlays.add(row + "-" + (column + 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column + 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            possiblePlays.add(row + "-" + (column + 2) + "-3");
+            if((row - 1) != FIRST_POS )
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            if((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+
         } else if (column == LAST_POS) {
-            possiblePlays.add(row + "-" + (column - 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column - 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            if ((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+            if ((row - 1) != FIRST_POS)
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            possiblePlays.add(row + "-" + (column - 2) + "-3");
         } else {
-            possiblePlays.add(row + "-" + (column + 1));
-            possiblePlays.add(row + "-" + (column - 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column + 1) + "-2");
+            possiblePlays.add(row + "-" + (column - 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            if ((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+            if ((row - 1) != FIRST_POS)
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            if ((column + 1) != LAST_POS)
+                possiblePlays.add(row + "-" + (column + 1) + "-3");
+            if ((column - 1) != FIRST_POS)
+                possiblePlays.add(row + "-" + (column - 1) + "-3");
         }
 
         return possiblePlays;
@@ -1425,6 +1467,77 @@ public class GameActivity extends Activity {
             System.out.println("\n");
         }
         System.out.println("--------X--------");
+    }
+
+    private boolean canEnter(int row, int column) {
+        int upDown;
+        int movement;
+        int pos = 1;
+        int orientation = 1;
+        int invertCounter = 0;
+
+        while (true) { //horizontal
+            if(pos == MAX_SIZE_SHIP) return true;
+
+            if (invertCounter == 2) break;
+
+            upDown = checkLimits(column - pos * orientation);
+
+            if (upDown == orientation) {
+                orientation = orientation * (-1);
+                invertCounter++;
+                continue;
+            }
+
+            //asignamos nuestra jugada
+            movement = (int) matrixHuman[row][column - pos * orientation][GAME_STATE];
+
+            switch (movement) {
+                case WATER:  //si es agua, cambiamos de direccion y seguimos
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    orientation = orientation * (-1);
+                    invertCounter++;
+                    break;
+                }
+
+                default:
+                    pos++;
+            }
+        }
+
+        pos = 1;
+        orientation = 1;
+        invertCounter = 0;
+
+        while (true) {
+            if(pos == MAX_SIZE_SHIP) return true;
+
+            if (invertCounter == 2) return false;
+
+            upDown = checkLimits(row - pos * orientation);
+
+            if (upDown == orientation) {
+                orientation = orientation * (-1);
+                invertCounter++;
+                continue;
+            }
+
+            //asignamos nuestra jugada
+             movement = (int) matrixHuman[row - pos * orientation][column][GAME_STATE];
+
+            switch (movement) {
+                case WATER:  //si es agua, cambiamos de direccion y seguimos
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    orientation = orientation * (-1);
+                    invertCounter++;
+                    break;
+                }
+                default:
+                    pos++;
+            }
+        }
     }
 
     private void endGame() {
