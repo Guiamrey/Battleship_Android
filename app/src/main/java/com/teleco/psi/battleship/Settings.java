@@ -79,6 +79,25 @@ public class Settings extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
 
+        spinner_language = (Spinner) findViewById(R.id.language_options);
+        spinner_language.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
+        ArrayAdapter<CharSequence> adap_language = ArrayAdapter.createFromResource(this, R.array.language_options, android.R.layout.simple_spinner_item);
+        adap_language.setDropDownViewResource(R.layout.downlevel);
+        spinner_language.setAdapter(adap_language);
+        spinner_language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+                String language;
+                if (spinner_language.getSelectedItem().toString().equalsIgnoreCase("English")) {
+                    language = "en";
+                } else language = "es";
+                configLanguage(language);
+                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         spinner_level = (Spinner) findViewById(R.id.difficulty_options);
         spinner_level.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
         ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
@@ -87,7 +106,7 @@ public class Settings extends Activity {
         spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
+                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -104,34 +123,12 @@ public class Settings extends Activity {
         spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
+                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-        spinner_language = (Spinner) findViewById(R.id.language_options);
-        spinner_language.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
-
-        ArrayAdapter<CharSequence> adap_language = ArrayAdapter.createFromResource(this, R.array.language_options, android.R.layout.simple_spinner_item);
-        adap_language.setDropDownViewResource(R.layout.downlevel);
-        spinner_language.setAdapter(adap_language);
-        spinner_language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
-                String language;
-                if (spinner_language.getSelectedItem().toString().equalsIgnoreCase("English")) {
-                    language = "en";
-                } else language = "es";
-                configLanguage(language);
-                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
-            }
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-
 
         original[LANGUAGE] = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");

@@ -77,6 +77,7 @@
         android:layout_above="@+id/back_settings"
         android:layout_marginStart="200dp"
         android:layout_alignTop="@+id/rules_text"
+
         android:layout_marginBottom="36dp"
         android:textSize="17sp" />
 

@@ -37,7 +37,7 @@
 
     <ImageView
         android:layout_height="wrap_content"
-        android:src="@drawable/ship5_tocado"
+        android:src="@drawable/ship5_tocadob"
         android:id="@+id/ship5_tocado"
         android:layout_alignParentStart="true"
         android:layout_marginStart="5dp"
@@ -45,7 +45,7 @@
 
     <ImageView
         android:layout_height="wrap_content"
-        android:src="@drawable/ship4_1_tocado"
+        android:src="@drawable/ship4_1_tocadob"
         android:id="@+id/ship4_tocado"
         android:layout_marginTop="27dp"
         android:layout_alignParentTop="true"
@@ -54,7 +54,7 @@
 
     <ImageView
         android:layout_height="wrap_content"
-        android:src="@drawable/ship3_tocado"
+        android:src="@drawable/ship3_tocadob"
         android:id="@+id/ship3_tocado"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/ship5_tocado"
@@ -63,7 +63,7 @@
 
     <ImageView
         android:layout_height="wrap_content"
-        android:src="@drawable/ship3_1_tocado"
+        android:src="@drawable/ship3_1_tocadob"
         android:id="@+id/ship3_1_tocado"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/ship4_tocado"
@@ -72,7 +72,7 @@
 
     <ImageView
         android:layout_height="wrap_content"
-        android:src="@drawable/ship2_tocado"
+        android:src="@drawable/ship2_tocadob"
         android:id="@+id/ship2_tocado"
         android:layout_below="@+id/ship3_1_tocado"
         android:layout_alignStart="@+id/ship3_1_tocado"

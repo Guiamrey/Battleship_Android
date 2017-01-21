@@ -96,11 +96,12 @@ public class GameActivity extends Activity {
 
         log("Default language --> " + Locale.getDefault().getDisplayLanguage());
         String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
-        if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("facil")) {
+        if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("fácil")) {
             level = EASY;
         } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
             level = MEDIUM;
         } else level = HARD;
+        System.out.println("Level = "+level);
 
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
