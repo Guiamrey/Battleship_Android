@@ -162,6 +162,18 @@ public class GameActivity extends Activity {
                 }
             }
         }
+
+        AlertDialog alertbox = new AlertDialog.Builder(this)
+                .setTitle(R.string.instructions)
+                .setMessage(R.string.gameturns)
+                .setCancelable(false)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                })
+
+                .show();
+
     }
 
     private void cleanMachineShips() {

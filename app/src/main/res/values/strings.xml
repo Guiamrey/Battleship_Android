@@ -59,6 +59,7 @@
     <string name="place_your_ships">Place your ships!</string>
     <string name="start_game">Start Game</string>
     <string name="info">Info</string>
+    <string name="howto">How to place the ships</string>
     <string name="information_rules">
     Game modes: \n\n1. Classic\nEach player can shot one square at time. Turn changes unless the player hit a ship. The player with ship still afloat.
     \n\n2. Supershots\nSame game mode as Classic, with the difference that ships sink with a single shot.
@@ -73,7 +74,7 @@
     <string name="shipof">"Ship of "</string>
     <string name="squares">" squares"</string>
     <string name="gamesmodes">Games modes</string>
-    <string name="shipinfo">To place your ships touch the images and then select the squares where you want to place the ship. \n\nSelect as many squares as indicated when touching the ship.</string>
+    <string name="shipinfo">To place your ships touch the images and then select the squares where you want to place the ship. \n\n Select as many squares as indicated when touching the ship.</string>
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="pulsame">Click me!</string>
@@ -84,5 +85,7 @@
     <string name="fuun">Click \'Start Game\' and start the battle!!</string>
     <string name="leave_game">Are you sure you want to leave the current game?</string>
     <string name="aboutBattleship">Battleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="instructions">Game instructions</string>
+    <string name="gameturns">You play first! \nThe traffic light will be green when it is your turn and red when it is the opponent\'s turn. \n\nMake the first shot and start the game!</string>
 
 </resources>

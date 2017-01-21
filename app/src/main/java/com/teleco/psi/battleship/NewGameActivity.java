@@ -518,7 +518,7 @@ public class NewGameActivity extends Activity {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.info);
+            builder.setTitle(R.string.howto);
             builder.setMessage(R.string.shipinfo);
             builder.setCancelable(false);
             builder.setPositiveButton(R.string.ok,
