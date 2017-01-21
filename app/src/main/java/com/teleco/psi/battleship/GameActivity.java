@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -245,6 +243,7 @@ public class GameActivity extends Activity {
                         supershot((int) matrixMachine[row - 1][column - 1][SHIPS], false);
                     } else {
                         view.setBackgroundColor(Color.RED);
+                        matrixMachine[row - 1][column - 1][GAME_STATE] = TOUCHED;
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
                     }
@@ -254,6 +253,7 @@ public class GameActivity extends Activity {
                 } else {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
+                    matrixMachine[row - 1][column - 1][GAME_STATE] = WATER;
                     view.setOnClickListener(null);
                     matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
                 }
@@ -1415,7 +1415,7 @@ public class GameActivity extends Activity {
 
     private void checkShipSunk(int numShip, boolean human) {
         boolean isSunk = true;
-        if (human) {
+        if (!human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == numShip &&
@@ -1426,29 +1426,6 @@ public class GameActivity extends Activity {
             }
             if (isSunk) {
                 sunkShipsHuman[numShip - 2] = true;
-                int id = 0;
-                switch (numShip) {
-                    case 2:
-                        id = R.id.ship2_tocado;
-                        break;
-                    case 3:
-                        id = R.id.ship3_tocado;
-                        break;
-                    case 4:
-                        id = R.id.ship4_tocado;
-                        break;
-                    case 5:
-                        id = R.id.ship5_tocado;
-                        break;
-                    case 6:
-                        id = R.id.ship6_tocado;
-                        break;
-                }
-                ImageView sunkShip = (ImageView) findViewById(id);
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.setSaturation(0);
-                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                sunkShip.setColorFilter(filter);
             }
         } else {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
@@ -1461,6 +1438,32 @@ public class GameActivity extends Activity {
             }
             if (isSunk) {
                 sunkShipsMachine[numShip - 2] = true;
+                int id = 0;
+                int idb = 0;
+                switch (numShip) {
+                    case 2:
+                        id = R.id.ship2_tocado;
+                        idb = R.drawable.ship2_hundido;
+                        break;
+                    case 3:
+                        id = R.id.ship3_tocado;
+                        idb = R.drawable.ship3_hundido;
+                        break;
+                    case 4:
+                        id = R.id.ship4_tocado;
+                        idb = R.drawable.ship3_1_hundido;
+                        break;
+                    case 5:
+                        id = R.id.ship5_tocado;
+                        idb = R.drawable.ship4_hundido;
+                        break;
+                    case 6:
+                        id = R.id.ship6_tocado;
+                        idb = R.drawable.ship5_hundido;
+                        break;
+                }
+                ImageView sunkShip = (ImageView) findViewById(id);
+                sunkShip.setImageResource(idb);
             }
         }
     }
