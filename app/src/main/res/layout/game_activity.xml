@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/water1">
 
     <FrameLayout
         android:id="@+id/boardMachine"
@@ -42,16 +43,6 @@
         android:layout_marginStart="5dp"
         android:layout_width="75dp" />
 
-    <FrameLayout
-        android:id="@+id/semaforo"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignBottom="@+id/boardHuman"
-        android:layout_alignEnd="@+id/ship3_1_tocado"
-        android:layout_marginBottom="24dp">
-
-    </FrameLayout>
-
     <ImageView
         android:layout_height="wrap_content"
         android:src="@drawable/ship4_1_tocado"
@@ -86,5 +77,15 @@
         android:layout_below="@+id/ship3_1_tocado"
         android:layout_alignStart="@+id/ship3_1_tocado"
         android:layout_width="40dp" />
+
+    <FrameLayout
+        android:id="@+id/semaforo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/ship2_tocado"
+        android:layout_alignEnd="@+id/ship3_1_tocado"
+        android:layout_marginTop="12dp">
+
+    </FrameLayout>
 
 </RelativeLayout>

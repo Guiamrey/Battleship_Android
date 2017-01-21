@@ -207,7 +207,11 @@ public class GameActivity extends Activity {
                 field.setBackgroundResource(R.drawable.cell_shape);
                 if (i == 0) {
                     field.setText(num[j]);
-                } else if (j == 0) field.setText(AJ[i - 1]);
+                    field.setTextColor(getResources().getColor(R.color.ColorWhite));
+                } else if (j == 0) {
+                    field.setText(AJ[i - 1]);
+                    field.setTextColor(getResources().getColor(R.color.ColorWhite));
+                }
                 field.setTextSize(15);
                 field.setPadding(8, 6, 0, 0);
                 field.setGravity(Gravity.CENTER);
