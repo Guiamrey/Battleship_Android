@@ -99,14 +99,13 @@ public class GameActivity extends Activity {
         log("Barcos adyacentes --> " + getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
         log("Dificultad --> " + getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy"));
 
-        log("Default language --> " + Locale.getDefault().getDisplayLanguage());
+        log("Default language --> "+Locale.getDefault().getDisplayLanguage());
         String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
         if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("fácil")) {
             level = EASY;
         } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
             level = MEDIUM;
-        } else level = HARD;
-        System.out.println("Level = "+level);
+        }else level = HARD;
 
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
@@ -144,7 +143,6 @@ public class GameActivity extends Activity {
         FrameLayout frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
-
         cleanMachineShips();
         if (level == EASY || level == MEDIUM)
             setRandomMatrixMachine(); //colocación de barcos aleatoria
@@ -266,13 +264,10 @@ public class GameActivity extends Activity {
     }
 
     private void supershot(int ship, boolean human) {
-        int cont = 0;
         if (human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == ship) {
-                        cont++;
-                        System.out.println("Num casillas barco (" + ship + "):" + cont);
                         matrixHuman[fila][columna][GAME_STATE] = TOUCHED;
                         viewsHuman[fila][columna].setBackgroundColor(Color.RED);
                         matrixHuman = updateMatrixValues(matrixHuman, fila, columna, true);
@@ -683,7 +678,6 @@ public class GameActivity extends Activity {
     /**
      * Function that calls when the IA hits a boat two times and try to found
      * the rest of the ship.
-     *
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
     private void bestAfterHit(float[] lastAction) {
@@ -694,7 +688,6 @@ public class GameActivity extends Activity {
     /**
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
-     *
      * @param possiblePlays List with the possible plays where the boat can be
      * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
@@ -728,7 +721,6 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
-     *
      * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
