@@ -84,7 +84,7 @@
     <string name="another">Ship already placed. Select another one.</string>
     <string name="fuun">Click \'Start Game\' and start the battle!!</string>
     <string name="leave_game">Are you sure you want to leave the current game?</string>
-    <string name="aboutBattleship">Battleship\n Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="aboutBattleship">Project developed for Programming of Intelligent Systems subject - Telecommunications Engineering degree - University of Vigo 2016/17.\n We use Google GSON library under Apache-2.0 license.</string>
     <string name="instructions">Game instructions</string>
     <string name="gameturns">You play first! \nThe traffic light will be green when it is your turn and red when it is the opponent\'s turn. \n\nMake the first shot and start the game!</string>
 
