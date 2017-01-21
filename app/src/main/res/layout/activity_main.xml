@@ -1,27 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/water1">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center">
-        <Button
-            android:id="@+id/newGameButton"
-            android:layout_width="190dp"
-            android:layout_height="60dp"
-            android:text="@string/new_game"/>
-        <Button
-            android:id="@+id/optionsButton"
-            android:layout_width="189dp"
-            android:layout_height="60dp"
-            android:text="@string/options"/>
-        <Button
-            android:id="@+id/aboutButton"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/about"/>
+
     </LinearLayout>
-</FrameLayout>
+
+    <Button
+        android:id="@+id/newGameButton"
+        android:layout_width="190dp"
+        android:layout_height="60dp"
+        android:text="@string/new_game"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/optionsButton"
+        android:layout_width="189dp"
+        android:layout_height="60dp"
+        android:text="@string/options"
+        android:layout_below="@+id/newGameButton"
+        android:layout_alignEnd="@+id/newGameButton" />
+
+    <Button
+        android:id="@+id/aboutButton"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/about"
+        android:layout_below="@+id/optionsButton"
+        android:layout_alignStart="@+id/optionsButton"
+        android:layout_alignEnd="@+id/optionsButton" />
+
+    <ImageView
+        android:src="@drawable/battleship"
+        android:id="@+id/imageView7"
+        android:layout_width="280dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="19dp"
+        android:layout_alignBottom="@+id/imageView2"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship_silueta"
+        android:id="@+id/imageView2"
+        android:layout_marginBottom="25dp"
+        android:layout_width="295dp"
+        android:layout_above="@+id/newGameButton"
+        android:layout_alignEnd="@+id/imageView7" />
+
+</RelativeLayout>

@@ -74,4 +74,8 @@
     <string name="another">Barco ya colocado. Seleccione otro.</string>
     <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
     <string name="leave_game">¿Eestá seguro de que quiere abandonar el juego actual?</string>
+    <string name="pulsame">Púlsame!</string>
+    <string name="howto">Cómo colocar los barcos</string>
+    <string name="instructions">Instrucciones de juego</string>
+    <string name="gameturns">Tu empiezas jugando! \nEl semáforo estará verde cuando sea tu turno y rojo cuando sea el turno del oponente. \n Puedes ver los barcos del oponente que has hundido en las imágenes con una cruz roja en la esquina superior izquierda. \n\nHaz el primer tiro y empieza el juego!</string>
 </resources>
