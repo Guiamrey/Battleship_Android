@@ -50,7 +50,7 @@ public class GameActivity extends Activity {
 
     ////
 
-    private static float alpha = 0.2f;
+    private static float alpha = 0.5f;
     private static int totalGames;
     private FrameLayout light;
     private float[][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
@@ -95,10 +95,11 @@ public class GameActivity extends Activity {
          */
         supershots = !getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic");
         log("Modo de juego--> " + getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic"));
+        log("Idioma --> " + getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "en"));
         log("Barcos adyacentes --> " + getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
         log("Dificultad --> " + getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy"));
 
-        log("Default language --> "+Locale.getDefault().getDisplayLanguage());
+        log("Default language --> " + Locale.getDefault().getDisplayLanguage());
         String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
         if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("fácil")) {
             level = EASY;
@@ -142,6 +143,7 @@ public class GameActivity extends Activity {
         FrameLayout frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
+
         cleanMachineShips();
         if (level == EASY || level == MEDIUM)
             setRandomMatrixMachine(); //colocación de barcos aleatoria
@@ -242,7 +244,7 @@ public class GameActivity extends Activity {
                         view.setBackgroundColor(Color.RED);
                         matrixMachine[row - 1][column - 1][GAME_STATE] = TOUCHED;
                         shipsDownHuman++;
-                        matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
+                        matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
                     }
                     checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], true);
                     checkFinalGame();
@@ -250,9 +252,9 @@ public class GameActivity extends Activity {
                 } else {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
-                    matrixMachine[row - 1][column - 1][GAME_STATE] = WATER;
                     view.setOnClickListener(null);
-                    matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
+                    matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
+
                 }
                 IATurn = true;
                 humanTurn = false;
@@ -280,7 +282,7 @@ public class GameActivity extends Activity {
                     if (matrixMachine[fila][columna][SHIPS] == ship) {
                         matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
                         viewsMachine[fila][columna].setBackgroundColor(Color.RED);
-                        matrixMachine = updateMatrixValues(matrixMachine, fila, columna, true);
+                        matrixMachine = updateMatrixValues(matrixMachine, fila, columna, false);
                         shipsDownHuman++;
                         viewsMachine[fila][columna].setOnClickListener(null);
                     }
@@ -625,6 +627,7 @@ public class GameActivity extends Activity {
     /**
      * Function that calls when the IA hits a boat two times and try to found
      * the rest of the ship.
+     *
      * @param lastAction array of int with the params of the last shot. lastAction[0] row, lastAction[1]  column
      */
     private void bestAfterHit(float[] lastAction) {
@@ -635,6 +638,7 @@ public class GameActivity extends Activity {
     /**
      * This function checks the possible plays arround the last hit, and when find a good play (hit), the function locates
      * int the board the ship and call @function shipFound()
+     *
      * @param possiblePlays List with the possible plays where the boat can be
      * @param lastAction    array of int with the params of the last shot. lastAction[0]  row, lastAction[1]  column
      */
@@ -668,6 +672,7 @@ public class GameActivity extends Activity {
     /**
      * Function calls after hit a boat again after two hits, and you know the aproximate possition of the boat
      * and if is vertical or horizontal. if is shotting in one direction and fails, them invert the direction of the shots
+     *
      * @param row    row where the IA knows that there is a boat there
      * @param column column where the IA knows that there is a boat there
      */
@@ -783,21 +788,21 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] + (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames + 1));
+                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames));
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
-        printLogMatrix(matrixBaseAttack);
+        //printLogMatrix(matrixBaseAttack);
     }
 
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] + (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][2])) / (totalGames));
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
-        printLogMatrix(matrixBaseDefense);
+        //printLogMatrix(matrixBaseDefense);
     }
 
     public void inicializeBaseAttack() {
@@ -1424,6 +1429,7 @@ public class GameActivity extends Activity {
         DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
         endGameDialog.show(getFragmentManager(), "Alert");
         totalGames++;
+        if(totalGames > 3) alpha = 0.3f;
         learningAttack();
         learningDefense();
         saveTotalGames(totalGames);
