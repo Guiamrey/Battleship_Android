@@ -253,7 +253,6 @@ public class GameActivity extends Activity {
                     view.setBackgroundColor(Color.BLUE);
                     view.setOnClickListener(null);
                     matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
-
                 }
                 IATurn = true;
                 humanTurn = false;
