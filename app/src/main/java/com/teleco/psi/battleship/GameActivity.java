@@ -379,76 +379,26 @@ public class GameActivity extends Activity {
 
     private void setRandomMatrixMachine() {
         Random rand = new Random();
-        boolean shipOK = false;
+        int shipsPlaced = 0, numberOfShips = 5, shipSize = 5, type = 6;
 
-        //Barco de 5
-        int line = rand.nextInt(MATRIX_SIZE);
-        int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+        while (shipsPlaced != numberOfShips){
+            boolean shipOK = false;
 
-        int from = rand.nextInt(5);
-        int to = from + 4;
+            while (!shipOK){
+                int line = rand.nextInt(MATRIX_SIZE);
+                int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+                int from = rand.nextInt(shipSize);
+                int to = from + shipSize - 1;
 
-        int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
-
-        log("SHIP 5 - true: Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-        setShip(from, to, line, direction, matrixMachine, CASILLAS5);
-
-        //Barco de 4
-
-        while (!shipOK) {
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(6);
-            to = from + 3;
-
-            shipOK = isAShip(from, to, line, direction);
-            log("SHIP 4 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, CASILLAS4);
+                shipOK = isAShip(from, to, line, direction);
+                log("SHIP " + shipSize + " - " + shipOK + " | Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+                if (shipOK) {
+                    setShip(from, to, line, direction, matrixMachine, type);
+                    type--;
+                }
             }
-
-        }
-
-        int shipThree = 0;
-        int type = CASILLAS3_1;
-        while (shipThree != 2) {
-
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(7);
-            to = from + 2;
-
-            shipOK = isAShip(from, to, line, direction);
-
-            log("SHIP 3 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, type);
-                shipThree++;
-                type = CASILLAS3_2;
-            }
-        }
-
-        shipOK = false;
-
-        while (!shipOK) {
-
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(8);
-            to = from + 1;
-
-            shipOK = isAShip(from, to, line, direction);
-
-            log("SHIP 2 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, CASILLAS2);
-            }
+            shipsPlaced++;
+            if (!((type == 3) && (shipSize == 3))) shipSize--;
         }
     }
 
