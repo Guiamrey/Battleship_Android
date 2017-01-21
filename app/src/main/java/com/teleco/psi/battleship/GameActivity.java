@@ -49,7 +49,7 @@ public class GameActivity extends Activity {
 
     ////
 
-    private static float alpha = 0.2f;
+    private static float alpha = 0.5f;
     private static int totalGames;
     private FrameLayout light;
     private float[][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
@@ -107,7 +107,10 @@ public class GameActivity extends Activity {
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
         setContentView(R.layout.game_activity);
+        printLogMatrix(matrixMachine);
         setupLearning();
+        printLogMatrix(matrixMachine);
+
         inicializeVarAlgorithm();
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
@@ -147,7 +150,7 @@ public class GameActivity extends Activity {
         else{
             setIntelligentShips(); //colocación de barcos inteligente
         }
-
+        printLogMatrix(matrixMachine);
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
@@ -240,7 +243,7 @@ public class GameActivity extends Activity {
                     } else {
                         view.setBackgroundColor(Color.RED);
                         shipsDownHuman++;
-                        matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
+                        matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
                     }
                     checkFinalGame();
                     return;
@@ -248,7 +251,7 @@ public class GameActivity extends Activity {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
                     view.setOnClickListener(null);
-                    matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
+                    matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
 
                 }
                 IATurn = true;
@@ -280,7 +283,7 @@ public class GameActivity extends Activity {
                     if (matrixMachine[fila][columna][SHIPS] == ship) {
                         matrixMachine[fila][columna][GAME_STATE] = TOUCHED;
                         viewsMachine[fila][columna].setBackgroundColor(Color.RED);
-                        matrixMachine = updateMatrixValues(matrixMachine, fila, columna, true);
+                        matrixMachine = updateMatrixValues(matrixMachine, fila, columna, false);
                         shipsDownHuman++;
                         viewsMachine[fila][columna].setOnClickListener(null);
                     }
@@ -837,21 +840,21 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] + (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames + 1));
+                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames));
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
-        printLogMatrix(matrixBaseAttack);
+        //printLogMatrix(matrixBaseAttack);
     }
 
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] + (alpha * matrixMachine[row][column][2])) / (totalGames + 1);
+                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][2])) / (totalGames));
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
-        printLogMatrix(matrixBaseDefense);
+        //printLogMatrix(matrixBaseDefense);
     }
 
     public void inicializeBaseAttack() {
@@ -1406,13 +1409,13 @@ public class GameActivity extends Activity {
         pos = 1;
     }
 
-    private void printLogMatrix(float[][] matrix) {
+    private void printLogMatrix(float[][][] matrix) {
         System.out.println("-----------------");
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
                 if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j] + " ");
-                else System.out.print(matrix[i][j] + " ");
+                    System.out.print(matrix[i][j][PROBABILITY] + " ");
+                else System.out.print(matrix[i][j][PROBABILITY] + " ");
             }
             System.out.println("\n");
         }
@@ -1423,8 +1426,12 @@ public class GameActivity extends Activity {
         DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
         endGameDialog.show(getFragmentManager(), "Alert");
         totalGames++;
+        if(totalGames > 3) alpha = 0.3f;
         learningAttack();
+        printLogMatrix(matrixHuman);
+        System.out.println("----X---    ");
         learningDefense();
+        printLogMatrix(matrixMachine);
         saveTotalGames(totalGames);
     }
 }
