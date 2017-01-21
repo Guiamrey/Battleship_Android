@@ -301,15 +301,13 @@ public class GameActivity extends Activity {
 
             String[] aux = bestPositions.toString().replace("{", "").replace("}", "").split(" ");
             Random rand = new Random();
-            int auxRand = rand.nextInt(aux.length); System.out.println(auxRand);
+            int auxRand = rand.nextInt(aux.length);
             String[] positionAux = aux[auxRand].split("=");
             String[] position = positionAux[0].split(",");
 
             int row = Integer.parseInt(position[0].trim());
             int column = Integer.parseInt(position[1].trim());
             int orientation = Integer.parseInt(position[2].trim());
-
-            System.out.println("--> shipSize: " + shipSize + " | type: " + type);
 
             if (orientation == HORIZONTAL){
                 setShip(column, column + (shipSize -1), row, HORIZONTAL, matrixMachine, type);

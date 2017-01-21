@@ -68,12 +68,11 @@
     <string name="shipinfo">Para colocar los barcos toque las imágenes y, después, seleccione las casillas donde quiera colocarlo.  \n\nSeleccione tantas casillas como se indique al tocar el barco.</string>
     <string name="ok">Vale</string>
     <string name="yes">Sí</string>
-    <string name="resetgamesure">¿Estás seguro?</string>
+    <string name="resetgamesure">¿Está seguro de que quiere abandonar el juego actual?</string>
     <string name="resetinggame">Estás intentando empezar nuevo juego.</string>
     <string name="noadjacent">No están permitidos los barcos adyacentes. Coloquelos separados entre sí.</string>
     <string name="another">Barco ya colocado. Seleccione otro.</string>
     <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
-    <string name="leave_game">¿Eestá seguro de que quiere abandonar el juego actual?</string>
     <string name="pulsame">Púlsame!</string>
     <string name="howto">Cómo colocar los barcos</string>
     <string name="instructions">Instrucciones de juego</string>

@@ -88,7 +88,6 @@ public class NewGameActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if (total_ships == 5) {
-                    System.out.println("total ships "+total_ships);
                     SharedPreferences settings = getSharedPreferences("Matrix", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = settings.edit();
                     Gson gson = new Gson();

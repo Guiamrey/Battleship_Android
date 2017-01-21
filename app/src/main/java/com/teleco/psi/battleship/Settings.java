@@ -57,32 +57,6 @@ public class Settings extends Activity {
         super.onResume();
     }
 
-    private void setPreferences() {
-        ArrayAdapter adap = (ArrayAdapter) spinner_level.getAdapter();
-        spinner_level.setSelection(adap.getPosition(getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "")), true);
-
-        adap = (ArrayAdapter) spinner_rules.getAdapter();
-        spinner_rules.setSelection(adap.getPosition(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "")));
-
-        ad_ships.setChecked(getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
-    }
-
-    private void configLanguage(String language) {
-        Locale locale = new Locale(language);
-        Resources res = getResources();
-        Configuration config = res.getConfiguration();
-        config.locale = locale;
-        res.updateConfiguration(config, res.getDisplayMetrics());
-        onConfigurationChanged(config);
-    }
-
-    private void savePreferences(String key, String name, String value_string) {
-        SharedPreferences settings = getSharedPreferences(key, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(name, value_string);
-        editor.commit();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -111,28 +85,10 @@ public class Settings extends Activity {
 
         spinner_level = (Spinner) findViewById(R.id.difficulty_options);
         spinner_level.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
-        ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
+        ArrayAdapter adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, R.layout.spinner_item);
         adap_level.setDropDownViewResource(R.layout.downlevel);
         spinner_level.setAdapter(adap_level);
-        /*spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });*/
-
-        ad_ships = (Switch) findViewById(R.id.switch_ships);
-
-        spinner_rules = (Spinner) findViewById(R.id.rules_options);
-        spinner_rules.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
-        ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
-        adap_rules.setDropDownViewResource(R.layout.downlevel);
-        spinner_rules.setAdapter(adap_rules);
-     /*   spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) parent.getSelectedView()).setTextColor(getResources().getColor(R.color.ColorWhite));
@@ -142,7 +98,24 @@ public class Settings extends Activity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        System.out.println(spin+--ner_level.getSelectedItem());*/
+
+        ad_ships = (Switch) findViewById(R.id.switch_ships);
+
+        spinner_rules = (Spinner) findViewById(R.id.rules_options);
+        spinner_rules.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
+        ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
+        adap_rules.setDropDownViewResource(R.layout.downlevel);
+        spinner_rules.setAdapter(adap_rules);
+        spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getSelectedView()).setTextColor(getResources().getColor(R.color.ColorWhite));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         original[LANGUAGE] = getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");
@@ -190,6 +163,34 @@ public class Settings extends Activity {
 
         savePreferences("Rules", "Rules", spinner_rules.getSelectedItem().toString());
     }
+
+
+    private void setPreferences() {
+        ArrayAdapter adap = (ArrayAdapter) spinner_level.getAdapter();
+        spinner_level.setSelection(adap.getPosition(getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "")), true);
+
+        adap = (ArrayAdapter) spinner_rules.getAdapter();
+        spinner_rules.setSelection(adap.getPosition(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "")));
+
+        ad_ships.setChecked(getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
+    }
+
+    private void configLanguage(String language) {
+        Locale locale = new Locale(language);
+        Resources res = getResources();
+        Configuration config = res.getConfiguration();
+        config.locale = locale;
+        res.updateConfiguration(config, res.getDisplayMetrics());
+        onConfigurationChanged(config);
+    }
+
+    private void savePreferences(String key, String name, String value_string) {
+        SharedPreferences settings = getSharedPreferences(key, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(name, value_string);
+        editor.commit();
+    }
+
 
     private void showInfoDialog() {
 
@@ -243,8 +244,8 @@ public class Settings extends Activity {
         if (original[LANGUAGE].equalsIgnoreCase("es"))
             lan = "Español";
         else lan = "English";
-        if(original[LANGUAGE].equals("") || original[LEVEL].equals("") || original[RULES].equals(""))
-            return  !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()));
+        if (original[LANGUAGE].equals("") || original[LEVEL].equals("") || original[RULES].equals(""))
+            return !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()));
 
         return !(lan.equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
                 !(original[LEVEL].equalsIgnoreCase(spinner_level.getSelectedItem().toString())) ||
@@ -278,7 +279,7 @@ public class Settings extends Activity {
                         }
                     })
                     .show();
-        } else{
+        } else {
             saveAll();
             finish();
         }
