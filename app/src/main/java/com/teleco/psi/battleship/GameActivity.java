@@ -1171,7 +1171,8 @@ public class GameActivity extends Activity {
             String[] posStr = posUpdate.split("-");
             int rowUptdate = Integer.parseInt(posStr[ROW]);
             int columnUpdate = Integer.parseInt(posStr[COLUMN]);
-            matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, 2);
+            int level = Integer.parseInt(posStr[2]);
+            matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, level);
         }
         return matrix;
     }
@@ -1192,41 +1193,79 @@ public class GameActivity extends Activity {
 
         if (row == LAST_POS) {  // buscar hacia arriba o lados
             if (column == FIRST_POS) { //hacia arriba o derecha
-                possiblePlays.add("9-1");
-                possiblePlays.add("8-0");
+                possiblePlays.add("9-1-2");
+                possiblePlays.add("8-0-2");
+                possiblePlays.add("7-0-3");
+                possiblePlays.add("9-2-3");
             } else if (column == LAST_POS) { //hacia arriba o izquierda
-                possiblePlays.add("8-9");
-                possiblePlays.add("9-8");
+                possiblePlays.add("8-9-2");
+                possiblePlays.add("9-8-2");
+                possiblePlays.add("9-7-3");
+                possiblePlays.add("8-8-3");
             } else { // buscar mejor jugada proxima a ese barco
-                possiblePlays.add("9-" + (column - 1));
-                possiblePlays.add("9-" + (column + 1));
-                possiblePlays.add("8-" + (column));
+                possiblePlays.add("9-" + (column - 1) + "-2");
+                possiblePlays.add("9-" + (column + 1) + "-2");
+                possiblePlays.add("8-" + (column) + "-2");
+                if(column - 1 != FIRST_POS)
+                    possiblePlays.add("9-" + (column - 2)  + "-3");
+                if(column + 1 != LAST_POS)
+                    possiblePlays.add("9-" + (column + 2)  + "-3");
+
+                possiblePlays.add("7-" + column + "-3");
             }
         } else if (row == FIRST_POS) { // hacia abajo o los lados
             if (column == FIRST_POS) { // hacia abajo o derecha
-                possiblePlays.add("0-1");
-                possiblePlays.add("1-0");
+                possiblePlays.add("0-1-2");
+                possiblePlays.add("1-0-2");
+                possiblePlays.add("0-2-3");
+                possiblePlays.add("2-0-3");
             } else if (column == LAST_POS) { //hacia abajo o izquierda
-                possiblePlays.add("0-8");
-                possiblePlays.add("1-9");
+                possiblePlays.add("0-8-2");
+                possiblePlays.add("1-9-2");
+                possiblePlays.add("0-7-3");
+                possiblePlays.add("2-9-3");
             } else { // buscar mejor jugada proxima a ese barco
-                possiblePlays.add("0-" + (column - 1));
-                possiblePlays.add("0-" + (column + 1));
-                possiblePlays.add("1-" + column);
+                possiblePlays.add("0-" + (column - 1) + "-2");
+                possiblePlays.add("0-" + (column + 1) + "-2");
+                possiblePlays.add("1-" + column + "-2");
+                if((column - 1) != FIRST_POS)
+                    possiblePlays.add("0-" + (column - 2) + "-3");
+                if ((column + 1) != LAST_POS)
+                    possiblePlays.add("0-" + (column + 2) + "-3");
+                possiblePlays.add("2-" + column + "-3");
             }
         } else if (column == FIRST_POS) {
-            possiblePlays.add(row + "-" + (column + 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column + 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            possiblePlays.add(row + "-" + (column + 2) + "-3");
+            if((row - 1) != FIRST_POS )
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            if((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+
         } else if (column == LAST_POS) {
-            possiblePlays.add(row + "-" + (column - 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column - 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            if ((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+            if ((row - 1) != FIRST_POS)
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            possiblePlays.add(row + "-" + (column - 2) + "-3");
         } else {
-            possiblePlays.add(row + "-" + (column + 1));
-            possiblePlays.add(row + "-" + (column - 1));
-            possiblePlays.add((row + 1) + "-" + column);
-            possiblePlays.add((row - 1) + "-" + column);
+            possiblePlays.add(row + "-" + (column + 1) + "-2");
+            possiblePlays.add(row + "-" + (column - 1) + "-2");
+            possiblePlays.add((row + 1) + "-" + column + "-2");
+            possiblePlays.add((row - 1) + "-" + column + "-2");
+            if ((row + 1) != LAST_POS)
+                possiblePlays.add((row + 2) + "-" + column + "-3");
+            if ((row - 1) != FIRST_POS)
+                possiblePlays.add((row - 2) + "-" + column + "-3");
+            if ((column + 1) != LAST_POS)
+                possiblePlays.add(row + "-" + (column + 1) + "-3");
+            if ((column - 1) != FIRST_POS)
+                possiblePlays.add(row + "-" + (column - 1) + "-3");
         }
 
         return possiblePlays;
