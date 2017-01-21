@@ -222,6 +222,7 @@ public class GameActivity extends Activity {
                         supershot((int) matrixMachine[row - 1][column - 1][SHIPS], false);
                     } else {
                         view.setBackgroundColor(Color.RED);
+                        matrixHuman[row - 1][column -1][GAME_STATE] = TOUCHED;
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
                     }
@@ -231,6 +232,7 @@ public class GameActivity extends Activity {
                 } else {
                     light.setBackgroundResource(R.drawable.rojo);
                     view.setBackgroundColor(Color.BLUE);
+                    matrixHuman[row - 1][column -1][GAME_STATE] = WATER;
                     view.setOnClickListener(null);
                     matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
                 }
@@ -243,13 +245,10 @@ public class GameActivity extends Activity {
     }
 
     private void supershot(int ship, boolean human) {
-        int cont = 0;
         if (human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == ship) {
-                        cont++;
-                        System.out.println("Num casillas barco ("+ship+"):"+cont);
                         matrixHuman[fila][columna][GAME_STATE] = TOUCHED;
                         viewsHuman[fila][columna].setBackgroundColor(Color.RED);
                         matrixHuman = updateMatrixValues(matrixHuman, fila, columna, true);
