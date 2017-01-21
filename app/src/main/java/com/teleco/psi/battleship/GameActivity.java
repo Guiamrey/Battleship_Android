@@ -956,13 +956,13 @@ public class GameActivity extends Activity {
         matrixMachine[8][2][2] = 100 - 46;
         matrixMachine[8][7][2] = 100 - 46;
         matrixMachine[7][8][2] = 100 - 46;
+        matrixMachine[1][7][2] = 100 - 46;
+        matrixMachine[2][8][2] = 100 - 46;
         //
         matrixMachine[0][3][2] = 100 - 36;
         matrixMachine[3][0][2] = 100 - 36;
         matrixMachine[0][6][2] = 100 - 36;
         matrixMachine[3][9][2] = 100 - 36;
-        matrixMachine[1][7][2] = 100 - 36;
-        matrixMachine[2][8][2] = 100 - 36;
         matrixMachine[6][0][2] = 100 - 36;
         matrixMachine[9][3][2] = 100 - 36;
         matrixMachine[9][6][2] = 100 - 36;
@@ -1005,7 +1005,7 @@ public class GameActivity extends Activity {
      * @param direction horizontal (0) or vertical (1)
      * @return true if ship can be set, false in other case.
      */
-    private static boolean isAShip(int from, int to, int line, int direction) {
+    private static boolean isAShip(int from, int to, int line, int direction) { //TODO cambiar los índices de la matriz a las constantes
         if (ALLOW_ADJACENT_SHIPS) {
             if (direction == HORIZONTAL) {
                 for (int column = from; column <= to; column++) {
