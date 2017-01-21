@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -143,7 +144,7 @@ public class GameActivity extends Activity {
         if (level == EASY || level == MEDIUM)
             setRandomMatrixMachine(); //colocación de barcos aleatoria
         else{
-            /// COLOCACION BARCOS INTELIGENTES
+            setIntelligentShips(); //colocación de barcos inteligente
         }
 
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
@@ -285,6 +286,95 @@ public class GameActivity extends Activity {
                 }
             }
         }
+    }
+
+    private static void setIntelligentShips(){
+
+        HashMap<String, Float> bestPositions= new HashMap<>();
+
+        int numberOfShips = 5, shipsPlaced = 0, shipSize = 5, type = 6;
+
+        while (numberOfShips != shipsPlaced){
+
+            bestPositions = checkBestPosition(shipSize);
+
+            String[] aux = bestPositions.toString().replace("{", "").replace("}", "").split(" ");
+            Random rand = new Random();
+            int auxRand = rand.nextInt(aux.length); System.out.println(auxRand);
+            String[] positionAux = aux[auxRand].split("=");
+            String[] position = positionAux[0].split(",");
+
+            int row = Integer.parseInt(position[0].trim());
+            int column = Integer.parseInt(position[1].trim());
+            int orientation = Integer.parseInt(position[2].trim());
+
+            System.out.println("--> shipSize: " + shipSize + " | type: " + type);
+
+            if (orientation == HORIZONTAL){
+                setShip(column, column + (shipSize -1), row, HORIZONTAL, matrixMachine, type);
+                shipsPlaced++;
+                type--;
+            }
+
+            if (orientation == VERTICAL){
+                setShip(row, row + (shipSize -1), column, VERTICAL, matrixMachine, type);
+                shipsPlaced++;
+                type--;
+            }
+
+            if (!((type == 3) && (shipSize == 3))) shipSize--;
+
+        }
+    }
+
+    private static HashMap<String, Float> checkBestPosition(int shipSize){
+
+        float maxValue = 0;
+        HashMap<String, Float> bestPositions= new HashMap<>();
+
+        //Checking by rows
+        for (int row = 0; row < MATRIX_SIZE; row++){
+            for (int column = 0; column < MATRIX_SIZE - shipSize+1; column++){
+                boolean possiblePosition = false;
+                possiblePosition = isAShip(column, (column + (shipSize-1)), row, HORIZONTAL);
+                if(possiblePosition) {
+                    float maxValueAux = 0;
+                    for (int i = column; i < (column + (shipSize)); i++){
+                        maxValueAux = maxValueAux + matrixMachine[row][i][PROBABILITY];
+                    }
+                    if(maxValueAux > maxValue){
+                        maxValue = maxValueAux;
+                        bestPositions.clear();
+                        bestPositions.put(row + "," + column + ",0", maxValueAux);
+                    } else if (maxValueAux == maxValue){
+                        bestPositions.put(row + "," + column + ",0", maxValueAux);
+                    } else continue;
+
+                } else continue;
+            }
+        }
+        //Checking by columns
+        for (int column = 0; column < MATRIX_SIZE; column++){
+            for (int row = 0; row < MATRIX_SIZE - shipSize+1; row++){
+                boolean possiblePosition = false; //TODO False
+                possiblePosition = isAShip(row, (row + (shipSize-1)), column, VERTICAL);
+                if(possiblePosition) {
+                    float maxValueAux = 0;
+                    for (int i = row; i < (row + (shipSize)); i++){
+                        maxValueAux = maxValueAux + matrixMachine[i][column][PROBABILITY];
+                    }
+                    if(maxValueAux > maxValue){
+                        maxValue = maxValueAux;
+                        bestPositions.clear();
+                        bestPositions.put(row + "," + column + ",1", maxValueAux);
+                    } else if (maxValueAux == maxValue){
+                        bestPositions.put(row + "," + column + ",1", maxValueAux);
+                    } else continue;
+
+                } else continue;
+            }
+        }
+        return bestPositions;
     }
 
     private void setRandomMatrixMachine() {
