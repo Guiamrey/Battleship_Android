@@ -831,7 +831,6 @@ public class GameActivity extends Activity {
         matrixHuman[9][9][2] = 0;
     }
 
-
     public void inicializeBaseDefense() {
         //centrales
         matrixMachine[4][4][2] = 100 - 100;
@@ -917,7 +916,7 @@ public class GameActivity extends Activity {
         matrixMachine[2][8][2] = 100 - 36;
         matrixMachine[6][0][2] = 100 - 36;
         matrixMachine[9][3][2] = 100 - 36;
-        matrixMachine[9][6][2] = 3100 - 6;
+        matrixMachine[9][6][2] = 100 - 36;
         matrixMachine[6][9][2] = 100 - 36;
         //
         matrixMachine[2][0][2] = 100 - 27;
