@@ -22,7 +22,7 @@
         android:layout_above="@+id/boardMachine"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="330dp"
-        android:layout_toEndOf="@+id/ship5_tocado">
+        android:layout_toEndOf="@+id/ship6_tocado">
 
     </FrameLayout>
 
@@ -38,7 +38,7 @@
     <ImageView
         android:layout_height="wrap_content"
         android:src="@drawable/ship5_tocadob"
-        android:id="@+id/ship5_tocado"
+        android:id="@+id/ship6_tocado"
         android:layout_alignParentStart="true"
         android:layout_marginStart="5dp"
         android:layout_width="75dp" />
@@ -46,10 +46,10 @@
     <ImageView
         android:layout_height="wrap_content"
         android:src="@drawable/ship4_1_tocadob"
-        android:id="@+id/ship4_tocado"
+        android:id="@+id/ship5_tocado"
         android:layout_marginTop="27dp"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/ship5_tocado"
+        android:layout_alignStart="@+id/ship6_tocado"
         android:layout_width="60dp" />
 
     <ImageView
@@ -57,16 +57,16 @@
         android:src="@drawable/ship3_tocadob"
         android:id="@+id/ship3_tocado"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/ship5_tocado"
-        android:layout_alignStart="@+id/ship4_tocado"
+        android:layout_below="@+id/ship6_tocado"
+        android:layout_alignStart="@+id/ship5_tocado"
         android:layout_width="50dp" />
 
     <ImageView
         android:layout_height="wrap_content"
         android:src="@drawable/ship3_1_tocadob"
-        android:id="@+id/ship3_1_tocado"
+        android:id="@+id/ship4_tocado"
         android:layout_marginTop="20dp"
-        android:layout_below="@+id/ship4_tocado"
+        android:layout_below="@+id/ship5_tocado"
         android:layout_alignStart="@+id/ship3_tocado"
         android:layout_width="50dp" />
 
@@ -74,8 +74,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ship2_tocadob"
         android:id="@+id/ship2_tocado"
-        android:layout_below="@+id/ship3_1_tocado"
-        android:layout_alignStart="@+id/ship3_1_tocado"
+        android:layout_below="@+id/ship4_tocado"
+        android:layout_alignStart="@+id/ship4_tocado"
         android:layout_width="40dp" />
 
     <FrameLayout

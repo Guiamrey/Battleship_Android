@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Gravity;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -570,7 +573,7 @@ public class GameActivity extends Activity {
                 matrixHuman = updateMatrixValues(matrixHuman, row, column, true);
                 shipsDownIA++;
             }
-            checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], false);
+            checkShipSunk((int) matrixMachine[row][column][SHIPS], false);
             checkFinalGame();
             return true;
         } else {
@@ -1423,6 +1426,29 @@ public class GameActivity extends Activity {
             }
             if (isSunk) {
                 sunkShipsHuman[numShip - 2] = true;
+                int id = 0;
+                switch (numShip) {
+                    case 2:
+                        id = R.id.ship2_tocado;
+                        break;
+                    case 3:
+                        id = R.id.ship3_tocado;
+                        break;
+                    case 4:
+                        id = R.id.ship4_tocado;
+                        break;
+                    case 5:
+                        id = R.id.ship5_tocado;
+                        break;
+                    case 6:
+                        id = R.id.ship6_tocado;
+                        break;
+                }
+                ImageView sunkShip = (ImageView) findViewById(id);
+                ColorMatrix matrix = new ColorMatrix();
+                matrix.setSaturation(0);
+                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+                sunkShip.setColorFilter(filter);
             }
         } else {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
