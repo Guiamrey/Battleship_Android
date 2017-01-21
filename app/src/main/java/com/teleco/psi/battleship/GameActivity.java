@@ -997,6 +997,8 @@ public class GameActivity extends Activity {
         matrixMachine[5][9][2] = 54;
         matrixMachine[1][2][2] = 54;
         matrixMachine[2][1][2] = 54;
+        matrixMachine[1][7][2] = 54;
+        matrixMachine[2][8][2] = 54;
         matrixMachine[7][1][2] = 54;
         matrixMachine[8][2][2] = 54;
         matrixMachine[8][7][2] = 54;
@@ -1006,8 +1008,6 @@ public class GameActivity extends Activity {
         matrixMachine[3][0][2] = 64;
         matrixMachine[0][6][2] = 64;
         matrixMachine[3][9][2] = 64;
-        matrixMachine[1][7][2] = 64;
-        matrixMachine[2][8][2] = 64;
         matrixMachine[6][0][2] = 64;
         matrixMachine[9][3][2] = 64;
         matrixMachine[9][6][2] = 64;
