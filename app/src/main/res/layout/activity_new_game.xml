@@ -8,7 +8,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.teleco.psi.battleship.NewGameActivity">
+    tools:context="com.teleco.psi.battleship.NewGameActivity"
+    android:background="@drawable/water1">
 
     <FrameLayout
         android:id="@+id/frame"
@@ -57,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/place_your_ships"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/ColorWhite"
         android:textSize="23sp"
         android:textStyle="normal|bold"
         android:layout_marginTop="11dp"
@@ -106,10 +107,10 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="hla holahoalahoas"
+        android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/ColorWhite"
         android:textSize="15sp"
         android:id="@+id/num_fields"
         android:layout_above="@+id/textView"

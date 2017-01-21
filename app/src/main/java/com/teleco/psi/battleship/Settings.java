@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -78,7 +79,41 @@ public class Settings extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
 
+        spinner_level = (Spinner) findViewById(R.id.difficulty_options);
+        spinner_level.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
+        ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
+        adap_level.setDropDownViewResource(R.layout.downlevel);
+        spinner_level.setAdapter(adap_level);
+        spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        ad_ships = (Switch) findViewById(R.id.switch_ships);
+
+        spinner_rules = (Spinner) findViewById(R.id.rules_options);
+        spinner_rules.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
+        ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
+        adap_rules.setDropDownViewResource(R.layout.downlevel);
+        spinner_rules.setAdapter(adap_rules);
+        spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         spinner_language = (Spinner) findViewById(R.id.language_options);
+        spinner_language.getBackground().setColorFilter(getResources().getColor(R.color.ColorWhite), PorterDuff.Mode.SRC_ATOP);
+
         ArrayAdapter<CharSequence> adap_language = ArrayAdapter.createFromResource(this, R.array.language_options, android.R.layout.simple_spinner_item);
         adap_language.setDropDownViewResource(R.layout.downlevel);
         spinner_language.setAdapter(adap_language);
@@ -90,22 +125,13 @@ public class Settings extends Activity {
                     language = "en";
                 } else language = "es";
                 configLanguage(language);
+                ((TextView) parent.getChildAt(0)).setTextColor(getResources().getColor(R.color.ColorWhite));
             }
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
-        spinner_level = (Spinner) findViewById(R.id.difficulty_options);
-        ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
-        adap_level.setDropDownViewResource(R.layout.downlevel);
-        spinner_level.setAdapter(adap_level);
 
-        ad_ships = (Switch) findViewById(R.id.switch_ships);
-
-        spinner_rules = (Spinner) findViewById(R.id.rules_options);
-        ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
-        adap_rules.setDropDownViewResource(R.layout.downlevel);
-        spinner_rules.setAdapter(adap_rules);
 
         original[LANGUAGE] = getSharedPreferences("Language" , Context.MODE_PRIVATE).getString("Language","");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");

@@ -214,8 +214,10 @@ public class NewGameActivity extends Activity {
                 }
                 if (i == 0) {
                     field.setText(num[j]);
+                    field.setTextColor(getResources().getColor(R.color.ColorWhite));
                 } else if (j == 0) {
                     field.setText(AJ[i - 1]);
+                    field.setTextColor(getResources().getColor(R.color.ColorWhite));
                 }
                 field.setTextSize(15);
                 field.setPadding(10, 15, 0, 0);
@@ -479,7 +481,7 @@ public class NewGameActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         for (int i = 0; i < 10; i++) {
                             for (int j = 0; j < 10; j++) {
