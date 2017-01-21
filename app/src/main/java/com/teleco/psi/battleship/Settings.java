@@ -6,17 +6,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -39,7 +36,7 @@ public class Settings extends Activity {
     protected void onResume() {
         String language = getResources().getConfiguration().locale.getDisplayLanguage();
         System.out.println("-------- Language"+language);
-        if(language.equals("español")){
+        if(language.equalsIgnoreCase("español") || language.equalsIgnoreCase("spanish")){
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));
         }
