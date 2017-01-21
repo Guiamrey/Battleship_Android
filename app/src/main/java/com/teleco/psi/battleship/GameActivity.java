@@ -83,6 +83,8 @@ public class GameActivity extends Activity {
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
     private static int MAX_SIZE_SHIP = 5;
+    private boolean[] sunkShipsHuman = new boolean[]{false, false, false, false, false};
+    private boolean[] sunkShipsMachine = new boolean[]{false, false, false, false, false};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -995,8 +997,6 @@ public class GameActivity extends Activity {
         matrixMachine[5][9][2] = 54;
         matrixMachine[1][2][2] = 54;
         matrixMachine[2][1][2] = 54;
-        matrixMachine[1][7][2] = 54;
-        matrixMachine[2][8][2] = 54;
         matrixMachine[7][1][2] = 54;
         matrixMachine[8][2][2] = 54;
         matrixMachine[8][7][2] = 54;
