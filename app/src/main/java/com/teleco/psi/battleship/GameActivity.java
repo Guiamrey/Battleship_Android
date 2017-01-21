@@ -209,6 +209,7 @@ public class GameActivity extends Activity {
                         supershot((int) matrixMachine[row - 1][column - 1][SHIPS], false);
                     } else {
                         view.setBackgroundColor(Color.RED);
+                        view.setOnClickListener(null);
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
                     }
@@ -398,7 +399,9 @@ public class GameActivity extends Activity {
                 int row = rand.nextInt(MATRIX_SIZE);
 
                 if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && canEnter(row, column)) {
-                    bestAction[ROW] = row;
+                //if (matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
+
+                bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
                     break;
@@ -706,7 +709,6 @@ public class GameActivity extends Activity {
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
-        printLogMatrix(matrixBaseAttack);
     }
 
     public void learningDefense() {
@@ -716,7 +718,6 @@ public class GameActivity extends Activity {
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
-        printLogMatrix(matrixBaseDefense);
     }
 
     public void inicializeBaseAttack() {
@@ -1174,6 +1175,7 @@ public class GameActivity extends Activity {
             int level = Integer.parseInt(posStr[2]);
             matrix[rowUptdate][columnUpdate][PROBABILITY] = updatePos(matrix[rowUptdate][columnUpdate][PROBABILITY], hit, level);
         }
+
         return matrix;
     }
 
@@ -1319,13 +1321,13 @@ public class GameActivity extends Activity {
         pos = 1;
     }
 
-    private void printLogMatrix(float[][] matrix){
+    private void printLogMatrix(float[][][] matrix){
         System.out.println("-----------------");
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
                 if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j] + " ");
-                else System.out.print(matrix[i][j] + " ");
+                    System.out.print(matrix[i][j][PROBABILITY] + " ");
+                else System.out.print(matrix[i][j][PROBABILITY] + " ");
             }
             System.out.println("\n");
         }
@@ -1340,9 +1342,9 @@ public class GameActivity extends Activity {
         int invertCounter = 0;
 
         while (true) { //horizontal
-            if (invertCounter == 2) {
-                break;
-            }
+            if(pos == MAX_SIZE_SHIP) return true;
+
+            if (invertCounter == 2) break;
 
             upDown = checkLimits(column - pos * orientation);
 
@@ -1356,17 +1358,16 @@ public class GameActivity extends Activity {
             movement = (int) matrixHuman[row][column - pos * orientation][GAME_STATE];
 
             switch (movement) {
-                case WATER: { //si es agua, cambiamos de direccion y seguimos
-                    pos++;
-                    if(pos == MAX_SIZE_SHIP) return true;
-                    break;
-                }
+                case WATER:  //si es agua, cambiamos de direccion y seguimos
 
                 case TOUCHED: { //si hemos tocado, seguimos en esa direccion
                     orientation = orientation * (-1);
                     invertCounter++;
                     break;
                 }
+
+                default:
+                    pos++;
             }
         }
 
@@ -1375,9 +1376,9 @@ public class GameActivity extends Activity {
         invertCounter = 0;
 
         while (true) {
-            if (invertCounter == 2) {
-                return false;
-            }
+            if(pos == MAX_SIZE_SHIP) return true;
+
+            if (invertCounter == 2) return false;
 
             upDown = checkLimits(row - pos * orientation);
 
@@ -1391,16 +1392,15 @@ public class GameActivity extends Activity {
              movement = (int) matrixHuman[row - pos * orientation][column][GAME_STATE];
 
             switch (movement) {
-                case WATER: { //si es agua, cambiamos de direccion y seguimos
-                    pos++;
-                    if(pos == MAX_SIZE_SHIP) return true;
-                }
+                case WATER:  //si es agua, cambiamos de direccion y seguimos
 
                 case TOUCHED: { //si hemos tocado, seguimos en esa direccion
                     orientation = orientation * (-1);
                     invertCounter++;
                     break;
                 }
+                default:
+                    pos++;
             }
         }
     }
