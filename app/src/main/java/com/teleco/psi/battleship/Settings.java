@@ -142,7 +142,7 @@ public class Settings extends Activity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        System.out.println(spinner_level.getSelectedItem());*/
+        System.out.println(spin+--ner_level.getSelectedItem());*/
 
         original[LANGUAGE] = getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");
