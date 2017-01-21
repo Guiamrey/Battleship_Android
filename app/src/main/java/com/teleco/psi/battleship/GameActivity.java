@@ -1146,6 +1146,10 @@ public class GameActivity extends Activity {
                         if (matrixMachine[line + 1][to + 1][0] != 0) return false;
                     }
                 }
+                //COMPROBAR POSICIÓN DEL BARCO
+                for (int i = from; i < to; i++){
+                    if(matrixMachine[line][i][0] != 0) return false;
+                }
             }
             if (direction == VERTICAL) {
                 for (int i = from; i <= to; i++) {
@@ -1183,6 +1187,10 @@ public class GameActivity extends Activity {
                     if (line < 9) {
                         if (matrixMachine[to + 1][line + 1][0] != 0) return false;
                     }
+                }
+                //COMPROBAR POSICIÓN DEL BARCO
+                for (int i = from; i < to; i++){
+                    if(matrixMachine[i][line][0] != 0) return false;
                 }
             }
         }
