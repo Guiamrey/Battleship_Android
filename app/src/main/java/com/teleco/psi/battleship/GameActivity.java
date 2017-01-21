@@ -82,6 +82,9 @@ public class GameActivity extends Activity {
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
 
+    private boolean[] sunkShipsHuman = new boolean[]{false, false, false, false, false};
+    private boolean[] sunkShipsMachine = new boolean[]{false, false, false, false, false};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,6 +245,7 @@ public class GameActivity extends Activity {
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, true);
                     }
+                    checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], true);
                     checkFinalGame();
                     return;
                 } else {
@@ -567,6 +571,7 @@ public class GameActivity extends Activity {
                 matrixHuman = updateMatrixValues(matrixHuman, row, column, true);
                 shipsDownIA++;
             }
+            checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], false);
             checkFinalGame();
             return true;
         } else {
@@ -1406,7 +1411,36 @@ public class GameActivity extends Activity {
         pos = 1;
     }
 
-    private void printLogMatrix(float[][] matrix) {
+    private void checkShipSunk(int numShip, boolean human) {
+        boolean isSunk = true;
+        if (human) {
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixHuman[fila][columna][SHIPS] == numShip &&
+                            matrixHuman[fila][columna][GAME_STATE] != TOUCHED) {
+                        isSunk = false;
+                    }
+                }
+            }
+            if (isSunk) {
+                sunkShipsHuman[numShip - 2] = true;
+            }
+        } else {
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixMachine[fila][columna][SHIPS] == numShip &&
+                            matrixMachine[fila][columna][GAME_STATE] != TOUCHED) {
+                        isSunk = false;
+                    }
+                }
+            }
+            if (isSunk) {
+                sunkShipsMachine[numShip - 2] = true;
+            }
+        }
+    }
+
+    private void printLogMatrix(float[][] matrix){
         System.out.println("-----------------");
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
