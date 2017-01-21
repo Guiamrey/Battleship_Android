@@ -80,6 +80,7 @@ public class GameActivity extends Activity {
     private static final int EASY = 0;
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
+    private static int MAX_SIZE_SHIP = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,7 +219,6 @@ public class GameActivity extends Activity {
                     view.setBackgroundColor(Color.BLUE);
                     view.setOnClickListener(null);
                     matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
-
                 }
                 IATurn = true;
                 humanTurn = false;
@@ -381,9 +381,11 @@ public class GameActivity extends Activity {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
                 if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] > bestAction[PROBABILITY]) {
-                    bestAction[ROW] = row;
-                    bestAction[COLUMN] = column;
-                    bestAction[VALUE] = matrixHuman[row][column][VALUE];
+                    if(canEnter(row, column)){
+                        bestAction[ROW] = row;
+                        bestAction[COLUMN] = column;
+                        bestAction[VALUE] = matrixHuman[row][column][VALUE];
+                    }
                 }
             }
         }
@@ -395,7 +397,7 @@ public class GameActivity extends Activity {
                 int column = rand.nextInt(MATRIX_SIZE);
                 int row = rand.nextInt(MATRIX_SIZE);
 
-                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && canEnter(row, column)) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -563,9 +565,11 @@ public class GameActivity extends Activity {
             int column = (int)Float.parseFloat(playsStr[COLUMN]);
 
             if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
-                bestAction[ROW] = row;
-                bestAction[COLUMN] = column;
-                bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
+                if(canEnter(row, column)) {
+                    bestAction[ROW] = row;
+                    bestAction[COLUMN] = column;
+                    bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
+                }
             }
         }
 
@@ -948,81 +952,6 @@ public class GameActivity extends Activity {
         matrixMachine[9][9][2] = 100 - 0;
     }
 
-    /*
-        public void placeShipsIA(){
-            int[] bestPlace = new int[3];
-            bestPlace[0] = -1;
-            for (int i = 0; i < matrixMachine.length ; i++) {
-                for (int j = 0; j < matrixMachine.length ; j++) {
-                    if (matrixMachine[i][j][0] == 0 && matrixMachine[i][j][2] > bestPlace[2]){
-                        bestPlace[0] = i;
-                        bestPlace[1] = j;
-                        bestPlace[2] = matrixMachine[i][j][2];
-                    }
-                }
-            }
-
-            if(bestPlace[0] == -1) {
-                Random rand = new Random();
-                while(true) {
-                    int x = rand.nextInt(9);
-                    int y = rand.nextInt(9);
-
-                    if(matrixMachine[x][y][0] == 0) {
-                        bestPlace[0] = x;
-                        bestPlace[1] = y;
-                        bestPlace[2] =  matrixMachine[x][y][2];
-                        break;
-                    }
-                }
-            }
-            placeCarrier(bestPlace);
-        }
-    /*
-        public double probabilityPlace(int from, int to, int line, int direction){
-            double sum = 0;
-
-            if (direction==0){ //Horizontal
-                for (int i=from; i<=to; i++){
-                    sum += matrixHuman[line][i][2];
-                }
-            } else { //Vertical
-                for (int i=from; i<=to; i++){
-                    sum += matrixHuman[i][line][2];
-                }
-            }
-            return sum/(to-from);
-        }
-    /*
-        private void placeCarrier(int[] bestPlace){
-            List<String> possiblePlace = placesWithCorrectSize(bestPlace, 5);
-            boolean shipFree;
-
-            for (String aPossiblePlace : possiblePlace) {
-                String[] placeStr = aPossiblePlace.split("-");
-                int row = Integer.parseInt(placeStr[0]);
-                int column = Integer.parseInt(placeStr[1]);
-
-                if (bestPlace[0] == row) {
-                    if (bestPlace[1] > column) {
-                        shipFree = isAShip(bestPlace[1] - 5, bestPlace[1], row, 0);
-                    } else {
-                        shipFree = isAShip(bestPlace[1], bestPlace[1] + 5, row, 0);
-                    }
-                } else {
-                    if (bestPlace[0] > column) {
-                        shipFree = isAShip(bestPlace[0] + 5, bestPlace[0], row, 0);
-                    } else {
-                        shipFree = isAShip(bestPlace[0], bestPlace[0] + 5, row, 0);
-                    }
-                }
-
-                if (shipFree) {
-                    //probabilityPlace();
-                }
-            }
-        }
-    */
     private List<String> placesWithCorrectSize(int[] bestPlace, int sizeBoat) { //el menos deberia quitarse si los barcos no pueden estar juntos
         List<String> possiblePlays = new ArrayList<>();
         if ((bestPlace[0] + sizeBoat - 1) < 10) {
@@ -1362,6 +1291,79 @@ public class GameActivity extends Activity {
             System.out.println("\n");
         }
         System.out.println("--------X--------");
+    }
+
+    private boolean canEnter(int row, int column) {
+        int upDown;
+        int movement;
+        int pos = 1;
+        int orientation = 1;
+        int invertCounter = 0;
+
+        while (true) { //horizontal
+            if (invertCounter == 2) {
+                break;
+            }
+
+            upDown = checkLimits(column - pos * orientation);
+
+            if (upDown == orientation) {
+                orientation = orientation * (-1);
+                invertCounter++;
+                continue;
+            }
+
+            //asignamos nuestra jugada
+            movement = (int) matrixHuman[row][column - pos * orientation][GAME_STATE];
+
+            switch (movement) {
+                case WATER: { //si es agua, cambiamos de direccion y seguimos
+                    pos++;
+                    if(pos == MAX_SIZE_SHIP) return true;
+                    break;
+                }
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    orientation = orientation * (-1);
+                    invertCounter++;
+                    break;
+                }
+            }
+        }
+
+        pos = 1;
+        orientation = 1;
+        invertCounter = 0;
+
+        while (true) {
+            if (invertCounter == 2) {
+                return false;
+            }
+
+            upDown = checkLimits(row - pos * orientation);
+
+            if (upDown == orientation) {
+                orientation = orientation * (-1);
+                invertCounter++;
+                continue;
+            }
+
+            //asignamos nuestra jugada
+             movement = (int) matrixHuman[row - pos * orientation][column][GAME_STATE];
+
+            switch (movement) {
+                case WATER: { //si es agua, cambiamos de direccion y seguimos
+                    pos++;
+                    if(pos == MAX_SIZE_SHIP) return true;
+                }
+
+                case TOUCHED: { //si hemos tocado, seguimos en esa direccion
+                    orientation = orientation * (-1);
+                    invertCounter++;
+                    break;
+                }
+            }
+        }
     }
 
     private void endGame() {
