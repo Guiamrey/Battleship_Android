@@ -38,7 +38,6 @@ public class Settings extends Activity {
     @Override
     protected void onResume() {
         String language = getResources().getConfiguration().locale.getDisplayLanguage();
-        System.out.println("-------- Language"+language);
         if(language.equals("español")){
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));

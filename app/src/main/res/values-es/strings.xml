@@ -74,4 +74,5 @@
     <string name="another">Barco ya colocado. Seleccione otro.</string>
     <string name="fuun">Haz click en \'Empezar juego\' y que comience la batalla!!</string>
     <string name="leave_game">¿Eestá seguro de que quiere abandonar el juego actual?</string>
+    <string name="pulsame">Púlsame!</string>
 </resources>

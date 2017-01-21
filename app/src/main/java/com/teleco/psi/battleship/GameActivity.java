@@ -139,7 +139,7 @@ public class GameActivity extends Activity {
         FrameLayout frameLayoutMachine = (FrameLayout) findViewById(R.id.boardMachine);
         frameLayoutHuman.addView(createBoard(false));
         frameLayoutMachine.addView(createBoard(true));
-
+        cleanMachineShips();
         setMatrixMachine();
 
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
@@ -161,6 +161,14 @@ public class GameActivity extends Activity {
                     field.setBackgroundColor(Color.BLACK);
                     viewsHuman[row - 1][column - 1] = field;
                 }
+            }
+        }
+    }
+
+    private void cleanMachineShips() {
+        for (int i = 0; i < MATRIX_SIZE; i++) {
+            for (int j = 0; j < MATRIX_SIZE; j++) {
+                matrixMachine[i][j][SHIPS] = 0;
             }
         }
     }
@@ -230,10 +238,13 @@ public class GameActivity extends Activity {
     }
 
     private void supershot(int ship, boolean human) {
+        int cont = 0;
         if (human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == ship) {
+                        cont++;
+                        System.out.println("Num casillas barco ("+ship+"):"+cont);
                         matrixHuman[fila][columna][GAME_STATE] = TOUCHED;
                         viewsHuman[fila][columna].setBackgroundColor(Color.RED);
                         matrixHuman = updateMatrixValues(matrixHuman, fila, columna, true);
@@ -1168,7 +1179,7 @@ public class GameActivity extends Activity {
     @Override
     public void onBackPressed() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
-                .setMessage("SEGURO??")
+                .setMessage(R.string.resetgamesure)
                 .setCancelable(false)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {

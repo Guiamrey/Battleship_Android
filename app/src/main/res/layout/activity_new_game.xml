@@ -101,7 +101,7 @@
         android:id="@+id/info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/info"
+        android:text="@string/pulsame"
         android:layout_below="@+id/ancla"
         android:layout_centerHorizontal="true" />
 

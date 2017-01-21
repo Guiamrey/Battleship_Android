@@ -14,25 +14,6 @@
         android:layout_marginBottom="60dp"
         android:layout_marginTop="270dp" />
 
-    <ImageButton
-        android:id="@+id/pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="14dp"
-        android:layout_marginTop="16dp"
-        android:src="@android:drawable/ic_media_pause" />
-
-    <ImageButton
-        android:id="@+id/help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/pause"
-        android:layout_below="@+id/pause"
-        android:layout_marginTop="8dp"
-        android:src="@android:drawable/ic_menu_help" />
-
     <FrameLayout
         android:id="@+id/boardHuman"
         android:layout_width="match_parent"
@@ -40,7 +21,7 @@
         android:layout_above="@+id/boardMachine"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="330dp"
-        android:layout_toEndOf="@+id/pause">
+        android:layout_toEndOf="@+id/ship5_tocado">
 
     </FrameLayout>
 
@@ -53,15 +34,57 @@
         android:layout_marginBottom="5dp"
         android:text="@string/new_game" />
 
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship5_tocado"
+        android:id="@+id/ship5_tocado"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:layout_width="75dp" />
+
     <FrameLayout
         android:id="@+id/semaforo"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/help"
-        android:layout_alignStart="@+id/help"
-        android:layout_marginStart="7dp"
-        android:layout_marginTop="35dp">
+        android:layout_alignBottom="@+id/boardHuman"
+        android:layout_alignEnd="@+id/ship3_1_tocado"
+        android:layout_marginBottom="24dp">
 
     </FrameLayout>
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship4_1_tocado"
+        android:id="@+id/ship4_tocado"
+        android:layout_marginTop="27dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/ship5_tocado"
+        android:layout_width="60dp" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship3_tocado"
+        android:id="@+id/ship3_tocado"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/ship5_tocado"
+        android:layout_alignStart="@+id/ship4_tocado"
+        android:layout_width="50dp" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship3_1_tocado"
+        android:id="@+id/ship3_1_tocado"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/ship4_tocado"
+        android:layout_alignStart="@+id/ship3_tocado"
+        android:layout_width="50dp" />
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:src="@drawable/ship2_tocado"
+        android:id="@+id/ship2_tocado"
+        android:layout_below="@+id/ship3_1_tocado"
+        android:layout_alignStart="@+id/ship3_1_tocado"
+        android:layout_width="40dp" />
 
 </RelativeLayout>
