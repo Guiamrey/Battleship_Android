@@ -114,7 +114,7 @@ public class Settings extends Activity {
         ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
         adap_level.setDropDownViewResource(R.layout.downlevel);
         spinner_level.setAdapter(adap_level);
-       /* spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
@@ -132,7 +132,7 @@ public class Settings extends Activity {
         ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
         adap_rules.setDropDownViewResource(R.layout.downlevel);
         spinner_rules.setAdapter(adap_rules);
-        /*spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+     /*   spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 ((TextView) parent.getSelectedView()).setTextColor(getResources().getColor(R.color.ColorWhite));
@@ -141,7 +141,8 @@ public class Settings extends Activity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
-        });*/
+        });
+        System.out.println(spin+--ner_level.getSelectedItem());*/
 
         original[LANGUAGE] = getSharedPreferences("Language", Context.MODE_PRIVATE).getString("Language", "");
         original[RULES] = getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "");
@@ -238,11 +239,13 @@ public class Settings extends Activity {
      */
 
     private boolean check_changed() {
-        
         String lan;
         if (original[LANGUAGE].equalsIgnoreCase("es"))
             lan = "Español";
         else lan = "English";
+        if(original[LANGUAGE].equals("") || original[LEVEL].equals("") || original[RULES].equals(""))
+            return  !(original[SHIPS].equalsIgnoreCase("" + ad_ships.isChecked()));
+
         return !(lan.equalsIgnoreCase(spinner_language.getSelectedItem().toString())) ||
                 !(original[LEVEL].equalsIgnoreCase(spinner_level.getSelectedItem().toString())) ||
                 !(original[RULES].equalsIgnoreCase(spinner_rules.getSelectedItem().toString())) ||
@@ -275,7 +278,10 @@ public class Settings extends Activity {
                         }
                     })
                     .show();
-        } else finish();
+        } else{
+            saveAll();
+            finish();
+        }
     }
 
     private void showLogDialog() {

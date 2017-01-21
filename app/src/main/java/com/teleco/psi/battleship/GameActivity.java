@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -82,6 +83,9 @@ public class GameActivity extends Activity {
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
 
+    private boolean[] sunkShipsHuman = new boolean[]{false, false, false, false, false};
+    private boolean[] sunkShipsMachine = new boolean[]{false, false, false, false, false};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,16 +105,12 @@ public class GameActivity extends Activity {
             level = EASY;
         } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
             level = MEDIUM;
-        } else level = HARD;
-        System.out.println("Level = "+level);
+        }else level = HARD;
 
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
         setContentView(R.layout.game_activity);
-        printLogMatrix(matrixMachine);
         setupLearning();
-        printLogMatrix(matrixMachine);
-
         inicializeVarAlgorithm();
         light = (FrameLayout) findViewById(R.id.semaforo);
         light.setBackgroundResource(R.drawable.verde);
@@ -150,7 +150,7 @@ public class GameActivity extends Activity {
         else{
             setIntelligentShips(); //colocación de barcos inteligente
         }
-        printLogMatrix(matrixMachine);
+
         SharedPreferences settings = getSharedPreferences("Matrix", 0);
         Gson gson = new Gson();
         String json = settings.getString("Matrix", "");
@@ -242,9 +242,11 @@ public class GameActivity extends Activity {
                         supershot((int) matrixMachine[row - 1][column - 1][SHIPS], false);
                     } else {
                         view.setBackgroundColor(Color.RED);
+                        matrixMachine[row - 1][column - 1][GAME_STATE] = TOUCHED;
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
                     }
+                    checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], true);
                     checkFinalGame();
                     return;
                 } else {
@@ -263,13 +265,10 @@ public class GameActivity extends Activity {
     }
 
     private void supershot(int ship, boolean human) {
-        int cont = 0;
         if (human) {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
                 for (int columna = 0; columna < MATRIX_SIZE; columna++) {
                     if (matrixHuman[fila][columna][SHIPS] == ship) {
-                        cont++;
-                        System.out.println("Num casillas barco (" + ship + "):" + cont);
                         matrixHuman[fila][columna][GAME_STATE] = TOUCHED;
                         viewsHuman[fila][columna].setBackgroundColor(Color.RED);
                         matrixHuman = updateMatrixValues(matrixHuman, fila, columna, true);
@@ -383,76 +382,26 @@ public class GameActivity extends Activity {
 
     private void setRandomMatrixMachine() {
         Random rand = new Random();
-        boolean shipOK = false;
+        int shipsPlaced = 0, numberOfShips = 5, shipSize = 5, type = 6;
 
-        //Barco de 5
-        int line = rand.nextInt(MATRIX_SIZE);
-        int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+        while (shipsPlaced != numberOfShips){
+            boolean shipOK = false;
 
-        int from = rand.nextInt(5);
-        int to = from + 4;
+            while (!shipOK){
+                int line = rand.nextInt(MATRIX_SIZE);
+                int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
+                int from = rand.nextInt(shipSize);
+                int to = from + shipSize - 1;
 
-        int CASILLAS5 = 6, CASILLAS4 = 5, CASILLAS3_1 = 4, CASILLAS3_2 = 3, CASILLAS2 = 2;
-
-        log("SHIP 5 - true: Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-        setShip(from, to, line, direction, matrixMachine, CASILLAS5);
-
-        //Barco de 4
-
-        while (!shipOK) {
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(6);
-            to = from + 3;
-
-            shipOK = isAShip(from, to, line, direction);
-            log("SHIP 4 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, CASILLAS4);
+                shipOK = isAShip(from, to, line, direction);
+                log("SHIP " + shipSize + " - " + shipOK + " | Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
+                if (shipOK) {
+                    setShip(from, to, line, direction, matrixMachine, type);
+                    type--;
+                }
             }
-
-        }
-
-        int shipThree = 0;
-        int type = CASILLAS3_1;
-        while (shipThree != 2) {
-
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(7);
-            to = from + 2;
-
-            shipOK = isAShip(from, to, line, direction);
-
-            log("SHIP 3 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, type);
-                shipThree++;
-                type = CASILLAS3_2;
-            }
-        }
-
-        shipOK = false;
-
-        while (!shipOK) {
-
-            line = rand.nextInt(MATRIX_SIZE);
-            direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-
-            from = rand.nextInt(8);
-            to = from + 1;
-
-            shipOK = isAShip(from, to, line, direction);
-
-            log("SHIP 2 - " + shipOK + ": Line: " + (line + 1) + " -- Direction: " + direction + " -- From: " + from + " -- To: " + to);
-
-            if (shipOK) {
-                setShip(from, to, line, direction, matrixMachine, CASILLAS2);
-            }
+            shipsPlaced++;
+            if (!((type == 3) && (shipSize == 3))) shipSize--;
         }
     }
 
@@ -570,6 +519,7 @@ public class GameActivity extends Activity {
                 matrixHuman = updateMatrixValues(matrixHuman, row, column, true);
                 shipsDownIA++;
             }
+            checkShipSunk((int) matrixMachine[row][column][SHIPS], false);
             checkFinalGame();
             return true;
         } else {
@@ -1409,13 +1359,68 @@ public class GameActivity extends Activity {
         pos = 1;
     }
 
-    private void printLogMatrix(float[][][] matrix) {
+    private void checkShipSunk(int numShip, boolean human) {
+        boolean isSunk = true;
+        if (!human) {
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixHuman[fila][columna][SHIPS] == numShip &&
+                            matrixHuman[fila][columna][GAME_STATE] != TOUCHED) {
+                        isSunk = false;
+                    }
+                }
+            }
+            if (isSunk) {
+                sunkShipsHuman[numShip - 2] = true;
+            }
+        } else {
+            for (int fila = 0; fila < MATRIX_SIZE; fila++) {
+                for (int columna = 0; columna < MATRIX_SIZE; columna++) {
+                    if (matrixMachine[fila][columna][SHIPS] == numShip &&
+                            matrixMachine[fila][columna][GAME_STATE] != TOUCHED) {
+                        isSunk = false;
+                    }
+                }
+            }
+            if (isSunk) {
+                sunkShipsMachine[numShip - 2] = true;
+                int id = 0;
+                int idb = 0;
+                switch (numShip) {
+                    case 2:
+                        id = R.id.ship2_tocado;
+                        idb = R.drawable.ship2_hundido;
+                        break;
+                    case 3:
+                        id = R.id.ship3_tocado;
+                        idb = R.drawable.ship3_hundido;
+                        break;
+                    case 4:
+                        id = R.id.ship4_tocado;
+                        idb = R.drawable.ship3_1_hundido;
+                        break;
+                    case 5:
+                        id = R.id.ship5_tocado;
+                        idb = R.drawable.ship4_hundido;
+                        break;
+                    case 6:
+                        id = R.id.ship6_tocado;
+                        idb = R.drawable.ship5_hundido;
+                        break;
+                }
+                ImageView sunkShip = (ImageView) findViewById(id);
+                sunkShip.setImageResource(idb);
+            }
+        }
+    }
+
+    private void printLogMatrix(float[][] matrix){
         System.out.println("-----------------");
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
                 if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j][PROBABILITY] + " ");
-                else System.out.print(matrix[i][j][PROBABILITY] + " ");
+                    System.out.print(matrix[i][j] + " ");
+                else System.out.print(matrix[i][j] + " ");
             }
             System.out.println("\n");
         }
@@ -1428,10 +1433,7 @@ public class GameActivity extends Activity {
         totalGames++;
         if(totalGames > 3) alpha = 0.3f;
         learningAttack();
-        printLogMatrix(matrixHuman);
-        System.out.println("----X---    ");
         learningDefense();
-        printLogMatrix(matrixMachine);
         saveTotalGames(totalGames);
     }
 }
