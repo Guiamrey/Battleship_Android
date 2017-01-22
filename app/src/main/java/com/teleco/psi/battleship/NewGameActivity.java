@@ -280,15 +280,22 @@ public class NewGameActivity extends Activity {
             if ((matrix[i - 2][j][0] == ship) || (matrix[i - 1][j][0] == ship)) {
                 horizontal = false;
                 barco = true;
-            } else if (j != 0) {
+            } else if (j != 0 && j != 9) {
                 if ((matrix[i][j + 1][0] == ship) || (matrix[i][j - 1][0] == ship)) {
                     horizontal = true;
                     barco = true;
                 } else barco = false;
-            } else if ((matrix[i][j + 1][0] == ship) || (matrix[i][j + 2][0] == ship)) {
-                horizontal = true;
-                barco = true;
-            } else barco = false;
+            } else if (j == 0) {
+                if ((matrix[i][j + 1][0] == ship) || (matrix[i][j + 2][0] == ship)) {
+                    horizontal = true;
+                    barco = true;
+                }else barco = false;
+            } else {
+                if ((matrix[i][j - 1][0] == ship) || (matrix[i][j - 2][0] == ship)) {
+                    horizontal = true;
+                    barco = true;
+                }else barco = false;
+            }
         } else if (j == 9) { // si la columna es la ultima comprobar columnas hacia atras
             if ((matrix[i][j - 2][0] == ship) || (matrix[i][j - 1][0] == ship)) {
                 horizontal = true;
