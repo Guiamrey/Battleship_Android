@@ -50,7 +50,7 @@ public class GameActivity extends Activity {
 
     ////
 
-    private static float alpha = 0.5f;
+    private static float alpha = 0.7f;
     private static int totalGames;
     private FrameLayout light;
     private float[][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
@@ -110,6 +110,7 @@ public class GameActivity extends Activity {
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
         setContentView(R.layout.game_activity);
+        printLogMatrix(matrixMachine);
         setupLearning();
         inicializeVarAlgorithm();
         light = (FrameLayout) findViewById(R.id.semaforo);
@@ -148,6 +149,7 @@ public class GameActivity extends Activity {
         if (level == EASY || level == MEDIUM)
             setRandomMatrixMachine(); //colocación de barcos aleatoria
         else{
+            printLogMatrix(matrixMachine);
             setIntelligentShips(); //colocación de barcos inteligente
         }
 
@@ -802,7 +804,7 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (totalGames * matrixBaseDefense[row][column] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][2])) / (totalGames));
+                matrixBaseDefense[row][column] = (((totalGames - 1) * matrixBaseDefense[row][column] - (alpha * 2 * (matrixBaseDefense[row][column] - matrixMachine[row][column][2]))) / (totalGames));
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
@@ -1454,13 +1456,13 @@ public class GameActivity extends Activity {
         }
     }
 
-    private void printLogMatrix(float[][] matrix){
+    private void printLogMatrix(float[][][] matrix){
         System.out.println("-----------------");
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
                 if (i == LAST_POS && j == FIRST_POS)
-                    System.out.print(matrix[i][j] + " ");
-                else System.out.print(matrix[i][j] + " ");
+                    System.out.print(matrix[i][j][PROBABILITY] + " ");
+                else System.out.print(matrix[i][j][PROBABILITY] + " ");
             }
             System.out.println("\n");
         }
