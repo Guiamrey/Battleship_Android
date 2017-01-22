@@ -794,7 +794,9 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][2]))) / (totalGames));
+                matrixBaseAttack[row][column] = ((totalGames * matrixHuman[row][column][PROBABILITY] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][PROBABILITY]))) / (totalGames));
+                if(matrixBaseAttack[row][column] < 0f) matrixBaseAttack[row][column] = 0f;
+                else if(matrixBaseAttack[row][column] > 100f) matrixBaseAttack[row][column] = 100f;
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
@@ -804,7 +806,9 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (((totalGames - 1) * matrixBaseDefense[row][column] - (alpha * 2 * (matrixBaseDefense[row][column] - matrixMachine[row][column][2]))) / (totalGames));
+                matrixBaseDefense[row][column] = (((totalGames) * matrixMachine[row][column][PROBABILITY] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][PROBABILITY]))) / (totalGames));
+                if(matrixBaseDefense[row][column] < 0f) matrixBaseDefense[row][column] = 0f;
+                else if(matrixBaseDefense[row][column] > 100f) matrixBaseDefense[row][column] = 100f;
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
