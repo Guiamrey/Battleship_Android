@@ -6,3 +6,4 @@ Posibles líneas futuras:
   - Interfaz con porcentajes, en vez de tamaños absolutos.
   - Permitir más versiones de Android.
   - Desarrollo de pantallas horizontales. 
+  - Sonido al disparar a agua y al disparar a barco tocado.
