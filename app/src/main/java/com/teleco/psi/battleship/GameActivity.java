@@ -50,7 +50,7 @@ public class GameActivity extends Activity {
 
     ////
 
-    private static float alpha = 0.7f;
+    private static float alpha = 0.9f;
     private static int totalGames;
     private FrameLayout light;
     private float[][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
@@ -247,6 +247,7 @@ public class GameActivity extends Activity {
                         matrixMachine[row - 1][column - 1][GAME_STATE] = TOUCHED;
                         shipsDownHuman++;
                         matrixMachine = updateMatrixValues(matrixMachine, row - 1, column - 1, false);
+                        view.setOnClickListener(null);
                     }
                     checkShipSunk((int) matrixMachine[row - 1][column - 1][SHIPS], true);
                     checkFinalGame();
@@ -275,6 +276,8 @@ public class GameActivity extends Activity {
                         viewsHuman[fila][columna].setBackgroundColor(Color.RED);
                         matrixHuman = updateMatrixValues(matrixHuman, fila, columna, true);
                         shipsDownIA++;
+                        viewsHuman[fila][columna].setOnClickListener(null);
+
                     }
                 }
             }
@@ -794,7 +797,7 @@ public class GameActivity extends Activity {
     public void learningAttack() {
         for (int row = 0; row < MATRIX_SIZE; row++) {
             for (int column = 0; column < MATRIX_SIZE; column++) {
-                matrixBaseAttack[row][column] = ((totalGames * matrixHuman[row][column][PROBABILITY] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][PROBABILITY]))) / (totalGames));
+                matrixBaseAttack[row][column] = ((totalGames * matrixBaseAttack[row][column] - (alpha * (matrixBaseAttack[row][column] - matrixHuman[row][column][PROBABILITY]))) / (totalGames));
                 if(matrixBaseAttack[row][column] < 0f) matrixBaseAttack[row][column] = 0f;
                 else if(matrixBaseAttack[row][column] > 100f) matrixBaseAttack[row][column] = 100f;
             }
@@ -806,7 +809,9 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                matrixBaseDefense[row][column] = (((totalGames) * matrixMachine[row][column][PROBABILITY] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][PROBABILITY]))) / (totalGames));
+                System.out.println(matrixMachine[row][column][PROBABILITY] + ": " + matrixBaseDefense[row][column] + " -->" );
+                matrixBaseDefense[row][column] = ((totalGames * matrixBaseDefense[row][column] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][PROBABILITY]))) / (totalGames));
+                System.out.println(matrixBaseDefense[row][column]);
                 if(matrixBaseDefense[row][column] < 0f) matrixBaseDefense[row][column] = 0f;
                 else if(matrixBaseDefense[row][column] > 100f) matrixBaseDefense[row][column] = 100f;
             }
@@ -1265,11 +1270,11 @@ public class GameActivity extends Activity {
 
     public float updatePos(float target, boolean hit, int level) {
         if (hit) {
-            if (target + 20 / level > 100) target = 100;
-            else target += 20 / level;
+            if (target + 50 / level > 100) target = 100;
+            else target += 50 / level;
         } else {
-            if (target - 20 / level < 0) target = 0;
-            else target -= 20 / level;
+            if (target - 50 / level < 0) target = 0;
+            else target -= 50 / level;
         }
         return target;
     }
@@ -1548,6 +1553,7 @@ public class GameActivity extends Activity {
         DialogFragment endGameDialog = new AlertDialogEndGame().newInstance();
         endGameDialog.show(getFragmentManager(), "Alert");
         totalGames++;
+        if(totalGames == 2) alpha = 0.6f;
         if(totalGames > 3) alpha = 0.3f;
         learningAttack();
         learningDefense();
