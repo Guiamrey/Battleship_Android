@@ -388,7 +388,7 @@ public class GameActivity extends Activity {
             while (!shipOK){
                 int line = rand.nextInt(MATRIX_SIZE);
                 int direction = rand.nextInt(2); // 0 = horizontal, 1 = vertical
-                int from = rand.nextInt(shipSize);
+                int from = rand.nextInt(MATRIX_SIZE - shipSize);
                 int to = from + shipSize - 1;
 
                 shipOK = isAShip(from, to, line, direction);
