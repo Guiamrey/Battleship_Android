@@ -43,17 +43,6 @@ public class Settings extends Activity {
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));
         }
-        if(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic")){
-            spinner_rules.setSelection(0, true);
-        }else spinner_rules.setSelection(1, true);
-
-        String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
-        if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("fácil")) {
-            spinner_level.setSelection(0, true);
-        } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
-            spinner_level.setSelection(1, true);
-        } else spinner_level.setSelection(2, true);
-
         super.onResume();
     }
 
@@ -88,6 +77,12 @@ public class Settings extends Activity {
         ArrayAdapter adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, R.layout.spinner_item);
         adap_level.setDropDownViewResource(R.layout.downlevel);
         spinner_level.setAdapter(adap_level);
+        String lev = getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "Easy");
+        if (lev.equalsIgnoreCase("easy") || lev.equalsIgnoreCase("fácil")) {
+            spinner_level.setSelection(0, true);
+        } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
+            spinner_level.setSelection(1, true);
+        } else spinner_level.setSelection(2, true);
         spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -106,6 +101,9 @@ public class Settings extends Activity {
         ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
         adap_rules.setDropDownViewResource(R.layout.downlevel);
         spinner_rules.setAdapter(adap_rules);
+        if(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic")){
+            spinner_rules.setSelection(0, true);
+        }else spinner_rules.setSelection(1, true);
         spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -166,13 +164,9 @@ public class Settings extends Activity {
 
 
     private void setPreferences() {
-        ArrayAdapter adap = (ArrayAdapter) spinner_level.getAdapter();
-        spinner_level.setSelection(adap.getPosition(getSharedPreferences("Level", Context.MODE_PRIVATE).getString("Level", "")), true);
-
-        adap = (ArrayAdapter) spinner_rules.getAdapter();
-        spinner_rules.setSelection(adap.getPosition(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "")));
-
-        ad_ships.setChecked(getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false));
+        spinner_level.setSelection(spinner_level.getSelectedItemPosition());
+        spinner_rules.setSelection(spinner_rules.getSelectedItemPosition());
+        ad_ships.setChecked(ad_ships.isChecked());
     }
 
     private void configLanguage(String language) {
@@ -213,6 +207,8 @@ public class Settings extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         // refresh your views here
+        int lev = spinner_level.getSelectedItemPosition();
+        int rul = spinner_rules.getSelectedItemPosition();
         TextView setting = (TextView) findViewById(R.id.settings_text);
         setting.setText(R.string.settings);
         TextView level = (TextView) findViewById(R.id.difficulty_text);
@@ -226,9 +222,11 @@ public class Settings extends Activity {
         ArrayAdapter<CharSequence> adap_rules = ArrayAdapter.createFromResource(this, R.array.rules_options, android.R.layout.simple_spinner_item);
         adap_rules.setDropDownViewResource(R.layout.downlevel);
         spinner_rules.setAdapter(adap_rules);
+        spinner_rules.setSelection(rul);
         ArrayAdapter<CharSequence> adap_level = ArrayAdapter.createFromResource(this, R.array.difficulty_options, android.R.layout.simple_spinner_item);
         adap_level.setDropDownViewResource(R.layout.downlevel);
         spinner_level.setAdapter(adap_level);
+        spinner_level.setSelection(lev);
         backButton.setText(R.string.save);
         setPreferences();
         super.onConfigurationChanged(newConfig);
