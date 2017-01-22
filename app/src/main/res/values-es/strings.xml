@@ -77,4 +77,5 @@
     <string name="howto">Cómo colocar los barcos</string>
     <string name="instructions">Instrucciones de juego</string>
     <string name="gameturns">Tu empiezas jugando! \nEl semáforo estará verde cuando sea tu turno y rojo cuando sea el turno del oponente. \n Puedes ver los barcos del oponente que has hundido en las imágenes con una cruz roja en la esquina superior izquierda. \n\nHaz el primer tiro y empieza el juego!</string>
+    <string name="aboutBattleship">Proyecto desarrollado para la asignatura de Programación de Sistemas Inteligentes. \n\nGrado en Ingeniería de Telecomunicaciones. \n\nUniversidad de Vigo 2016/17. \n\nEmpleamos la librería Google GSON bajo licencia Apache-2.0.\n\n    v1.0.1</string>
 </resources>
