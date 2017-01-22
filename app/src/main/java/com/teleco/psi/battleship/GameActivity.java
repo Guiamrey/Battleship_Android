@@ -191,6 +191,7 @@ public class GameActivity extends Activity {
         for (int i = 0; i < MATRIX_SIZE; i++) {
             for (int j = 0; j < MATRIX_SIZE; j++) {
                 matrixMachine[i][j][SHIPS] = 0;
+                matrixMachine[i][j][GAME_STATE] = UNKNOWN;
             }
         }
     }
@@ -805,9 +806,7 @@ public class GameActivity extends Activity {
     public void learningDefense() {
         for (int row = 0; row < 10; row++) {
             for (int column = 0; column < 10; column++) {
-                System.out.println(matrixMachine[row][column][PROBABILITY] + ": " + matrixBaseDefense[row][column] + " -->" );
                 matrixBaseDefense[row][column] = ((totalGames * matrixBaseDefense[row][column] - (alpha * (matrixBaseDefense[row][column] - matrixMachine[row][column][PROBABILITY]))) / (totalGames));
-                System.out.println(matrixBaseDefense[row][column]);
                 if(matrixBaseDefense[row][column] < 0f) matrixBaseDefense[row][column] = 0f;
                 else if(matrixBaseDefense[row][column] > 100f) matrixBaseDefense[row][column] = 100f;
             }
