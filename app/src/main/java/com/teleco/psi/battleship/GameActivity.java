@@ -51,7 +51,7 @@ public class GameActivity extends Activity {
 
     ////
 
-    private static float alpha = 0.9f;
+    private static float alpha = 0.7f;
     private static int totalGames;
     private FrameLayout light;
     private float[][][] matrixHuman = new float[MATRIX_SIZE][MATRIX_SIZE][3];
@@ -111,7 +111,6 @@ public class GameActivity extends Activity {
         ALLOW_ADJACENT_SHIPS = getSharedPreferences("Adyacent_ships", Context.MODE_PRIVATE).getBoolean("checked", false);
 
         setContentView(R.layout.game_activity);
-        printLogMatrix(matrixMachine);
         setupLearning();
         inicializeVarAlgorithm();
         light = (FrameLayout) findViewById(R.id.semaforo);
@@ -150,7 +149,6 @@ public class GameActivity extends Activity {
         if (level == EASY || level == MEDIUM)
             setRandomMatrixMachine(); //colocación de barcos aleatoria
         else{
-            printLogMatrix(matrixMachine);
             setIntelligentShips(); //colocación de barcos inteligente
         }
 
@@ -489,7 +487,7 @@ public class GameActivity extends Activity {
                 int column = rand.nextInt(MATRIX_SIZE);
                 int row = rand.nextInt(MATRIX_SIZE);
 
-                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && canEnter(row, column)) {
+                if (matrixHuman[row][column][GAME_STATE] == UNKNOWN) {
                     bestAction[ROW] = row;
                     bestAction[COLUMN] = column;
                     bestAction[VALUE] = matrixHuman[row][column][VALUE];
@@ -660,11 +658,9 @@ public class GameActivity extends Activity {
             int column = (int) Float.parseFloat(playsStr[COLUMN]);
 
             if (matrixHuman[row][column][GAME_STATE] == UNKNOWN && matrixHuman[row][column][PROBABILITY] >= bestAction[VALUE]) {
-                if(canEnter(row, column)) {
-                    bestAction[ROW] = row;
-                    bestAction[COLUMN] = column;
-                    bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
-                }
+                bestAction[ROW] = row;
+                bestAction[COLUMN] = column;
+                bestAction[VALUE] = matrixHuman[row][column][PROBABILITY];
             }
         }
 
@@ -804,7 +800,6 @@ public class GameActivity extends Activity {
             }
         }
         saveMatrixBase(matrixBaseAttack, "ATTACK");
-        //printLogMatrix(matrixBaseAttack);
     }
 
     public void learningDefense() {
@@ -818,7 +813,6 @@ public class GameActivity extends Activity {
             }
         }
         saveMatrixBase(matrixBaseDefense, "DEFEND");
-        //printLogMatrix(matrixBaseDefense);
     }
 
     public void inicializeBaseAttack() {
