@@ -1402,6 +1402,7 @@ public class GameActivity extends Activity {
         lastHit = false;
         orientation = 1;
         pos = 1;
+        MIN_SIZE_SHIP = 2;
     }
 
     private void checkShipSunk(int numShip, boolean human) {
