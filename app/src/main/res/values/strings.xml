@@ -86,5 +86,8 @@
     <string name="aboutBattleship">Project developed for Programming of Intelligent Systems subject. \n\nTelecommunications Engineering degree. \n\nUniversity of Vigo 2016/17.\n\nWe use Google GSON library under Apache-2.0 license.\n\n     v1.0.1</string>
     <string name="instructions">Game instructions</string>
     <string name="gameturns">You play first! \nThe traffic light will be green when it is your turn and red when it is the opponent\'s turn. \nYou can see the opponent\'s boats that you have sunk in the images with a red cross in the upper left corner. \n\nMake the first shot and start the game!</string>
+    <string name="endgame">END GAME!!</string>
+    <string name="youwin">You win the game!!\n\n\t\t :)</string>
+    <string name="youlose">You lose the game… \n\n\t\t :(</string>
 
 </resources>

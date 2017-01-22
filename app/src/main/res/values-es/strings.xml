@@ -53,7 +53,7 @@
     </string-array>
     <string name="information_rules">Modos de juego: \n1. Clásico. Cada jugador solo puede disparar a una casilla de cada vez.
         El turno de juego se cambia a menos que un jugador acierte en un barco. Gana el jugador con más barcos a flote.
-    \n2. Superdisparo. Mismo modo de juego que el modo clásico, con la diferencia de que los barcos se hunden con un sólo disparo. </string>
+    \n\n2. Superdisparo. Mismo modo de juego que el modo clásico, con la diferencia de que los barcos se hunden con un sólo disparo. </string>
     <string name="back_pressed">Se ha pulsado el botón \"Atrás\". ¿Está seguro de que no quiere guardar los ajustes?</string>
     <string name="no_save">No guardar</string>
     <string name="noship">El barco no está correctamente colocado.\n\n Las casillas deben ser consecutivas y estar en una sola dirección.</string>
@@ -77,4 +77,7 @@
     <string name="howto">Cómo colocar los barcos</string>
     <string name="instructions">Instrucciones de juego</string>
     <string name="gameturns">Tu empiezas jugando! \nEl semáforo estará verde cuando sea tu turno y rojo cuando sea el turno del oponente. \n Puedes ver los barcos del oponente que has hundido en las imágenes con una cruz roja en la esquina superior izquierda. \n\nHaz el primer tiro y empieza el juego!</string>
+    <string name="endgame">¡¡FIN DEL JUEGO!!</string>
+    <string name="youlose">Has perdido…\n\n\t\t :(</string>
+    <string name="youwin">¡¡Has ganado!!\n\n\t\t :)</string>
 </resources>

@@ -43,7 +43,7 @@ public class Settings extends Activity {
             ArrayAdapter adap = (ArrayAdapter) spinner_language.getAdapter();
             spinner_language.setSelection(adap.getPosition("Español"));
         }
-        /*if(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic")){
+        if(getSharedPreferences("Rules", Context.MODE_PRIVATE).getString("Rules", "Classic").contains("sic")){
             spinner_rules.setSelection(0, true);
         }else spinner_rules.setSelection(1, true);
 
@@ -52,7 +52,7 @@ public class Settings extends Activity {
             spinner_level.setSelection(0, true);
         } else if (lev.equalsIgnoreCase("medium") || lev.equalsIgnoreCase("Medio")) {
             spinner_level.setSelection(1, true);
-        } else spinner_level.setSelection(2, true);*/
+        } else spinner_level.setSelection(2, true);
 
         super.onResume();
     }
@@ -91,7 +91,7 @@ public class Settings extends Activity {
         spinner_level.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getSelectedView()).setTextColor(getResources().getColor(R.color.ColorWhite));
+                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
             }
 
             @Override
@@ -109,7 +109,7 @@ public class Settings extends Activity {
         spinner_rules.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((TextView) parent.getSelectedView()).setTextColor(getResources().getColor(R.color.ColorWhite));
+                ((TextView) view).setTextColor(getResources().getColor(R.color.ColorWhite));
             }
 
             @Override

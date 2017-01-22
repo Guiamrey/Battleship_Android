@@ -15,14 +15,14 @@ public class AlertDialogEndGame extends DialogFragment{
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("END GAME!");
+        builder.setTitle(R.string.endgame);
         if(GameActivity.getWinner() == 1){
-            builder.setMessage("You win the game! :)");
+            builder.setMessage(R.string.youwin);
         }else{
-            builder.setMessage("You lose the game... :(");
+            builder.setMessage(R.string.youlose);
         }
         builder.setCancelable(false);
-        builder.setPositiveButton("Ok",
+        builder.setPositiveButton(R.string.ok,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         getActivity().finish();
