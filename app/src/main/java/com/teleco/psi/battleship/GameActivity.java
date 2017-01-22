@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -82,7 +83,7 @@ public class GameActivity extends Activity {
     private static final int EASY = 0;
     private static final int MEDIUM = 1;
     private static final int HARD = 2;
-    private static int MAX_SIZE_SHIP = 5;
+    private static int MIN_SIZE_SHIP = 2;
     private boolean[] sunkShipsHuman = new boolean[]{false, false, false, false, false};
     private boolean[] sunkShipsMachine = new boolean[]{false, false, false, false, false};
 
@@ -1422,7 +1423,27 @@ public class GameActivity extends Activity {
                 }
             }
             if (isSunk) {
-                sunkShipsHuman[numShip - 2] = true;
+                sunkShipsMachine[numShip - 2] = true;
+                int min_ship = Arrays.asList(sunkShipsMachine).indexOf(false);
+                int size = 0;
+                switch (min_ship) {
+                    case 0:
+                        size = 2;
+                        break;
+                    case 1:
+                    case 2:
+                        size = 3;
+                        break;
+                    case 3:
+                        size = 4;
+                        break;
+                    case 4:
+                        size = 5;
+                        break;
+                }
+                if (MIN_SIZE_SHIP < size) {
+                    MIN_SIZE_SHIP = size;
+                }
             }
         } else {
             for (int fila = 0; fila < MATRIX_SIZE; fila++) {
@@ -1434,7 +1455,7 @@ public class GameActivity extends Activity {
                 }
             }
             if (isSunk) {
-                sunkShipsMachine[numShip - 2] = true;
+                sunkShipsHuman[numShip - 2] = true;
                 int id = 0;
                 int idb = 0;
                 switch (numShip) {
@@ -1486,7 +1507,7 @@ public class GameActivity extends Activity {
         int invertCounter = 0;
 
         while (true) { //horizontal
-            if(pos == MAX_SIZE_SHIP) return true;
+            if(pos == MIN_SIZE_SHIP) return true;
 
             if (invertCounter == 2) break;
 
@@ -1520,7 +1541,7 @@ public class GameActivity extends Activity {
         invertCounter = 0;
 
         while (true) {
-            if(pos == MAX_SIZE_SHIP) return true;
+            if(pos == MIN_SIZE_SHIP) return true;
 
             if (invertCounter == 2) return false;
 
