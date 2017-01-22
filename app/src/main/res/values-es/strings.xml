@@ -80,4 +80,5 @@
     <string name="endgame">¡¡FIN DEL JUEGO!!</string>
     <string name="youlose">Has perdido…\n\n\t\t :(</string>
     <string name="youwin">¡¡Has ganado!!\n\n\t\t :)</string>
+    <string name="aboutBattleship">Proyecto desarrollado para la asignatura de Programación de Sistemas Inteligentes. \n\nGrado en Ingeniería de Telecomunicaciones. \n\nUniversidad de Vigo 2016/17. \n\nEmpleamos la librería Google GSON bajo licencia Apache-2.0.\n\n    v1.0.1</string>
 </resources>
